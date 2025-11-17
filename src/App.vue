@@ -2,6 +2,9 @@
 	<Wrapview ref="wrapView" @onInitalized="environmentMounted"></Wrapview>
 	<div id="orbitControls"></div>
     <section class="bottom-panel">
+		<div class="thumb-container">
+			<div class="thumb"></div>
+		</div>
 		<div class="top-tabs">
 			<div class="tab">
 				<div class="image"></div>
@@ -444,6 +447,19 @@ export default {
 	border-top-right-radius: 20px;
 }
 
+.thumb-container {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	margin-bottom: 5px;
+}
+.thumb {
+	height: 4px;
+	width: 30px;
+	border-radius: 4px;
+	background-color: #cccccc;
+}
+
 .top-tabs, .bottom-tabs {
 	display: flex;
 	justify-content: space-between;
@@ -456,7 +472,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 2px;
+	gap: 4px;
 }
 
 .tab p {
@@ -468,10 +484,14 @@ export default {
 }
 
 .image {
-	height: 30px;
-	width: 30px;
+	height: 28px;
+	width: 28px;
 	background-color: black;
 	border-radius: 50%;
+}
+
+.tab.active .image{
+	background-color: blue;
 }
 
 .content {
