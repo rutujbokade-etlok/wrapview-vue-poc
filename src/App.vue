@@ -346,22 +346,22 @@ export default {
 					}
 				});
 
-			const frontBody = new WrapviewTexturedMaterial(this.$refs['wrapView'].instance(), {
-				resources: {
-					base: './3001C_SMALL/textures/F_3001C_SMALL_common.png', // Base layer for text editing
-					diffuse: './3001C_SMALL/textures/F_3001C_SMALL_common.png',
-					normal: './3001C_SMALL/textures/F_3001C_SMALL_normal_1001.png',
-					alpha: './3001C_SMALL/textures/F_3001C_SMALL_opacity_1001.png',
-					roughness: './3001C_SMALL/textures/F_3001C_SMALL_roughness_1001.png',
-					metalness: './3001C_SMALL/textures/F_3001C_SMALL_metalness_1001.png',
-				},
-				build: {
-					parameters: {
-						base: true, // Enable base layer building for text editing
-						size: 2048
+				const frontBody = new WrapviewTexturedMaterial(this.$refs['wrapView'].instance(), {
+					resources: {
+						base: './3001C_SMALL/textures/F_3001C_SMALL_common.png', // Base layer for text editing
+						diffuse: './3001C_SMALL/textures/F_3001C_SMALL_common.png',
+						normal: './3001C_SMALL/textures/F_3001C_SMALL_normal_1001.png',
+						alpha: './3001C_SMALL/textures/F_3001C_SMALL_opacity_1001.png',
+						roughness: './3001C_SMALL/textures/F_3001C_SMALL_roughness_1001.png',
+						metalness: './3001C_SMALL/textures/F_3001C_SMALL_metalness_1001.png',
+					},
+					build: {
+						parameters: {
+							base: true, // Enable base layer building for text editing
+							size: 2048
+						}
 					}
-				}
-			});
+				});
 
 				const backBody = new WrapviewTexturedMaterial(this.$refs['wrapView'].instance(), {
 					resources: {
@@ -454,13 +454,9 @@ export default {
 				console.error('Cannot add text layer: panel texture not initialized');
 				return;
 			}
-			console.log("panel.texture()", panel.texture())
-			console.log("panel.settings.status.base", panel.settings.status.base)
-			console.log("panel.settings.resources.base", panel.settings.resources.base)
 
 			var fonts = new WrapviewFontSet()
 			fonts.load([{ name: "Roboto", source: "google", id: '1', value: function(n) {return this[n];} }])
-			console.log("fonts", fonts)
 
             var color  = new WrapviewParameter(panel, 'textColor');
             color.set({
@@ -468,14 +464,14 @@ export default {
                 value: '#000000',
                 descriptor: 'Black'
             });
-			console.log("color", color)
+
             var outline  = new WrapviewParameter(panel, 'outlineColor');
             outline.set({
                 type: 'fixed',
                 value: '#000000',
                 descriptor: 'Black'
             });
-			console.log("outline", outline)
+
             var size = panel.settings.build.parameters.size;
             const textLayer = new WrapviewTextLayer(WrapviewUtils.guid(),{
                 pivot: {
@@ -487,7 +483,7 @@ export default {
                     y: size/2
                 },
                 angle: 0,
-                fontSize: 50,
+                fontSize: 70,
                 font: fonts.first(),
                 color: color,
                 outline: {
@@ -496,24 +492,18 @@ export default {
                     thickness: 1
                 }
             });
-			console.log("textLayer", textLayer)
             
 			// Begin editing the texture before adding layers
-			console.log("Calling beginEditing()...")
 			panel.texture().beginEditing().then(() => {
-				console.log("beginEditing() resolved successfully!")
 				var layerIndex = panel.texture().addLayer(textLayer);
-				console.log("layerIndex", layerIndex)
 				textLayer.load({
 					text: {
 						type: 'fixed',
 						value: 'Text'
 					}
 				}, panel).then(()=>{
-					console.log("textLayer.load() resolved")
 					panel.texture().editLayer(layerIndex);
 					panel.texture().render();
-					console.log("Text layer added successfully")
 					// panel.texture().endEditing();
 				}).catch((err) => {
 					console.error("Error loading text layer:", err);
