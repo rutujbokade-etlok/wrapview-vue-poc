@@ -1,4 +1,11 @@
 <template>
+	<div class="header">
+		<div><img src="/icons/Arrow.png" alt="" srcset=""></div>
+		<div>
+			<img src="/icons/Logo.png" alt="" srcset="">
+		</div>
+		<div></div>
+	</div>
 	<Wrapview ref="wrapView" @onInitalized="environmentMounted"></Wrapview>
 	<div id="orbitControls"></div>
     <section class="bottom-panel">
@@ -7,49 +14,43 @@
 		</div>
 		<div class="top-tabs">
 			<div class="tab">
-				<div class="image"></div>
-				<p>Colors</p>
+				<img src="/icons/Colors.png">
 			</div>
 			<div class="tab">
-				<div class="image"></div>
-				<p>Layers</p>
+				<img src="/icons/Layers.png">
 			</div>
 			<div class="tab active">
-				<div class="image"></div>
-				<p>Text Editor</p>
+				<img src="/icons/TextEditor.png">
 			</div>
 			<div class="tab">
-				<div class="image"></div>
-				<p>Images</p>
+				<img src="/icons/Images.png">
 			</div>
 			<div class="tab">
-				<div class="image"></div>
-				<p>Personalize</p>
+				<img src="/icons/Personalize.png">
 			</div>
 			<div class="tab">
-				<div class="image"></div>
-				<p>Done</p>
+				<img src="/icons/Done.png">
 			</div>
 		</div>
 		<div class="bottom-tabs">
 			<div class="tab" :class="{ 'active' : activeTab === 0 }" v-on:click="changeTab(0)">
-				<div class="image"></div>
+				<img src="/icons/Edit.svg">
 				<p>Edit Text</p>
 			</div>
 			<div class="tab" :class="{ 'active' : activeTab === 1 }" v-on:click="changeTab(1)">
-				<div class="image"></div>
+				<img src="/icons/EditColor.svg" style="height: 24px; width: 24px;">
 				<p>Edit Color</p>
 			</div>
 			<div class="tab" :class="{ 'active' : activeTab === 2 }" v-on:click="changeTab(2)">
-				<div class="image"></div>
+				<img src="/icons/Aa.svg">
 				<p>Font</p>
 			</div>
 			<div class="tab" :class="{ 'active' : activeTab === 3 }" v-on:click="changeTab(3)">
-				<div class="image"></div>
+				<img src="/icons/AOutline.svg">
 				<p>Outline</p>
 			</div>
 			<div class="tab" :class="{ 'active' : activeTab === 4 }" v-on:click="changeTab(4)">
-				<div class="image"></div>
+				<img src="/icons/Arch.svg">
 				<p>Shape</p>
 			</div>
 		</div>
@@ -176,13 +177,18 @@ import {
 	WrapviewShadowMaterial,
 	WrapviewTexturedMaterial,
 	WrapviewStitchMaterial,
-	WrapviewLight
+	WrapviewLight,
+	WrapviewTextLayer,
+	WrapviewParameter,
+	WrapviewUtils,
+	WrapviewFontSet
 } from "@etlok-systems/wrapview"
 
 export default {
 	components: {Wrapview, WrapviewInputControl},
 	data() {
 		return {
+			materials: null,
 			size: {
 				height: 0,
 				width: 0,
@@ -198,7 +204,11 @@ export default {
 			this.calculateDimensions()
 			this.loadEnvironment().then(() => this.loadLights().then(() => this.loadMaterials().then(({ materials }) => this.loadObjects(materials).then(() => {
 			    this.$refs['wrapView'].show()
+				this.materials = materials
+
 			    this.$refs['wrapView'].instance().animate()
+
+				this.addTextLayer()
 			}))))
 		},
 		calculateDimensions() {
@@ -336,15 +346,22 @@ export default {
 					}
 				});
 
-				const frontBody = new WrapviewTexturedMaterial(this.$refs['wrapView'].instance(), {
-					resources: {
-						diffuse: './3001C_SMALL/textures/F_3001C_SMALL_common.png',
-						normal: './3001C_SMALL/textures/F_3001C_SMALL_normal_1001.png',
-						alpha: './3001C_SMALL/textures/F_3001C_SMALL_opacity_1001.png',
-						roughness: './3001C_SMALL/textures/F_3001C_SMALL_roughness_1001.png',
-						metalness: './3001C_SMALL/textures/F_3001C_SMALL_metalness_1001.png',
+			const frontBody = new WrapviewTexturedMaterial(this.$refs['wrapView'].instance(), {
+				resources: {
+					base: './3001C_SMALL/textures/F_3001C_SMALL_common.png', // Base layer for text editing
+					diffuse: './3001C_SMALL/textures/F_3001C_SMALL_common.png',
+					normal: './3001C_SMALL/textures/F_3001C_SMALL_normal_1001.png',
+					alpha: './3001C_SMALL/textures/F_3001C_SMALL_opacity_1001.png',
+					roughness: './3001C_SMALL/textures/F_3001C_SMALL_roughness_1001.png',
+					metalness: './3001C_SMALL/textures/F_3001C_SMALL_metalness_1001.png',
+				},
+				build: {
+					parameters: {
+						base: true, // Enable base layer building for text editing
+						size: 2048
 					}
-				});
+				}
+			});
 
 				const backBody = new WrapviewTexturedMaterial(this.$refs['wrapView'].instance(), {
 					resources: {
@@ -400,7 +417,7 @@ export default {
 							y: -Math.PI
 						},
 						position: {
-							y: 0.2
+							y: 0.13
 						},
 						scale: {
 							x: 0.8, y: 0.8, z: 0.8
@@ -414,7 +431,97 @@ export default {
 					});
 				resolve();
 			});
-		}
+		},
+		currentPanel() {
+			// Get the material from the materials set using the proper getter method
+			// A "panel" in this context is a WrapviewTexturedMaterial that can have text layers
+			const panel = this.materials.get('FRONT_BODY');
+			if (!panel) {
+				console.error('FRONT_BODY panel not found in materials');
+				return null;
+			}
+			console.log(panel)
+			return panel;
+		},
+		addTextLayer(){
+			const panel = this.currentPanel();
+			if (!panel) {
+				console.error('Cannot add text layer: panel not found');
+				return;
+			}
+
+			if (!panel.texture()) {
+				console.error('Cannot add text layer: panel texture not initialized');
+				return;
+			}
+			console.log("panel.texture()", panel.texture())
+			console.log("panel.settings.status.base", panel.settings.status.base)
+			console.log("panel.settings.resources.base", panel.settings.resources.base)
+
+			var fonts = new WrapviewFontSet()
+			fonts.load([{ name: "Roboto", source: "google", id: '1', value: function(n) {return this[n];} }])
+			console.log("fonts", fonts)
+
+            var color  = new WrapviewParameter(panel, 'textColor');
+            color.set({
+                type: 'fixed',
+                value: '#000000',
+                descriptor: 'Black'
+            });
+			console.log("color", color)
+            var outline  = new WrapviewParameter(panel, 'outlineColor');
+            outline.set({
+                type: 'fixed',
+                value: '#000000',
+                descriptor: 'Black'
+            });
+			console.log("outline", outline)
+            var size = panel.settings.build.parameters.size;
+            const textLayer = new WrapviewTextLayer(WrapviewUtils.guid(),{
+                pivot: {
+                    x: 0.5,
+                    y: 0.5
+                },
+                position: {
+                    x: size/2,
+                    y: size/2
+                },
+                angle: 0,
+                fontSize: 50,
+                font: fonts.first(),
+                color: color,
+                outline: {
+                    include: false,
+                    color: outline,
+                    thickness: 1
+                }
+            });
+			console.log("textLayer", textLayer)
+            
+			// Begin editing the texture before adding layers
+			console.log("Calling beginEditing()...")
+			panel.texture().beginEditing().then(() => {
+				console.log("beginEditing() resolved successfully!")
+				var layerIndex = panel.texture().addLayer(textLayer);
+				console.log("layerIndex", layerIndex)
+				textLayer.load({
+					text: {
+						type: 'fixed',
+						value: 'Text'
+					}
+				}, panel).then(()=>{
+					console.log("textLayer.load() resolved")
+					panel.texture().editLayer(layerIndex);
+					panel.texture().render();
+					console.log("Text layer added successfully")
+					// panel.texture().endEditing();
+				}).catch((err) => {
+					console.error("Error loading text layer:", err);
+				});
+			}).catch((err) => {
+				console.error("Error in beginEditing():", err);
+			});
+        },
 	}
 }
 </script>
@@ -425,6 +532,19 @@ export default {
 	padding: 0;
 	box-sizing: border-box;
 	font-family: sans-serif;
+}
+
+.header {
+	position: absolute;
+	top: 0%;
+	left: 0;
+	width: 100%;
+	height: auto;
+	padding: 23px 10px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: white;
 }
 
 #orbitControls {
@@ -463,7 +583,7 @@ export default {
 .top-tabs, .bottom-tabs {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: flex-end;
 	padding: 10px 0;
 	border-bottom: 1px solid #f0f0f0;
 }
@@ -476,11 +596,15 @@ export default {
 }
 
 .tab p {
-	font-size: 12px;
+	font-size: 10px;
 }
 
 .tab.active {
-	color: blue;
+	color: #0070C8;
+}
+
+.tab.active img, .tab.active path{
+	color: #0070C8;
 }
 
 .image {
@@ -491,7 +615,7 @@ export default {
 }
 
 .tab.active .image{
-	background-color: blue;
+	background-color: #0070C8;
 }
 
 .content {
