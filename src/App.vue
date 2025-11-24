@@ -542,7 +542,7 @@ export default {
 
               this.$refs["wrapView"].instance().animate();
 
-              this.addTextLayer();
+              this.addSvgLayer();
             })
           )
         )
@@ -1078,17 +1078,12 @@ export default {
 
           // Check if SVG layer already exists
           const layers = panel.texture().layers();
-          let layerIndex = -1;
+          let layerIndex = panel.texture().addLayer(this.currentSvgLayer);
           for (let i = 0; i < layers.length; i++) {
             if (layers[i].id === this.currentSvgLayer.id) {
               layerIndex = i;
               break;
             }
-          }
-
-          // Add layer if it doesn't exist
-          if (layerIndex === -1) {
-            layerIndex = panel.texture().addLayer(this.currentSvgLayer);
           }
 
           // Load SVG data into the layer
