@@ -12,22 +12,12 @@
     <div class="svg-preview-panel">
       <h4>SVG Preview</h4>
       <div style="display: flex; align-items: center; gap: 10px">
-        <canvas
-          id="svgPreviewCanvas"
-          width="120"
-          height="120"
-          style="border: 1px solid #ccc"
-        ></canvas>
+        <canvas id="svgPreviewCanvas" width="120" height="120" style="border: 1px solid #ccc"></canvas>
         <div style="display: flex; flex-direction: column; gap: 5px">
-          <label
-            >Text Color: <input type="color" v-model="svgTextColor"
-          /></label>
-          <label
-            >Font Size:
-            <input type="number" v-model="svgFontSize" min="8" max="72"
-          /></label>
-          <label
-            >Decoration:
+          <label>Text Color: <input type="color" v-model="svgTextColor" /></label>
+          <label>Font Size:
+            <input type="number" v-model="svgFontSize" min="8" max="72" /></label>
+          <label>Decoration:
             <select v-model="svgTextDecoration">
               <option value="">None</option>
               <option value="bold">Bold</option>
@@ -35,9 +25,7 @@
               <option value="bold italic">Bold Italic</option>
             </select>
           </label>
-          <button
-            @click="addSvgLayer"
-            style="
+          <button @click="addSvgLayer" style="
               margin-top: 10px;
               padding: 8px 12px;
               background-color: #0070c8;
@@ -46,8 +34,7 @@
               border-radius: 4px;
               cursor: pointer;
               width: 100%;
-            "
-          >
+            ">
             Apply to 3D Model
           </button>
         </div>
@@ -77,43 +64,23 @@
       </div>
     </div>
     <div class="bottom-tabs">
-      <div
-        class="tab"
-        :class="{ active: activeTab === 0 }"
-        v-on:click="changeTab(0)"
-      >
+      <div class="tab" :class="{ active: activeTab === 0 }" v-on:click="changeTab(0)">
         <img src="/icons/Edit.svg" />
         <p>Edit Text</p>
       </div>
-      <div
-        class="tab"
-        :class="{ active: activeTab === 1 }"
-        v-on:click="changeTab(1)"
-      >
+      <div class="tab" :class="{ active: activeTab === 1 }" v-on:click="changeTab(1)">
         <img src="/icons/EditColor.svg" style="height: 24px; width: 24px" />
         <p>Edit Color</p>
       </div>
-      <div
-        class="tab"
-        :class="{ active: activeTab === 2 }"
-        v-on:click="changeTab(2)"
-      >
+      <div class="tab" :class="{ active: activeTab === 2 }" v-on:click="changeTab(2)">
         <img src="/icons/Aa.svg" />
         <p>Font</p>
       </div>
-      <div
-        class="tab"
-        :class="{ active: activeTab === 3 }"
-        v-on:click="changeTab(3)"
-      >
+      <div class="tab" :class="{ active: activeTab === 3 }" v-on:click="changeTab(3)">
         <img src="/icons/AOutline.svg" />
         <p>Outline</p>
       </div>
-      <div
-        class="tab"
-        :class="{ active: activeTab === 4 }"
-        v-on:click="changeTab(4)"
-      >
+      <div class="tab" :class="{ active: activeTab === 4 }" v-on:click="changeTab(4)">
         <img src="/icons/Arch.svg" />
         <p>Shape</p>
       </div>
@@ -122,233 +89,80 @@
       <div id="tab1" :class="{ 'display-none': activeTab !== 0 }">
         <div style="padding: 10px">
           <label style="display: block; margin-bottom: 10px">
-            <span style="display: block; margin-bottom: 5px; font-weight: bold"
-              >Edit Text</span
-            >
-            <input
-              type="text"
-              v-model="svgTextValue"
-              placeholder="Enter text"
-              style="
+            <span style="display: block; margin-bottom: 5px; font-weight: bold">Edit Text</span>
+            <input type="text" v-model="svgTextValue" placeholder="Enter text" style="
                 width: 100%;
                 padding: 8px;
                 border: 1px solid #ccc;
                 border-radius: 4px;
-              "
-            />
+              " />
           </label>
           <label style="display: block">
-            <span style="display: block; margin-bottom: 5px; font-weight: bold"
-              >Text Size: {{ svgFontSize }}px</span
-            >
-            <input
-              type="range"
-              v-model="svgFontSize"
-              min="8"
-              max="72"
-              style="width: 100%"
-            />
+            <span style="display: block; margin-bottom: 5px; font-weight: bold">Text Size: {{ svgFontSize }}px</span>
+            <input type="range" v-model="svgFontSize" min="8" max="72" style="width: 100%" />
           </label>
         </div>
       </div>
       <div id="tab2" :class="{ 'display-none': activeTab !== 1 }">
         <div class="color-container">
-          <div
-            class="color"
-            style="background-color: #000000"
-            @click="svgTextColor = '#000000'"
-            title="Black"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ffffff; border: 1px solid #ccc"
-            @click="svgTextColor = '#FFFFFF'"
-            title="White"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #808080"
-            @click="svgTextColor = '#808080'"
-            title="Gray"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #c0c0c0"
-            @click="svgTextColor = '#C0C0C0'"
-            title="Silver"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ff0000"
-            @click="svgTextColor = '#FF0000'"
-            title="Red"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #8b0000"
-            @click="svgTextColor = '#8B0000'"
-            title="Dark Red"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ffa500"
-            @click="svgTextColor = '#FFA500'"
-            title="Orange"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ff8c00"
-            @click="svgTextColor = '#FF8C00'"
-            title="Dark Orange"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ffff00"
-            @click="svgTextColor = '#FFFF00'"
-            title="Yellow"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ffd700"
-            @click="svgTextColor = '#FFD700'"
-            title="Gold"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #00ff00"
-            @click="svgTextColor = '#00FF00'"
-            title="Lime"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #008000"
-            @click="svgTextColor = '#008000'"
-            title="Green"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #006400"
-            @click="svgTextColor = '#006400'"
-            title="Dark Green"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #00ffff"
-            @click="svgTextColor = '#00FFFF'"
-            title="Cyan"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #008b8b"
-            @click="svgTextColor = '#008B8B'"
-            title="Dark Cyan"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #0000ff"
-            @click="svgTextColor = '#0000FF'"
-            title="Blue"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #000080"
-            @click="svgTextColor = '#000080'"
-            title="Navy"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #4169e1"
-            @click="svgTextColor = '#4169E1'"
-            title="Royal Blue"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #800080"
-            @click="svgTextColor = '#800080'"
-            title="Purple"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #4b0082"
-            @click="svgTextColor = '#4B0082'"
-            title="Indigo"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ff00ff"
-            @click="svgTextColor = '#FF00FF'"
-            title="Magenta"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ff1493"
-            @click="svgTextColor = '#FF1493'"
-            title="Deep Pink"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ffc0cb"
-            @click="svgTextColor = '#FFC0CB'"
-            title="Pink"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #a52a2a"
-            @click="svgTextColor = '#A52A2A'"
-            title="Brown"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #d2691e"
-            @click="svgTextColor = '#D2691E'"
-            title="Chocolate"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #f5f5dc"
-            @click="svgTextColor = '#F5F5DC'"
-            title="Beige"
-          ></div>
+          <div class="color" style="background-color: #000000" @click="svgTextColor = '#000000'" title="Black"></div>
+          <div class="color" style="background-color: #ffffff; border: 1px solid #ccc" @click="svgTextColor = '#FFFFFF'"
+            title="White"></div>
+          <div class="color" style="background-color: #808080" @click="svgTextColor = '#808080'" title="Gray"></div>
+          <div class="color" style="background-color: #c0c0c0" @click="svgTextColor = '#C0C0C0'" title="Silver"></div>
+          <div class="color" style="background-color: #ff0000" @click="svgTextColor = '#FF0000'" title="Red"></div>
+          <div class="color" style="background-color: #8b0000" @click="svgTextColor = '#8B0000'" title="Dark Red"></div>
+          <div class="color" style="background-color: #ffa500" @click="svgTextColor = '#FFA500'" title="Orange"></div>
+          <div class="color" style="background-color: #ff8c00" @click="svgTextColor = '#FF8C00'" title="Dark Orange">
+          </div>
+          <div class="color" style="background-color: #ffff00" @click="svgTextColor = '#FFFF00'" title="Yellow"></div>
+          <div class="color" style="background-color: #ffd700" @click="svgTextColor = '#FFD700'" title="Gold"></div>
+          <div class="color" style="background-color: #00ff00" @click="svgTextColor = '#00FF00'" title="Lime"></div>
+          <div class="color" style="background-color: #008000" @click="svgTextColor = '#008000'" title="Green"></div>
+          <div class="color" style="background-color: #006400" @click="svgTextColor = '#006400'" title="Dark Green">
+          </div>
+          <div class="color" style="background-color: #00ffff" @click="svgTextColor = '#00FFFF'" title="Cyan"></div>
+          <div class="color" style="background-color: #008b8b" @click="svgTextColor = '#008B8B'" title="Dark Cyan">
+          </div>
+          <div class="color" style="background-color: #0000ff" @click="svgTextColor = '#0000FF'" title="Blue"></div>
+          <div class="color" style="background-color: #000080" @click="svgTextColor = '#000080'" title="Navy"></div>
+          <div class="color" style="background-color: #4169e1" @click="svgTextColor = '#4169E1'" title="Royal Blue">
+          </div>
+          <div class="color" style="background-color: #800080" @click="svgTextColor = '#800080'" title="Purple"></div>
+          <div class="color" style="background-color: #4b0082" @click="svgTextColor = '#4B0082'" title="Indigo"></div>
+          <div class="color" style="background-color: #ff00ff" @click="svgTextColor = '#FF00FF'" title="Magenta"></div>
+          <div class="color" style="background-color: #ff1493" @click="svgTextColor = '#FF1493'" title="Deep Pink">
+          </div>
+          <div class="color" style="background-color: #ffc0cb" @click="svgTextColor = '#FFC0CB'" title="Pink"></div>
+          <div class="color" style="background-color: #a52a2a" @click="svgTextColor = '#A52A2A'" title="Brown"></div>
+          <div class="color" style="background-color: #d2691e" @click="svgTextColor = '#D2691E'" title="Chocolate">
+          </div>
+          <div class="color" style="background-color: #f5f5dc" @click="svgTextColor = '#F5F5DC'" title="Beige"></div>
         </div>
       </div>
       <div id="tab3" :class="{ 'display-none': activeTab !== 2 }">
-        <div
-          class="font-variants"
-          :class="{ 'active-font': svgFontFamily === 'Arial' }"
-          @click="svgFontFamily = 'Arial'"
-        >
+        <div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Arial' }"
+          @click="svgFontFamily = 'Arial'">
           <h4>Warriors</h4>
           <p>Arial</p>
         </div>
-        <div
-          class="font-variants"
-          :class="{ 'active-font': svgFontFamily === 'Verdana' }"
-          @click="svgFontFamily = 'Verdana'"
-        >
+        <div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Verdana' }"
+          @click="svgFontFamily = 'Verdana'">
           <h4>Warriors</h4>
           <p>Verdana</p>
         </div>
-        <div
-          class="font-variants"
-          :class="{ 'active-font': svgFontFamily === 'Times New Roman' }"
-          @click="svgFontFamily = 'Times New Roman'"
-        >
+        <div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Times New Roman' }"
+          @click="svgFontFamily = 'Times New Roman'">
           <h4>Warriors</h4>
           <p>Times New Roman</p>
         </div>
-        <div
-          class="font-variants"
-          :class="{ 'active-font': svgFontFamily === 'Courier New' }"
-          @click="svgFontFamily = 'Courier New'"
-        >
+        <div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Courier New' }"
+          @click="svgFontFamily = 'Courier New'">
           <h4>Warriors</h4>
           <p>Courier New</p>
         </div>
-        <div
-          class="font-variants"
-          :class="{ 'active-font': svgFontFamily === 'Georgia' }"
-          @click="svgFontFamily = 'Georgia'"
-        >
+        <div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Georgia' }"
+          @click="svgFontFamily = 'Georgia'">
           <h4>Warriors</h4>
           <p>Georgia</p>
         </div>
@@ -381,60 +195,30 @@
       </div>
       <div id="tab5" :class="{ 'display-none': activeTab !== 4 }">
         <div class="style-content">
-          <div
-            class="fontStyle"
-            :class="{ 'active-shape': svgTextShape === 'none' }"
-            @click="svgTextShape = 'none'"
-          >
+          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'none' }" @click="svgTextShape = 'none'">
             <h2>None</h2>
           </div>
-          <div
-            class="fontStyle"
-            :class="{ 'active-shape': svgTextShape === 'arch' }"
-            @click="svgTextShape = 'arch'"
-          >
+          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'arch' }" @click="svgTextShape = 'arch'">
             <h2>Arch</h2>
           </div>
-          <div
-            class="fontStyle"
-            :class="{ 'active-shape': svgTextShape === 'bridge' }"
-            @click="svgTextShape = 'bridge'"
-          >
+          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'bridge' }"
+            @click="svgTextShape = 'bridge'">
             <h2>Bridge</h2>
           </div>
-          <div
-            class="fontStyle"
-            :class="{ 'active-shape': svgTextShape === 'bulge' }"
-            @click="svgTextShape = 'bulge'"
-          >
+          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'bulge' }" @click="svgTextShape = 'bulge'">
             <h2>Bulge</h2>
           </div>
-          <div
-            class="fontStyle"
-            :class="{ 'active-shape': svgTextShape === 'flag' }"
-            @click="svgTextShape = 'flag'"
-          >
+          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'flag' }" @click="svgTextShape = 'flag'">
             <h2>Flag</h2>
           </div>
-          <div
-            class="fontStyle"
-            :class="{ 'active-shape': svgTextShape === 'wave' }"
-            @click="svgTextShape = 'wave'"
-          >
+          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'wave' }" @click="svgTextShape = 'wave'">
             <h2>Wave</h2>
           </div>
-          <div
-            class="fontStyle"
-            :class="{ 'active-shape': svgTextShape === 'angle' }"
-            @click="svgTextShape = 'angle'"
-          >
+          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'angle' }" @click="svgTextShape = 'angle'">
             <h2>Angle</h2>
           </div>
-          <div
-            class="fontStyle"
-            :class="{ 'active-shape': svgTextShape === 'circle' }"
-            @click="svgTextShape = 'circle'"
-          >
+          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'circle' }"
+            @click="svgTextShape = 'circle'">
             <h2>Circle</h2>
           </div>
         </div>
@@ -997,40 +781,30 @@ export default {
 
       switch (shapeType) {
         case "arch":
-          return `M ${startX} ${centerY} Q ${width / 2} ${
-            centerY - curve
-          } ${endX} ${centerY}`;
+          return `M ${startX} ${centerY} Q ${width / 2} ${centerY - curve
+            } ${endX} ${centerY}`;
         case "bridge":
-          return `M ${startX} ${centerY} Q ${width / 2} ${
-            centerY + curve
-          } ${endX} ${centerY}`;
+          return `M ${startX} ${centerY} Q ${width / 2} ${centerY + curve
+            } ${endX} ${centerY}`;
         case "bulge":
-          return `M ${startX} ${centerY} Q ${width / 2} ${
-            centerY + curve
-          } ${endX} ${centerY}`;
+          return `M ${startX} ${centerY} Q ${width / 2} ${centerY + curve
+            } ${endX} ${centerY}`;
         case "flag":
-          return `M ${startX} ${centerY} Q ${width / 3} ${centerY - curve} ${
-            width / 2
-          } ${centerY} Q ${(2 * width) / 3} ${
-            centerY + curve
-          } ${endX} ${centerY}`;
+          return `M ${startX} ${centerY} Q ${width / 3} ${centerY - curve} ${width / 2
+            } ${centerY} Q ${(2 * width) / 3} ${centerY + curve
+            } ${endX} ${centerY}`;
         case "wave":
-          return `M ${startX} ${centerY} Q ${width / 3} ${centerY + curve} ${
-            width / 2
-          } ${centerY} Q ${(2 * width) / 3} ${
-            centerY - curve
-          } ${endX} ${centerY}`;
+          return `M ${startX} ${centerY} Q ${width / 3} ${centerY + curve} ${width / 2
+            } ${centerY} Q ${(2 * width) / 3} ${centerY - curve
+            } ${endX} ${centerY}`;
         case "angle":
-          return `M ${startX} ${centerY + curve / 2} L ${width / 2} ${
-            centerY - curve / 2
-          } L ${endX} ${centerY + curve / 2}`;
+          return `M ${startX} ${centerY + curve / 2} L ${width / 2} ${centerY - curve / 2
+            } L ${endX} ${centerY + curve / 2}`;
         case "circle":
           const radius = 30 + (intensity / 100) * 10;
-          return `M ${
-            width / 2 - radius
-          } ${centerY} A ${radius} ${radius} 0 0 1 ${
-            width / 2 + radius
-          } ${centerY}`;
+          return `M ${width / 2 - radius
+            } ${centerY} A ${radius} ${radius} 0 0 1 ${width / 2 + radius
+            } ${centerY}`;
         default:
           return `M ${startX} ${centerY} L ${endX} ${centerY}`;
       }
@@ -1148,40 +922,30 @@ export default {
 
       switch (shapeType) {
         case "arch":
-          return `M ${startX} ${centerY} Q ${size / 2} ${
-            centerY - curve
-          } ${endX} ${centerY}`;
+          return `M ${startX} ${centerY} Q ${size / 2} ${centerY - curve
+            } ${endX} ${centerY}`;
         case "bridge":
-          return `M ${startX} ${centerY} Q ${size / 2} ${
-            centerY + curve
-          } ${endX} ${centerY}`;
+          return `M ${startX} ${centerY} Q ${size / 2} ${centerY + curve
+            } ${endX} ${centerY}`;
         case "bulge":
-          return `M ${startX} ${centerY} Q ${size / 2} ${
-            centerY + curve
-          } ${endX} ${centerY}`;
+          return `M ${startX} ${centerY} Q ${size / 2} ${centerY + curve
+            } ${endX} ${centerY}`;
         case "flag":
-          return `M ${startX} ${centerY} Q ${size / 3} ${centerY - curve} ${
-            size / 2
-          } ${centerY} Q ${(2 * size) / 3} ${
-            centerY + curve
-          } ${endX} ${centerY}`;
+          return `M ${startX} ${centerY} Q ${size / 3} ${centerY - curve} ${size / 2
+            } ${centerY} Q ${(2 * size) / 3} ${centerY + curve
+            } ${endX} ${centerY}`;
         case "wave":
-          return `M ${startX} ${centerY} Q ${size / 3} ${centerY + curve} ${
-            size / 2
-          } ${centerY} Q ${(2 * size) / 3} ${
-            centerY - curve
-          } ${endX} ${centerY}`;
+          return `M ${startX} ${centerY} Q ${size / 3} ${centerY + curve} ${size / 2
+            } ${centerY} Q ${(2 * size) / 3} ${centerY - curve
+            } ${endX} ${centerY}`;
         case "angle":
-          return `M ${startX} ${centerY + curve / 2} L ${size / 2} ${
-            centerY - curve / 2
-          } L ${endX} ${centerY + curve / 2}`;
+          return `M ${startX} ${centerY + curve / 2} L ${size / 2} ${centerY - curve / 2
+            } L ${endX} ${centerY + curve / 2}`;
         case "circle":
           const radius = size * 0.25 + (intensity / 100) * (size * 0.083);
-          return `M ${
-            size / 2 - radius
-          } ${centerY} A ${radius} ${radius} 0 0 1 ${
-            size / 2 + radius
-          } ${centerY}`;
+          return `M ${size / 2 - radius
+            } ${centerY} A ${radius} ${radius} 0 0 1 ${size / 2 + radius
+            } ${centerY}`;
         default:
           return `M ${startX} ${centerY} L ${endX} ${centerY}`;
       }
@@ -1237,6 +1001,7 @@ export default {
   justify-content: center;
   margin-bottom: 5px;
 }
+
 .thumb {
   height: 4px;
   width: 30px;
@@ -1352,9 +1117,11 @@ export default {
 .outline-footer {
   margin-top: 24px;
 }
+
 .outline-footer p {
   font-size: 14px;
 }
+
 .outline-footer div {
   width: 100%;
   display: flex;
@@ -1396,10 +1163,12 @@ export default {
   margin-top: 10px;
   text-align: center;
 }
+
 .style-footer p {
   font-size: 14px;
   margin-bottom: 4px;
 }
+
 .style-footer input {
   width: 100%;
 }
