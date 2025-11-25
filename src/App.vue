@@ -171,25 +171,25 @@
         <div class="outline-header">
           <div>
             <p>Outline Color</p>
-            <div class="color"></div>
+              <input type="color" v-model="svgOutlineColor" style="width: 28px; height: 28px; border-radius: 50%; border: none;" />
           </div>
-          <p>5pt</p>
+            <p>{{ svgOutlineThickness }}pt</p>
         </div>
         <div class="color-container">
-          <div class="color"></div>
-          <div class="color"></div>
-          <div class="color"></div>
-          <div class="color"></div>
-          <div class="color"></div>
-          <div class="color"></div>
-          <div class="color"></div>
+            <div class="color" style="background-color: #000000" @click="svgOutlineColor = '#000000'" title="Black"></div>
+            <div class="color" style="background-color: #ffffff; border: 1px solid #ccc" @click="svgOutlineColor = '#FFFFFF'" title="White"></div>
+            <div class="color" style="background-color: #ff0000" @click="svgOutlineColor = '#FF0000'" title="Red"></div>
+            <div class="color" style="background-color: #00ff00" @click="svgOutlineColor = '#00FF00'" title="Lime"></div>
+            <div class="color" style="background-color: #0000ff" @click="svgOutlineColor = '#0000FF'" title="Blue"></div>
+            <div class="color" style="background-color: #ffff00" @click="svgOutlineColor = '#FFFF00'" title="Yellow"></div>
+            <div class="color" style="background-color: #ff00ff" @click="svgOutlineColor = '#FF00FF'" title="Magenta"></div>
         </div>
         <div class="outline-footer">
           <p>Outline Thickness</p>
           <div>
-            <p>None</p>
-            <input type="range" />
-            <p>Very Thick</p>
+              <p>None</p>
+              <input type="range" v-model="svgOutlineThickness" min="0" max="10" />
+              <p>Very Thick</p>
           </div>
         </div>
       </div>
@@ -270,6 +270,8 @@ export default {
       svgTextValue: "Demo",
       svgTextShape: "none",
       svgShapeIntensity: 50,
+        svgOutlineColor: "#000000",
+        svgOutlineThickness: 1,
       svgInitialized: false,
       currentSvgLayer: null,
     };
@@ -309,6 +311,12 @@ export default {
     },
     svgShapeIntensity(val) {
       this.updateLastTextShape("shapeIntensity", val);
+        },
+        svgOutlineColor(val) {
+          this.updateLastTextShape("outlineColor", val);
+        },
+        svgOutlineThickness(val) {
+          this.updateLastTextShape("outlineThickness", val);
     },
   },
   methods: {
@@ -724,6 +732,8 @@ export default {
         fontStyle,
         textShape: this.svgTextShape,
         shapeIntensity: this.svgShapeIntensity,
+        outlineColor: this.svgOutlineColor,
+        outlineThickness: this.svgOutlineThickness,
       });
       this.svgInitialized = true;
       this.updateSvgPreview();
@@ -753,6 +763,9 @@ export default {
           var style = `font-size:${shape.fontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
           if (shape.fontWeight) style += ` font-weight:${shape.fontWeight};`;
           if (shape.fontStyle) style += ` font-style:${shape.fontStyle};`;
+          if (shape.outlineColor && shape.outlineThickness > 0) {
+            style += ` stroke:${shape.outlineColor}; stroke-width:${shape.outlineThickness}px; paint-order: stroke fill;`;
+          }
 
           if (shape.textShape && shape.textShape !== "none") {
             // Apply text path transformation for shapes
@@ -893,6 +906,9 @@ export default {
           var style = `font-size:${scaledFontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
           if (shape.fontWeight) style += ` font-weight:${shape.fontWeight};`;
           if (shape.fontStyle) style += ` font-style:${shape.fontStyle};`;
+          if (shape.outlineColor && shape.outlineThickness > 0) {
+            style += ` stroke:${shape.outlineColor}; stroke-width:${shape.outlineThickness * scale}px; paint-order: stroke fill;`;
+          }
 
           if (shape.textShape && shape.textShape !== "none") {
             // Apply text path transformation for shapes (scaled)
