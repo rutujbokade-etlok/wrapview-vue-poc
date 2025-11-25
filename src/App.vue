@@ -76,7 +76,7 @@
 				<img src="/icons/Aa.svg" />
 				<p>Font</p>
 			</div>
-			<div class="tab" :class="{ active: activeTab === 3 }">
+			<div class="tab" :class="{ active: activeTab === 3 }" v-on:click="changeTab(3)">
 				<img src="/icons/AOutline.svg" />
 				<p>Outline</p>
 			</div>
@@ -100,7 +100,7 @@
 					<label style="display: block">
 						<span style="display: block; margin-bottom: 5px; font-weight: bold">Text Size: {{ svgFontSize
 							}}px</span>
-						<input type="range" class="styled-range" v-model="svgFontSize" min="8" max="72" style="width: 100%" />
+						<input type="range" v-model="svgFontSize" min="8" max="72" style="width: 100%" />
 					</label>
 				</div>
 			</div>
@@ -197,24 +197,32 @@
 				<div class="outline-header">
 					<div>
 						<p>Outline Color</p>
-						<div class="color"></div>
+						<input type="color" v-model="svgOutlineColor"
+							style="width: 28px; height: 28px; border-radius: 50%; border: none;" />
 					</div>
-					<p>5pt</p>
+					<p>{{ svgOutlineThickness }}pt</p>
 				</div>
 				<div class="color-container">
-					<div class="color"></div>
-					<div class="color"></div>
-					<div class="color"></div>
-					<div class="color"></div>
-					<div class="color"></div>
-					<div class="color"></div>
-					<div class="color"></div>
+					<div class="color" style="background-color: #000000" @click="svgOutlineColor = '#000000'"
+						title="Black"></div>
+					<div class="color" style="background-color: #ffffff; border: 1px solid #ccc"
+						@click="svgOutlineColor = '#FFFFFF'" title="White"></div>
+					<div class="color" style="background-color: #ff0000" @click="svgOutlineColor = '#FF0000'"
+						title="Red"></div>
+					<div class="color" style="background-color: #00ff00" @click="svgOutlineColor = '#00FF00'"
+						title="Lime"></div>
+					<div class="color" style="background-color: #0000ff" @click="svgOutlineColor = '#0000FF'"
+						title="Blue"></div>
+					<div class="color" style="background-color: #ffff00" @click="svgOutlineColor = '#FFFF00'"
+						title="Yellow"></div>
+					<div class="color" style="background-color: #ff00ff" @click="svgOutlineColor = '#FF00FF'"
+						title="Magenta"></div>
 				</div>
 				<div class="outline-footer">
 					<p>Outline Thickness</p>
 					<div>
 						<p>None</p>
-						<input type="range" class="styled-range"/>
+						<input type="range" v-model="svgOutlineThickness" min="0" max="10" />
 						<p>Very Thick</p>
 					</div>
 				</div>
@@ -256,7 +264,7 @@
 				</div>
 				<div class="style-footer">
 					<p>Shape Intensity: {{ svgShapeIntensity }}%</p>
-					<input type="range" v-model="svgShapeIntensity" min="0" max="100" class="styled-range"/>
+					<input type="range" v-model="svgShapeIntensity" min="0" max="100" />
 				</div>
 			</div>
 		</div>
@@ -296,12 +304,14 @@ export default {
 			activeTab: 0,
 			svgShapes: [],
 			svgTextColor: "#000000",
-			svgFontSize: 8,
+			svgFontSize: 24,
 			svgTextDecoration: "",
 			svgFontFamily: "Arial",
-			svgTextValue: "WARRIORS",
+			svgTextValue: "Demo",
 			svgTextShape: "none",
 			svgShapeIntensity: 50,
+			svgOutlineColor: "#000000",
+			svgOutlineThickness: 1,
 			svgInitialized: false,
 			currentSvgLayer: null,
 		};
@@ -341,6 +351,12 @@ export default {
 		},
 		svgShapeIntensity(val) {
 			this.updateLastTextShape("shapeIntensity", val);
+		},
+		svgOutlineColor(val) {
+			this.updateLastTextShape("outlineColor", val);
+		},
+		svgOutlineThickness(val) {
+			this.updateLastTextShape("outlineThickness", val);
 		},
 	},
 	methods: {
@@ -641,6 +657,7 @@ export default {
 				console.error("FRONT_BODY panel not found in materials");
 				return null;
 			}
+			console.log(panel);
 			return panel;
 		},
 		addTextLayer() {
@@ -755,6 +772,8 @@ export default {
 				fontStyle,
 				textShape: this.svgTextShape,
 				shapeIntensity: this.svgShapeIntensity,
+				outlineColor: this.svgOutlineColor,
+				outlineThickness: this.svgOutlineThickness,
 			});
 			this.svgInitialized = true;
 			this.updateSvgPreview();
@@ -775,7 +794,6 @@ export default {
 				DOMURL.revokeObjectURL(url);
 			};
 			img.src = url;
-			this.addSvgLayer();
 		},
 		buildSvgData() {
 			var svg = `<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'>`;
@@ -785,6 +803,9 @@ export default {
 					var style = `font-size:${shape.fontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
 					if (shape.fontWeight) style += ` font-weight:${shape.fontWeight};`;
 					if (shape.fontStyle) style += ` font-style:${shape.fontStyle};`;
+					if (shape.outlineColor && shape.outlineThickness > 0) {
+						style += ` stroke:${shape.outlineColor}; stroke-width:${shape.outlineThickness}px; paint-order: stroke fill;`;
+					}
 
 					if (shape.textShape && shape.textShape !== "none") {
 						// Apply text path transformation for shapes
@@ -848,6 +869,7 @@ export default {
 				last[key] = value;
 				this.updateSvgPreview();
 			}
+			this.addSvgLayer();
 		},
 
 		addSvgLayer() {
@@ -892,16 +914,6 @@ export default {
 						}
 					}
 
-					var color = new WrapviewParameter(panel, "textColor");
-					color.set({
-						type: "fixed",
-						value: "#1c5982",
-						descriptor: "Black",
-					});
-
-					panel.settings.buildable.diffuse.baseLayer().setColorParameter(color);
-            		panel.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
-
 					// Load SVG data into the layer
 					this.currentSvgLayer
 						.load({ svgData: svgData })
@@ -935,6 +947,9 @@ export default {
 					var style = `font-size:${scaledFontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
 					if (shape.fontWeight) style += ` font-weight:${shape.fontWeight};`;
 					if (shape.fontStyle) style += ` font-style:${shape.fontStyle};`;
+					if (shape.outlineColor && shape.outlineThickness > 0) {
+						style += ` stroke:${shape.outlineColor}; stroke-width:${shape.outlineThickness * scale}px; paint-order: stroke fill;`;
+					}
 
 					if (shape.textShape && shape.textShape !== "none") {
 						// Apply text path transformation for shapes (scaled)
@@ -1223,74 +1238,77 @@ export default {
 }
 
 .styled-range {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 250px;
-  background: transparent;
+	-webkit-appearance: none;
+	appearance: none;
+	width: 250px;
+	background: transparent;
 }
 
 /* ===== Chrome / Safari / Edge ===== */
 
 .styled-range::-webkit-slider-runnable-track {
-  height: 2px;
-  background: #000; /* gray track */
+	height: 2px;
+	background: #000;
+	/* gray track */
 }
 
 .styled-range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  background: #aaa; /* gray thumb */
-  border: 1px solid #000; /* black border */
-  border-radius: 50%;
-  margin-top: -8px; /* centers thumb on 2px track */
-  cursor: pointer;
+	-webkit-appearance: none;
+	appearance: none;
+	width: 16px;
+	height: 16px;
+	background: #aaa;
+	/* gray thumb */
+	border: 1px solid #000;
+	/* black border */
+	border-radius: 50%;
+	margin-top: -8px;
+	/* centers thumb on 2px track */
+	cursor: pointer;
 }
 
 /* ===== Firefox ===== */
 
 .styled-range::-moz-range-track {
-  height: 2px;
-  background: #000;
+	height: 2px;
+	background: #000;
 }
 
 .styled-range::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  background: #aaa;
-  border: 1px solid #000;
-  border-radius: 50%;
-  cursor: pointer;
+	width: 16px;
+	height: 16px;
+	background: #aaa;
+	border: 1px solid #000;
+	border-radius: 50%;
+	cursor: pointer;
 }
 
 /* Remove Firefox inner hit area padding */
 .styled-range::-moz-range-progress {
-  background: #000;
-  height: 2px;
+	background: #000;
+	height: 2px;
 }
 
 /* ===== Old Edge / IE (optional) ===== */
 
 .styled-range::-ms-track {
-  height: 2px;
-  background: transparent;
-  border-color: transparent;
-  color: transparent;
+	height: 2px;
+	background: transparent;
+	border-color: transparent;
+	color: transparent;
 }
 
 .styled-range::-ms-fill-lower,
 .styled-range::-ms-fill-upper {
-  background: #000;
+	background: #000;
 }
 
 .styled-range::-ms-thumb {
-  width: 16px;
-  height: 16px;
-  background: #aaa;
-  border: 1px solid #000;
-  border-radius: 50%;
-  cursor: pointer;
+	width: 16px;
+	height: 16px;
+	background: #aaa;
+	border: 1px solid #000;
+	border-radius: 50%;
+	cursor: pointer;
 }
-
 </style>
