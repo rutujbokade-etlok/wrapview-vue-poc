@@ -1,31 +1,31 @@
 <template>
-	<div class="header">
-		<div><img src="/icons/Arrow.png" alt="" srcset="" /></div>
-		<div>
-			<img src="/icons/Logo.png" alt="" srcset="" />
-		</div>
-		<div></div>
-	</div>
-	<Wrapview ref="wrapView" @onInitalized="environmentMounted"></Wrapview>
-	<div id="orbitControls"></div>
-	<section class="bottom-panel">
-		<div class="svg-preview-panel" style="display: none;">
-			<h4>SVG Preview</h4>
-			<div style="display: flex; align-items: center; gap: 10px">
-				<canvas id="svgPreviewCanvas" width="120" height="120" style="border: 1px solid #ccc"></canvas>
-				<div style="display: flex; flex-direction: column; gap: 5px">
-					<label>Text Color: <input type="color" v-model="svgTextColor" /></label>
-					<label>Font Size:
-						<input type="number" v-model="svgFontSize" min="8" max="72" /></label>
-					<label>Decoration:
-						<select v-model="svgTextDecoration">
-							<option value="">None</option>
-							<option value="bold">Bold</option>
-							<option value="italic">Italic</option>
-							<option value="bold italic">Bold Italic</option>
-						</select>
-					</label>
-					<button @click="addSvgLayer" style="
+  <div class="header">
+    <div><img src="/icons/Arrow.png" alt="" srcset="" /></div>
+    <div>
+      <img src="/icons/Logo.png" alt="" srcset="" />
+    </div>
+    <div></div>
+  </div>
+  <Wrapview ref="wrapView" @onInitalized="environmentMounted"></Wrapview>
+  <div id="orbitControls"></div>
+  <section class="bottom-panel">
+    <div class="svg-preview-panel">
+      <h4>SVG Preview</h4>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <canvas id="svgPreviewCanvas" width="120" height="120" style="border: 1px solid #ccc"></canvas>
+        <div style="display: flex; flex-direction: column; gap: 5px">
+          <label>Text Color: <input type="color" v-model="svgTextColor" /></label>
+          <label>Font Size:
+            <input type="number" v-model="svgFontSize" min="8" max="72" /></label>
+          <label>Decoration:
+            <select v-model="svgTextDecoration">
+              <option value="">None</option>
+              <option value="bold">Bold</option>
+              <option value="italic">Italic</option>
+              <option value="bold italic">Bold Italic</option>
+            </select>
+          </label>
+          <button @click="addSvgLayer" style="
               margin-top: 10px;
               padding: 8px 12px;
               background-color: #0070c8;
@@ -35,62 +35,62 @@
               cursor: pointer;
               width: 100%;
             ">
-						Apply to 3D Model
-					</button>
-				</div>
-			</div>
-		</div>
-		<div class="thumb-container">
-			<div class="thumb"></div>
-		</div>
-		<div class="top-tabs">
-			<div class="tab">
-				<img src="/icons/Colors.png" />
-			</div>
-			<div class="tab">
-				<img src="/icons/Layers.png" />
-			</div>
-			<div class="tab active">
-				<img src="/icons/TextEditor.png" />
-			</div>
-			<div class="tab">
-				<img src="/icons/Images.png" />
-			</div>
-			<div class="tab">
-				<img src="/icons/Personalize.png" />
-			</div>
-			<div class="tab">
-				<img src="/icons/Done.png" />
-			</div>
-		</div>
-		<div class="bottom-tabs">
-			<div class="tab" :class="{ active: activeTab === 0 }" v-on:click="changeTab(0)">
-				<img src="/icons/Edit.svg" />
-				<p>Edit Text</p>
-			</div>
-			<div class="tab" :class="{ active: activeTab === 1 }" v-on:click="changeTab(1)">
-				<img src="/icons/EditColor.svg" style="height: 24px; width: 24px" />
-				<p>Edit Color</p>
-			</div>
-			<div class="tab" :class="{ active: activeTab === 2 }" v-on:click="changeTab(2)">
-				<img src="/icons/Aa.svg" />
-				<p>Font</p>
-			</div>
-			<div class="tab" :class="{ active: activeTab === 3 }" v-on:click="changeTab(3)">
-				<img src="/icons/AOutline.svg" />
-				<p>Outline</p>
-			</div>
-			<div class="tab" :class="{ active: activeTab === 4 }" v-on:click="changeTab(4)">
-				<img src="/icons/Arch.svg" />
-				<p>Shape</p>
-			</div>
-		</div>
-		<div class="content">
-			<div id="tab1" :class="{ 'display-none': activeTab !== 0 }">
-				<div style="padding: 10px">
-					<label style="display: block; margin-bottom: 10px">
-						<span style="display: block; margin-bottom: 5px; font-weight: bold">Edit Text</span>
-						<input type="text" v-model="svgTextValue" placeholder="Enter text" style="
+            Apply to 3D Model
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="thumb-container">
+      <div class="thumb"></div>
+    </div>
+    <div class="top-tabs">
+      <div class="tab">
+        <img src="/icons/Colors.png" />
+      </div>
+      <div class="tab">
+        <img src="/icons/Layers.png" />
+      </div>
+      <div class="tab active">
+        <img src="/icons/TextEditor.png" />
+      </div>
+      <div class="tab">
+        <img src="/icons/Images.png" />
+      </div>
+      <div class="tab">
+        <img src="/icons/Personalize.png" />
+      </div>
+      <div class="tab">
+        <img src="/icons/Done.png" />
+      </div>
+    </div>
+    <div class="bottom-tabs">
+      <div class="tab" :class="{ active: activeTab === 0 }" v-on:click="changeTab(0)">
+        <img src="/icons/Edit.svg" />
+        <p>Edit Text</p>
+      </div>
+      <div class="tab" :class="{ active: activeTab === 1 }" v-on:click="changeTab(1)">
+        <img src="/icons/EditColor.svg" style="height: 24px; width: 24px" />
+        <p>Edit Color</p>
+      </div>
+      <div class="tab" :class="{ active: activeTab === 2 }" v-on:click="changeTab(2)">
+        <img src="/icons/Aa.svg" />
+        <p>Font</p>
+      </div>
+      <div class="tab" :class="{ active: activeTab === 3 }" v-on:click="changeTab(3)">
+        <img src="/icons/AOutline.svg" />
+        <p>Outline</p>
+      </div>
+      <div class="tab" :class="{ active: activeTab === 4 }" v-on:click="changeTab(4)">
+        <img src="/icons/Arch.svg" />
+        <p>Shape</p>
+      </div>
+    </div>
+    <div class="content">
+      <div id="tab1" :class="{ 'display-none': activeTab !== 0 }">
+        <div style="padding: 10px">
+          <label style="display: block; margin-bottom: 10px">
+            <span style="display: block; margin-bottom: 5px; font-weight: bold">Edit Text</span>
+            <input type="text" v-model="svgTextValue" placeholder="Enter text" style="
                 width: 100%;
                 padding: 8px;
                 border: 1px solid #ccc;
@@ -168,28 +168,28 @@
         </div>
       </div>
       <div id="tab4" :class="{ 'display-none': activeTab !== 3 }">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-          <div style="display:flex; align-items:center; gap:8px;">
-            <p style="font-size:14px;">Outline Color</p>
-            <input type="color" v-model="svgOutlineColor" style="width:40px; height:40px; padding:0; border:none;" />
+        <div class="outline-header">
+          <div>
+            <p>Outline Color</p>
+            <div class="color"></div>
           </div>
-          <p style="font-size:14px;">Thickness: {{ svgOutlineThickness }}px</p>
+          <p>5pt</p>
         </div>
-        <div class="color-container" style="margin-bottom:16px;">
-          <div class="color" style="background-color:#000000" @click="svgOutlineColor='#000000'" title="Black"></div>
-          <div class="color" style="background-color:#FFFFFF; border:1px solid #ccc" @click="svgOutlineColor='#FFFFFF'" title="White"></div>
-          <div class="color" style="background-color:#FF0000" @click="svgOutlineColor='#FF0000'" title="Red"></div>
-          <div class="color" style="background-color:#0070C8" @click="svgOutlineColor='#0070C8'" title="Blue"></div>
-          <div class="color" style="background-color:#FFA500" @click="svgOutlineColor='#FFA500'" title="Orange"></div>
-          <div class="color" style="background-color:#00FF00" @click="svgOutlineColor='#00FF00'" title="Lime"></div>
-          <div class="color" style="background-color:#800080" @click="svgOutlineColor='#800080'" title="Purple"></div>
+        <div class="color-container">
+          <div class="color"></div>
+          <div class="color"></div>
+          <div class="color"></div>
+          <div class="color"></div>
+          <div class="color"></div>
+          <div class="color"></div>
+          <div class="color"></div>
         </div>
         <div class="outline-footer">
-          <p style="margin-bottom:8px;">Adjust Outline Thickness</p>
-          <input type="range" min="0" max="20" v-model="svgOutlineThickness" />
-          <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:4px;">
-            <span>None</span>
-            <span>Very Thick</span>
+          <p>Outline Thickness</p>
+          <div>
+            <p>None</p>
+            <input type="range" />
+            <p>Very Thick</p>
           </div>
         </div>
       </div>
@@ -229,28 +229,27 @@
       </div>
     </div>
   </section>
-
 </template>
 <script>
 import {
-	Wrapview,
-	Wizard,
-	WrapviewInputControl,
+  Wrapview,
+  Wizard,
+  WrapviewInputControl,
 } from "@etlok-systems/wrapview-vue";
 import {
-	OrbitControls,
-	WrapviewSettings,
-	WrapviewObject,
-	WrapviewMaterialSet,
-	WrapviewShadowMaterial,
-	WrapviewTexturedMaterial,
-	WrapviewStitchMaterial,
-	WrapviewLight,
-	WrapviewTextLayer,
-	WrapviewParameter,
-	WrapviewUtils,
-	WrapviewFontSet,
-	WrapviewSvgLayer,
+  OrbitControls,
+  WrapviewSettings,
+  WrapviewObject,
+  WrapviewMaterialSet,
+  WrapviewShadowMaterial,
+  WrapviewTexturedMaterial,
+  WrapviewStitchMaterial,
+  WrapviewLight,
+  WrapviewTextLayer,
+  WrapviewParameter,
+  WrapviewUtils,
+  WrapviewFontSet,
+  WrapviewSvgLayer,
 } from "@etlok-systems/wrapview";
 
 export default {
@@ -273,8 +272,6 @@ export default {
       svgShapeIntensity: 50,
       svgInitialized: false,
       currentSvgLayer: null,
-      svgOutlineColor: "#000000",
-      svgOutlineThickness: 0,
     };
   },
   mounted() {
@@ -312,12 +309,6 @@ export default {
     },
     svgShapeIntensity(val) {
       this.updateLastTextShape("shapeIntensity", val);
-    },
-    svgOutlineColor(val) {
-      this.updateLastTextShape("outlineColor", val);
-    },
-    svgOutlineThickness(val) {
-      this.updateLastTextShape("outlineThickness", val);
     },
   },
   methods: {
@@ -733,8 +724,6 @@ export default {
         fontStyle,
         textShape: this.svgTextShape,
         shapeIntensity: this.svgShapeIntensity,
-        outlineColor: this.svgOutlineColor,
-        outlineThickness: this.svgOutlineThickness,
       });
       this.svgInitialized = true;
       this.updateSvgPreview();
@@ -764,9 +753,6 @@ export default {
           var style = `font-size:${shape.fontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
           if (shape.fontWeight) style += ` font-weight:${shape.fontWeight};`;
           if (shape.fontStyle) style += ` font-style:${shape.fontStyle};`;
-          if (shape.outlineThickness && shape.outlineThickness > 0) {
-            style += ` stroke:${shape.outlineColor || '#000'}; stroke-width:${shape.outlineThickness}; paint-order: stroke; stroke-linejoin:round;`;
-          }
 
           if (shape.textShape && shape.textShape !== "none") {
             // Apply text path transformation for shapes
@@ -907,10 +893,6 @@ export default {
           var style = `font-size:${scaledFontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
           if (shape.fontWeight) style += ` font-weight:${shape.fontWeight};`;
           if (shape.fontStyle) style += ` font-style:${shape.fontStyle};`;
-          if (shape.outlineThickness && shape.outlineThickness > 0) {
-            const scaledThickness = shape.outlineThickness * scale;
-            style += ` stroke:${shape.outlineColor || '#000'}; stroke-width:${scaledThickness}; paint-order: stroke; stroke-linejoin:round;`;
-          }
 
           if (shape.textShape && shape.textShape !== "none") {
             // Apply text path transformation for shapes (scaled)
@@ -969,230 +951,229 @@ export default {
       }
     },
   },
-
 };
 </script>
 
 <style lang="css">
 * {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-	font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
 }
 
 .header {
-	position: absolute;
-	top: 0%;
-	left: 0;
-	width: 100%;
-	height: auto;
-	padding: 23px 10px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	background-color: white;
+  position: absolute;
+  top: 0%;
+  left: 0;
+  width: 100%;
+  height: auto;
+  padding: 23px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
 }
 
 #orbitControls {
-	position: absolute;
-	top: 0;
-	left: 0;
-	height: 100vh;
-	width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
 }
 
 .bottom-panel {
-	position: absolute;
-	bottom: 0%;
-	left: 0;
-	padding: 15px;
-	width: 100%;
-	height: 320px;
-	background-color: white;
-	border-top-left-radius: 20px;
-	border-top-right-radius: 20px;
+  position: absolute;
+  bottom: 0%;
+  left: 0;
+  padding: 15px;
+  width: 100%;
+  height: 320px;
+  background-color: white;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
 }
 
 .thumb-container {
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	margin-bottom: 5px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px;
 }
 
 .thumb {
-	height: 4px;
-	width: 30px;
-	border-radius: 4px;
-	background-color: #cccccc;
+  height: 4px;
+  width: 30px;
+  border-radius: 4px;
+  background-color: #cccccc;
 }
 
 .top-tabs,
 .bottom-tabs {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-end;
-	padding: 10px 0;
-	border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .tab {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
 .tab p {
-	font-size: 10px;
+  font-size: 10px;
 }
 
 .tab.active {
-	color: #0070c8;
+  color: #0070c8;
 }
 
 .tab.active img,
 .tab.active path {
-	color: #0070c8;
+  color: #0070c8;
 }
 
 .image {
-	height: 28px;
-	width: 28px;
-	background-color: black;
-	border-radius: 50%;
+  height: 28px;
+  width: 28px;
+  background-color: black;
+  border-radius: 50%;
 }
 
 .tab.active .image {
-	background-color: #0070c8;
+  background-color: #0070c8;
 }
 
 .content {
-	margin-top: 10px;
+  margin-top: 10px;
 }
 
 #tab2 {
-	text-align: center;
+  text-align: center;
 }
 
 .color-container {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 15px;
-	align-self: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-self: center;
 }
 
 .color {
-	height: 28px;
-	width: 28px;
-	border-radius: 50%;
-	background-color: aqua;
-	margin-left: 10px;
+  height: 28px;
+  width: 28px;
+  border-radius: 50%;
+  background-color: aqua;
+  margin-left: 10px;
 }
 
 .font-variants {
-	text-align: center;
-	padding: 7px;
-	border-bottom: 1px solid #f0f0f0;
-	cursor: pointer;
-	transition: background-color 0.2s;
+  text-align: center;
+  padding: 7px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .font-variants:hover {
-	background-color: #f0f0f0;
+  background-color: #f0f0f0;
 }
 
 .font-variants.active-font {
-	background-color: #e3f2fd;
-	border-left: 3px solid #0070c8;
+  background-color: #e3f2fd;
+  border-left: 3px solid #0070c8;
 }
 
 .font-variants h4 {
-	font-size: 18px;
+  font-size: 18px;
 }
 
 .font-variants p {
-	font-size: 12px;
+  font-size: 12px;
 }
 
 .outline-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
 }
 
 .outline-header p {
-	font-size: 14px;
+  font-size: 14px;
 }
 
 .outline-header div {
-	display: flex;
-	align-items: center;
-	gap: 7px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
 }
 
 .outline-footer {
-	margin-top: 24px;
+  margin-top: 24px;
 }
 
 .outline-footer p {
-	font-size: 14px;
+  font-size: 14px;
 }
 
 .outline-footer div {
-	width: 100%;
-	display: flex;
-	align-items: center;
-	gap: 7px;
-	margin-top: 8px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 8px;
 }
 
 .outline-footer div input {
-	flex: 1;
+  flex: 1;
 }
 
 .style-content {
-	display: flex;
-	flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .style-content .fontStyle {
-	width: 25%;
-	text-align: center;
-	padding: 5px;
-	margin-bottom: 10px;
-	cursor: pointer;
-	border: 2px solid transparent;
-	border-radius: 4px;
-	transition: all 0.2s;
+  width: 25%;
+  text-align: center;
+  padding: 5px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  transition: all 0.2s;
 }
 
 .style-content .fontStyle:hover {
-	background-color: #f0f0f0;
+  background-color: #f0f0f0;
 }
 
 .style-content .fontStyle.active-shape {
-	background-color: #e3f2fd;
-	border-color: #0070c8;
+  background-color: #e3f2fd;
+  border-color: #0070c8;
 }
 
 .style-footer {
-	margin-top: 10px;
-	text-align: center;
+  margin-top: 10px;
+  text-align: center;
 }
 
 .style-footer p {
-	font-size: 14px;
-	margin-bottom: 4px;
+  font-size: 14px;
+  margin-bottom: 4px;
 }
 
 .style-footer input {
-	width: 100%;
+  width: 100%;
 }
 
 .display-none {
-	display: none;
+  display: none;
 }
 </style>
