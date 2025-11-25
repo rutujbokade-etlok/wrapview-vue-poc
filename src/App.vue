@@ -98,9 +98,8 @@
               " />
 					</label>
 					<label style="display: block">
-						<span style="display: block; margin-bottom: 5px; font-weight: bold">Text Size: {{ svgFontSize
-							}}px</span>
-						<input type="range" v-model="svgFontSize" min="8" max="72" style="width: 100%" />
+						<span style="display: block; margin-bottom: 5px; font-weight: bold">Text Size: {{ svgFontSize}}px</span>
+						<input type="range" v-model="svgFontSize" min="8" max="72" style="width: 100%" class="styled-range" />
 					</label>
 				</div>
 			</div>
@@ -222,7 +221,7 @@
 					<p>Outline Thickness</p>
 					<div>
 						<p>None</p>
-						<input type="range" v-model="svgOutlineThickness" min="0" max="10" />
+						<input type="range" v-model="svgOutlineThickness" min="0" max="10" class="styled-range" />
 						<p>Very Thick</p>
 					</div>
 				</div>
@@ -264,7 +263,7 @@
 				</div>
 				<div class="style-footer">
 					<p>Shape Intensity: {{ svgShapeIntensity }}%</p>
-					<input type="range" v-model="svgShapeIntensity" min="0" max="100" />
+					<input type="range" v-model="svgShapeIntensity" min="0" max="100" class="styled-range" />
 				</div>
 			</div>
 		</div>
@@ -657,7 +656,6 @@ export default {
 				console.error("FRONT_BODY panel not found in materials");
 				return null;
 			}
-			console.log(panel);
 			return panel;
 		},
 		addTextLayer() {
