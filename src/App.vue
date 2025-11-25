@@ -304,10 +304,10 @@ export default {
 			activeTab: 0,
 			svgShapes: [],
 			svgTextColor: "#000000",
-			svgFontSize: 24,
+			svgFontSize: 8,
 			svgTextDecoration: "",
 			svgFontFamily: "Arial",
-			svgTextValue: "Demo",
+			svgTextValue: "WARRIORS",
 			svgTextShape: "none",
 			svgShapeIntensity: 50,
 			svgOutlineColor: "#000000",
@@ -895,6 +895,15 @@ export default {
 					angle: 0,
 				});
 			}
+
+			var color = new WrapviewParameter(panel, "textColor");
+			color.set({
+				type: "fixed",
+				value: "#1c5982",
+				descriptor: "Black",
+			});
+			panel.settings.buildable.diffuse.baseLayer().setColorParameter(color);
+            panel.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
 
 			// Begin editing the texture before adding layers
 			panel
