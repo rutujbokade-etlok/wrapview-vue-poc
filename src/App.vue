@@ -1,31 +1,31 @@
 <template>
-  <div class="header">
-    <div><img src="/icons/Arrow.png" alt="" srcset="" /></div>
-    <div>
-      <img src="/icons/Logo.png" alt="" srcset="" />
-    </div>
-    <div></div>
-  </div>
-  <Wrapview ref="wrapView" @onInitalized="environmentMounted"></Wrapview>
-  <div id="orbitControls"></div>
-  <section class="bottom-panel">
-    <div class="svg-preview-panel">
-      <h4>SVG Preview</h4>
-      <div style="display: flex; align-items: center; gap: 10px">
-        <canvas id="svgPreviewCanvas" width="120" height="120" style="border: 1px solid #ccc"></canvas>
-        <div style="display: flex; flex-direction: column; gap: 5px">
-          <label>Text Color: <input type="color" v-model="svgTextColor" /></label>
-          <label>Font Size:
-            <input type="number" v-model="svgFontSize" min="8" max="72" /></label>
-          <label>Decoration:
-            <select v-model="svgTextDecoration">
-              <option value="">None</option>
-              <option value="bold">Bold</option>
-              <option value="italic">Italic</option>
-              <option value="bold italic">Bold Italic</option>
-            </select>
-          </label>
-          <button @click="addSvgLayer" style="
+	<div class="header">
+		<div><img src="/icons/Arrow.png" alt="" srcset="" /></div>
+		<div>
+			<img src="/icons/Logo.png" alt="" srcset="" />
+		</div>
+		<div></div>
+	</div>
+	<Wrapview ref="wrapView" @onInitalized="environmentMounted"></Wrapview>
+	<div id="orbitControls"></div>
+	<section class="bottom-panel">
+		<div class="svg-preview-panel" style="display: none;">
+			<h4>SVG Preview</h4>
+			<div style="display: flex; align-items: center; gap: 10px">
+				<canvas id="svgPreviewCanvas" width="120" height="120" style="border: 1px solid #ccc"></canvas>
+				<div style="display: flex; flex-direction: column; gap: 5px">
+					<label>Text Color: <input type="color" v-model="svgTextColor" /></label>
+					<label>Font Size:
+						<input type="number" v-model="svgFontSize" min="8" max="72" /></label>
+					<label>Decoration:
+						<select v-model="svgTextDecoration">
+							<option value="">None</option>
+							<option value="bold">Bold</option>
+							<option value="italic">Italic</option>
+							<option value="bold italic">Bold Italic</option>
+						</select>
+					</label>
+					<button @click="addSvgLayer" style="
               margin-top: 10px;
               padding: 8px 12px;
               background-color: #0070c8;
@@ -35,62 +35,62 @@
               cursor: pointer;
               width: 100%;
             ">
-            Apply to 3D Model
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="thumb-container">
-      <div class="thumb"></div>
-    </div>
-    <div class="top-tabs">
-      <div class="tab">
-        <img src="/icons/Colors.png" />
-      </div>
-      <div class="tab">
-        <img src="/icons/Layers.png" />
-      </div>
-      <div class="tab active">
-        <img src="/icons/TextEditor.png" />
-      </div>
-      <div class="tab">
-        <img src="/icons/Images.png" />
-      </div>
-      <div class="tab">
-        <img src="/icons/Personalize.png" />
-      </div>
-      <div class="tab">
-        <img src="/icons/Done.png" />
-      </div>
-    </div>
-    <div class="bottom-tabs">
-      <div class="tab" :class="{ active: activeTab === 0 }" v-on:click="changeTab(0)">
-        <img src="/icons/Edit.svg" />
-        <p>Edit Text</p>
-      </div>
-      <div class="tab" :class="{ active: activeTab === 1 }" v-on:click="changeTab(1)">
-        <img src="/icons/EditColor.svg" style="height: 24px; width: 24px" />
-        <p>Edit Color</p>
-      </div>
-      <div class="tab" :class="{ active: activeTab === 2 }" v-on:click="changeTab(2)">
-        <img src="/icons/Aa.svg" />
-        <p>Font</p>
-      </div>
-      <div class="tab" :class="{ active: activeTab === 3 }" v-on:click="changeTab(3)">
-        <img src="/icons/AOutline.svg" />
-        <p>Outline</p>
-      </div>
-      <div class="tab" :class="{ active: activeTab === 4 }" v-on:click="changeTab(4)">
-        <img src="/icons/Arch.svg" />
-        <p>Shape</p>
-      </div>
-    </div>
-    <div class="content">
-      <div id="tab1" :class="{ 'display-none': activeTab !== 0 }">
-        <div style="padding: 10px">
-          <label style="display: block; margin-bottom: 10px">
-            <span style="display: block; margin-bottom: 5px; font-weight: bold">Edit Text</span>
-            <input type="text" v-model="svgTextValue" placeholder="Enter text" style="
+						Apply to 3D Model
+					</button>
+				</div>
+			</div>
+		</div>
+		<div class="thumb-container">
+			<div class="thumb"></div>
+		</div>
+		<div class="top-tabs">
+			<div class="tab">
+				<img src="/icons/Colors.png" />
+			</div>
+			<div class="tab">
+				<img src="/icons/Layers.png" />
+			</div>
+			<div class="tab active">
+				<img src="/icons/TextEditor.png" />
+			</div>
+			<div class="tab">
+				<img src="/icons/Images.png" />
+			</div>
+			<div class="tab">
+				<img src="/icons/Personalize.png" />
+			</div>
+			<div class="tab">
+				<img src="/icons/Done.png" />
+			</div>
+		</div>
+		<div class="bottom-tabs">
+			<div class="tab" :class="{ active: activeTab === 0 }" v-on:click="changeTab(0)">
+				<img src="/icons/Edit.svg" />
+				<p>Edit Text</p>
+			</div>
+			<div class="tab" :class="{ active: activeTab === 1 }" v-on:click="changeTab(1)">
+				<img src="/icons/EditColor.svg" style="height: 24px; width: 24px" />
+				<p>Edit Color</p>
+			</div>
+			<div class="tab" :class="{ active: activeTab === 2 }" v-on:click="changeTab(2)">
+				<img src="/icons/Aa.svg" />
+				<p>Font</p>
+			</div>
+			<div class="tab" :class="{ active: activeTab === 3 }" v-on:click="changeTab(3)">
+				<img src="/icons/AOutline.svg" />
+				<p>Outline</p>
+			</div>
+			<div class="tab" :class="{ active: activeTab === 4 }" v-on:click="changeTab(4)">
+				<img src="/icons/Arch.svg" />
+				<p>Shape</p>
+			</div>
+		</div>
+		<div class="content">
+			<div id="tab1" :class="{ 'display-none': activeTab !== 0 }">
+				<div style="padding: 10px">
+					<label style="display: block; margin-bottom: 10px">
+						<span style="display: block; margin-bottom: 5px; font-weight: bold">Edit Text</span>
+						<input type="text" v-model="svgTextValue" placeholder="Enter text" style="
                 width: 100%;
                 padding: 8px;
                 border: 1px solid #ccc;
@@ -229,27 +229,28 @@
       </div>
     </div>
   </section>
+
 </template>
 <script>
 import {
-  Wrapview,
-  Wizard,
-  WrapviewInputControl,
+	Wrapview,
+	Wizard,
+	WrapviewInputControl,
 } from "@etlok-systems/wrapview-vue";
 import {
-  OrbitControls,
-  WrapviewSettings,
-  WrapviewObject,
-  WrapviewMaterialSet,
-  WrapviewShadowMaterial,
-  WrapviewTexturedMaterial,
-  WrapviewStitchMaterial,
-  WrapviewLight,
-  WrapviewTextLayer,
-  WrapviewParameter,
-  WrapviewUtils,
-  WrapviewFontSet,
-  WrapviewSvgLayer,
+	OrbitControls,
+	WrapviewSettings,
+	WrapviewObject,
+	WrapviewMaterialSet,
+	WrapviewShadowMaterial,
+	WrapviewTexturedMaterial,
+	WrapviewStitchMaterial,
+	WrapviewLight,
+	WrapviewTextLayer,
+	WrapviewParameter,
+	WrapviewUtils,
+	WrapviewFontSet,
+	WrapviewSvgLayer,
 } from "@etlok-systems/wrapview";
 
 export default {
@@ -968,229 +969,230 @@ export default {
       }
     },
   },
+
 };
 </script>
 
 <style lang="css">
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: sans-serif;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: sans-serif;
 }
 
 .header {
-  position: absolute;
-  top: 0%;
-  left: 0;
-  width: 100%;
-  height: auto;
-  padding: 23px 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: white;
+	position: absolute;
+	top: 0%;
+	left: 0;
+	width: 100%;
+	height: auto;
+	padding: 23px 10px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: white;
 }
 
 #orbitControls {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100vh;
+	width: 100%;
 }
 
 .bottom-panel {
-  position: absolute;
-  bottom: 0%;
-  left: 0;
-  padding: 15px;
-  width: 100%;
-  height: 320px;
-  background-color: white;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
+	position: absolute;
+	bottom: 0%;
+	left: 0;
+	padding: 15px;
+	width: 100%;
+	height: 320px;
+	background-color: white;
+	border-top-left-radius: 20px;
+	border-top-right-radius: 20px;
 }
 
 .thumb-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 5px;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	margin-bottom: 5px;
 }
 
 .thumb {
-  height: 4px;
-  width: 30px;
-  border-radius: 4px;
-  background-color: #cccccc;
+	height: 4px;
+	width: 30px;
+	border-radius: 4px;
+	background-color: #cccccc;
 }
 
 .top-tabs,
 .bottom-tabs {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  padding: 10px 0;
-  border-bottom: 1px solid #f0f0f0;
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+	padding: 10px 0;
+	border-bottom: 1px solid #f0f0f0;
 }
 
 .tab {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
 }
 
 .tab p {
-  font-size: 10px;
+	font-size: 10px;
 }
 
 .tab.active {
-  color: #0070c8;
+	color: #0070c8;
 }
 
 .tab.active img,
 .tab.active path {
-  color: #0070c8;
+	color: #0070c8;
 }
 
 .image {
-  height: 28px;
-  width: 28px;
-  background-color: black;
-  border-radius: 50%;
+	height: 28px;
+	width: 28px;
+	background-color: black;
+	border-radius: 50%;
 }
 
 .tab.active .image {
-  background-color: #0070c8;
+	background-color: #0070c8;
 }
 
 .content {
-  margin-top: 10px;
+	margin-top: 10px;
 }
 
 #tab2 {
-  text-align: center;
+	text-align: center;
 }
 
 .color-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  align-self: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 15px;
+	align-self: center;
 }
 
 .color {
-  height: 28px;
-  width: 28px;
-  border-radius: 50%;
-  background-color: aqua;
-  margin-left: 10px;
+	height: 28px;
+	width: 28px;
+	border-radius: 50%;
+	background-color: aqua;
+	margin-left: 10px;
 }
 
 .font-variants {
-  text-align: center;
-  padding: 7px;
-  border-bottom: 1px solid #f0f0f0;
-  cursor: pointer;
-  transition: background-color 0.2s;
+	text-align: center;
+	padding: 7px;
+	border-bottom: 1px solid #f0f0f0;
+	cursor: pointer;
+	transition: background-color 0.2s;
 }
 
 .font-variants:hover {
-  background-color: #f0f0f0;
+	background-color: #f0f0f0;
 }
 
 .font-variants.active-font {
-  background-color: #e3f2fd;
-  border-left: 3px solid #0070c8;
+	background-color: #e3f2fd;
+	border-left: 3px solid #0070c8;
 }
 
 .font-variants h4 {
-  font-size: 18px;
+	font-size: 18px;
 }
 
 .font-variants p {
-  font-size: 12px;
+	font-size: 12px;
 }
 
 .outline-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 24px;
 }
 
 .outline-header p {
-  font-size: 14px;
+	font-size: 14px;
 }
 
 .outline-header div {
-  display: flex;
-  align-items: center;
-  gap: 7px;
+	display: flex;
+	align-items: center;
+	gap: 7px;
 }
 
 .outline-footer {
-  margin-top: 24px;
+	margin-top: 24px;
 }
 
 .outline-footer p {
-  font-size: 14px;
+	font-size: 14px;
 }
 
 .outline-footer div {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: 8px;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	margin-top: 8px;
 }
 
 .outline-footer div input {
-  flex: 1;
+	flex: 1;
 }
 
 .style-content {
-  display: flex;
-  flex-wrap: wrap;
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .style-content .fontStyle {
-  width: 25%;
-  text-align: center;
-  padding: 5px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  border-radius: 4px;
-  transition: all 0.2s;
+	width: 25%;
+	text-align: center;
+	padding: 5px;
+	margin-bottom: 10px;
+	cursor: pointer;
+	border: 2px solid transparent;
+	border-radius: 4px;
+	transition: all 0.2s;
 }
 
 .style-content .fontStyle:hover {
-  background-color: #f0f0f0;
+	background-color: #f0f0f0;
 }
 
 .style-content .fontStyle.active-shape {
-  background-color: #e3f2fd;
-  border-color: #0070c8;
+	background-color: #e3f2fd;
+	border-color: #0070c8;
 }
 
 .style-footer {
-  margin-top: 10px;
-  text-align: center;
+	margin-top: 10px;
+	text-align: center;
 }
 
 .style-footer p {
-  font-size: 14px;
-  margin-bottom: 4px;
+	font-size: 14px;
+	margin-bottom: 4px;
 }
 
 .style-footer input {
-  width: 100%;
+	width: 100%;
 }
 
 .display-none {
-  display: none;
+	display: none;
 }
 </style>
