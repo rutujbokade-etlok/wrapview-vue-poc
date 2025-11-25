@@ -429,7 +429,7 @@ export default {
 				const dirLight = new WrapviewLight({
 					type: "directional",
 					color: 0xffffff,
-					intensity: 1,
+					intensity: 0.5,
 					position: { x: 1, y: 1, z: -2 },
 					target: { x: 0, y: 0, z: 0 },
 				});
