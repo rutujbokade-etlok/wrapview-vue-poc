@@ -168,28 +168,28 @@
         </div>
       </div>
       <div id="tab4" :class="{ 'display-none': activeTab !== 3 }">
-        <div class="outline-header">
-          <div>
-            <p>Outline Color</p>
-            <div class="color"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <p style="font-size:14px;">Outline Color</p>
+            <input type="color" v-model="svgOutlineColor" style="width:40px; height:40px; padding:0; border:none;" />
           </div>
-          <p>5pt</p>
+          <p style="font-size:14px;">Thickness: {{ svgOutlineThickness }}px</p>
         </div>
-        <div class="color-container">
-          <div class="color"></div>
-          <div class="color"></div>
-          <div class="color"></div>
-          <div class="color"></div>
-          <div class="color"></div>
-          <div class="color"></div>
-          <div class="color"></div>
+        <div class="color-container" style="margin-bottom:16px;">
+          <div class="color" style="background-color:#000000" @click="svgOutlineColor='#000000'" title="Black"></div>
+          <div class="color" style="background-color:#FFFFFF; border:1px solid #ccc" @click="svgOutlineColor='#FFFFFF'" title="White"></div>
+          <div class="color" style="background-color:#FF0000" @click="svgOutlineColor='#FF0000'" title="Red"></div>
+          <div class="color" style="background-color:#0070C8" @click="svgOutlineColor='#0070C8'" title="Blue"></div>
+          <div class="color" style="background-color:#FFA500" @click="svgOutlineColor='#FFA500'" title="Orange"></div>
+          <div class="color" style="background-color:#00FF00" @click="svgOutlineColor='#00FF00'" title="Lime"></div>
+          <div class="color" style="background-color:#800080" @click="svgOutlineColor='#800080'" title="Purple"></div>
         </div>
         <div class="outline-footer">
-          <p>Outline Thickness</p>
-          <div>
-            <p>None</p>
-            <input type="range" />
-            <p>Very Thick</p>
+          <p style="margin-bottom:8px;">Adjust Outline Thickness</p>
+          <input type="range" min="0" max="20" v-model="svgOutlineThickness" />
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:4px;">
+            <span>None</span>
+            <span>Very Thick</span>
           </div>
         </div>
       </div>
@@ -272,6 +272,8 @@ export default {
       svgShapeIntensity: 50,
       svgInitialized: false,
       currentSvgLayer: null,
+      svgOutlineColor: "#000000",
+      svgOutlineThickness: 0,
     };
   },
   mounted() {
@@ -309,6 +311,12 @@ export default {
     },
     svgShapeIntensity(val) {
       this.updateLastTextShape("shapeIntensity", val);
+    },
+    svgOutlineColor(val) {
+      this.updateLastTextShape("outlineColor", val);
+    },
+    svgOutlineThickness(val) {
+      this.updateLastTextShape("outlineThickness", val);
     },
   },
   methods: {
@@ -724,6 +732,8 @@ export default {
         fontStyle,
         textShape: this.svgTextShape,
         shapeIntensity: this.svgShapeIntensity,
+        outlineColor: this.svgOutlineColor,
+        outlineThickness: this.svgOutlineThickness,
       });
       this.svgInitialized = true;
       this.updateSvgPreview();
@@ -753,6 +763,9 @@ export default {
           var style = `font-size:${shape.fontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
           if (shape.fontWeight) style += ` font-weight:${shape.fontWeight};`;
           if (shape.fontStyle) style += ` font-style:${shape.fontStyle};`;
+          if (shape.outlineThickness && shape.outlineThickness > 0) {
+            style += ` stroke:${shape.outlineColor || '#000'}; stroke-width:${shape.outlineThickness}; paint-order: stroke; stroke-linejoin:round;`;
+          }
 
           if (shape.textShape && shape.textShape !== "none") {
             // Apply text path transformation for shapes
@@ -893,6 +906,10 @@ export default {
           var style = `font-size:${scaledFontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
           if (shape.fontWeight) style += ` font-weight:${shape.fontWeight};`;
           if (shape.fontStyle) style += ` font-style:${shape.fontStyle};`;
+          if (shape.outlineThickness && shape.outlineThickness > 0) {
+            const scaledThickness = shape.outlineThickness * scale;
+            style += ` stroke:${shape.outlineColor || '#000'}; stroke-width:${scaledThickness}; paint-order: stroke; stroke-linejoin:round;`;
+          }
 
           if (shape.textShape && shape.textShape !== "none") {
             // Apply text path transformation for shapes (scaled)
