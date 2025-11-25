@@ -76,7 +76,7 @@
 				<img src="/icons/Aa.svg" />
 				<p>Font</p>
 			</div>
-			<div class="tab" :class="{ active: activeTab === 3 }" v-on:click="changeTab(3)">
+			<div class="tab" :class="{ active: activeTab === 3 }">
 				<img src="/icons/AOutline.svg" />
 				<p>Outline</p>
 			</div>
@@ -100,7 +100,7 @@
 					<label style="display: block">
 						<span style="display: block; margin-bottom: 5px; font-weight: bold">Text Size: {{ svgFontSize
 							}}px</span>
-						<input type="range" v-model="svgFontSize" min="8" max="72" style="width: 100%" />
+						<input type="range" class="styled-range" v-model="svgFontSize" min="8" max="72" style="width: 100%" />
 					</label>
 				</div>
 			</div>
@@ -214,7 +214,7 @@
 					<p>Outline Thickness</p>
 					<div>
 						<p>None</p>
-						<input type="range" />
+						<input type="range" class="styled-range"/>
 						<p>Very Thick</p>
 					</div>
 				</div>
@@ -227,36 +227,36 @@
 					</div>
 					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'arch' }"
 						@click="svgTextShape = 'arch'">
-						<h2>Arch</h2>
+						<img src="/icons/arch.png" />
 					</div>
 					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'bridge' }"
 						@click="svgTextShape = 'bridge'">
-						<h2>Bridge</h2>
+						<img src="/icons/bridge.png" />
 					</div>
 					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'bulge' }"
 						@click="svgTextShape = 'bulge'">
-						<h2>Bulge</h2>
+						<img src="/icons/buldge.png" />
 					</div>
 					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'flag' }"
 						@click="svgTextShape = 'flag'">
-						<h2>Flag</h2>
+						<img src="/icons/flag.png" />
 					</div>
 					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'wave' }"
 						@click="svgTextShape = 'wave'">
-						<h2>Wave</h2>
+						<img src="/icons/wave.png" />
 					</div>
 					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'angle' }"
 						@click="svgTextShape = 'angle'">
-						<h2>Angle</h2>
+						<img src="/icons/angle.png" />
 					</div>
 					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'circle' }"
 						@click="svgTextShape = 'circle'">
-						<h2>Circle</h2>
+						<img src="/icons/circle.png" />
 					</div>
 				</div>
 				<div class="style-footer">
 					<p>Shape Intensity: {{ svgShapeIntensity }}%</p>
-					<input type="range" v-model="svgShapeIntensity" min="0" max="100" />
+					<input type="range" v-model="svgShapeIntensity" min="0" max="100" class="styled-range"/>
 				</div>
 			</div>
 		</div>
@@ -296,10 +296,10 @@ export default {
 			activeTab: 0,
 			svgShapes: [],
 			svgTextColor: "#000000",
-			svgFontSize: 16,
+			svgFontSize: 8,
 			svgTextDecoration: "",
 			svgFontFamily: "Arial",
-			svgTextValue: "Demo",
+			svgTextValue: "WARRIORS",
 			svgTextShape: "none",
 			svgShapeIntensity: 50,
 			svgInitialized: false,
@@ -892,6 +892,16 @@ export default {
 						}
 					}
 
+					var color = new WrapviewParameter(panel, "textColor");
+					color.set({
+						type: "fixed",
+						value: "#1c5982",
+						descriptor: "Black",
+					});
+
+					panel.settings.buildable.diffuse.baseLayer().setColorParameter(color);
+            		panel.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
+
 					// Load SVG data into the layer
 					this.currentSvgLayer
 						.load({ svgData: svgData })
@@ -1180,6 +1190,9 @@ export default {
 	border: 2px solid transparent;
 	border-radius: 4px;
 	transition: all 0.2s;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .style-content .fontStyle:hover {
@@ -1208,4 +1221,76 @@ export default {
 .display-none {
 	display: none;
 }
+
+.styled-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 250px;
+  background: transparent;
+}
+
+/* ===== Chrome / Safari / Edge ===== */
+
+.styled-range::-webkit-slider-runnable-track {
+  height: 2px;
+  background: #000; /* gray track */
+}
+
+.styled-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #aaa; /* gray thumb */
+  border: 1px solid #000; /* black border */
+  border-radius: 50%;
+  margin-top: -8px; /* centers thumb on 2px track */
+  cursor: pointer;
+}
+
+/* ===== Firefox ===== */
+
+.styled-range::-moz-range-track {
+  height: 2px;
+  background: #000;
+}
+
+.styled-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #aaa;
+  border: 1px solid #000;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Remove Firefox inner hit area padding */
+.styled-range::-moz-range-progress {
+  background: #000;
+  height: 2px;
+}
+
+/* ===== Old Edge / IE (optional) ===== */
+
+.styled-range::-ms-track {
+  height: 2px;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+
+.styled-range::-ms-fill-lower,
+.styled-range::-ms-fill-upper {
+  background: #000;
+}
+
+.styled-range::-ms-thumb {
+  width: 16px;
+  height: 16px;
+  background: #aaa;
+  border: 1px solid #000;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
 </style>
