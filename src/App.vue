@@ -87,19 +87,14 @@
 		</div>
 		<div class="content">
 			<div id="tab1" :class="{ 'display-none': activeTab !== 0 }">
-				<div style="padding: 10px">
-					<label style="display: block; margin-bottom: 10px">
+				<div style="padding: 10px; display: flex; flex-direction: row; flex-wrap: wrap; gap: 15px;">
+					<label style="flex: 1; min-width: 200px;">
 						<span style="display: block; margin-bottom: 5px; font-weight: bold">Edit Text</span>
-						<input type="text" v-model="svgTextValue" placeholder="Enter text" style="
-                width: 100%;
-                padding: 8px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-              " />
+						<input type="text" v-model="svgTextValue" placeholder="Enter text" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
 					</label>
-					<label style="display: block">
-						<span style="display: block; margin-bottom: 5px; font-weight: bold">Text Size: {{ svgFontSize}}px</span>
-						<input type="range" v-model="svgFontSize" min="8" max="72" style="width: 100%" class="styled-range" />
+					<label style="flex: 0 0 150px; min-width: 150px;">
+						<span style="display: block; margin-bottom: 5px; font-weight: bold">Text Size (px)</span>
+						<input type="number" v-model.number="svgFontSize" min="8" max="72" step="1" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
 					</label>
 				</div>
 			</div>
@@ -195,9 +190,9 @@
 			<div id="tab4" :class="{ 'display-none': activeTab !== 3 }">
 				<div class="outline-header">
 					<div>
-						<p>Outline Color</p>
-						<input type="color" v-model="svgOutlineColor"
-							style="width: 28px; height: 28px; border-radius: 50%; border: none;" />
+						<p>Enable Outline</p>
+						<input type="checkbox" v-model="svgOutlineEnabled"
+							style="width: 20px; height: 20px; cursor: pointer;" />
 					</div>
 					<p>{{ svgOutlineThickness }}pt</p>
 				</div>
@@ -217,13 +212,9 @@
 					<div class="color" style="background-color: #ff00ff" @click="svgOutlineColor = '#FF00FF'"
 						title="Magenta"></div>
 				</div>
-				<div class="outline-footer">
-					<p>Outline Thickness</p>
-					<div>
-						<p>None</p>
-						<input type="range" v-model="svgOutlineThickness" min="0" max="10" class="styled-range" />
-						<p>Very Thick</p>
-					</div>
+				<div class="outline-footer" style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
+					<p style="margin: 0;">Outline Thickness (pt)</p>
+					<input type="number" v-model.number="svgOutlineThickness" min="0" max="10" step="0.01" style="width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
 				</div>
 			</div>
 			<div id="tab5" :class="{ 'display-none': activeTab !== 4 }">
@@ -310,7 +301,8 @@ export default {
 			svgTextShape: "none",
 			svgShapeIntensity: 50,
 			svgOutlineColor: "#000000",
-			svgOutlineThickness: 1,
+			svgOutlineThickness: 0.5,
+			svgOutlineEnabled: false,
 			svgInitialized: false,
 			currentSvgLayer: null,
 		};
@@ -356,6 +348,9 @@ export default {
 		},
 		svgOutlineThickness(val) {
 			this.updateLastTextShape("outlineThickness", val);
+		},
+		svgOutlineEnabled(val) {
+			this.updateLastTextShape("outlineEnabled", val);
 		},
 	},
 	methods: {
@@ -772,6 +767,7 @@ export default {
 				shapeIntensity: this.svgShapeIntensity,
 				outlineColor: this.svgOutlineColor,
 				outlineThickness: this.svgOutlineThickness,
+				outlineEnabled: this.svgOutlineEnabled,
 			});
 			this.svgInitialized = true;
 			this.updateSvgPreview();
@@ -801,7 +797,7 @@ export default {
 					var style = `font-size:${shape.fontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
 					if (shape.fontWeight) style += ` font-weight:${shape.fontWeight};`;
 					if (shape.fontStyle) style += ` font-style:${shape.fontStyle};`;
-					if (shape.outlineColor && shape.outlineThickness > 0) {
+					if (shape.outlineEnabled && shape.outlineColor && shape.outlineThickness > 0) {
 						style += ` stroke:${shape.outlineColor}; stroke-width:${shape.outlineThickness}px; paint-order: stroke fill;`;
 					}
 
@@ -954,7 +950,7 @@ export default {
 					var style = `font-size:${scaledFontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
 					if (shape.fontWeight) style += ` font-weight:${shape.fontWeight};`;
 					if (shape.fontStyle) style += ` font-style:${shape.fontStyle};`;
-					if (shape.outlineColor && shape.outlineThickness > 0) {
+					if (shape.outlineEnabled && shape.outlineColor && shape.outlineThickness > 0) {
 						style += ` stroke:${shape.outlineColor}; stroke-width:${shape.outlineThickness * scale}px; paint-order: stroke fill;`;
 					}
 
