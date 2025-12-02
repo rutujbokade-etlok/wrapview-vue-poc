@@ -94,7 +94,7 @@
 					</label>
 					<label style="flex: 0 0 150px; min-width: 150px;">
 						<span style="display: block; margin-bottom: 5px; font-weight: bold">Text Size (px)</span>
-						<input type="number" v-model.number="svgFontSize" min="8" max="72" step="1" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
+						<input type="number" v-model.number="svgFontSize" min="1" max="120" step="1" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
 					</label>
 				</div>
 			</div>
@@ -231,6 +231,10 @@
 						@click="svgTextShape = 'bridge'">
 						<img src="/icons/bridge.png" />
 					</div>
+					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'valley' }"
+						@click="svgTextShape = 'valley'">
+						<img src="/icons/bridge.png" style="transform: rotate(180deg);" />
+					</div>
 					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'bulge' }"
 						@click="svgTextShape = 'bulge'">
 						<img src="/icons/buldge.png" />
@@ -239,8 +243,8 @@
 						@click="svgTextShape = 'flag'">
 						<img src="/icons/flag.png" />
 					</div>
-					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'wave' }"
-						@click="svgTextShape = 'wave'">
+					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'distort' }"
+						@click="svgTextShape = 'distort'">
 						<img src="/icons/wave.png" />
 					</div>
 					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'angle' }"
@@ -251,10 +255,6 @@
 						@click="svgTextShape = 'circle'">
 						<img src="/icons/circle.png" />
 					</div>
-				</div>
-				<div class="style-footer">
-					<p>Shape Intensity: {{ svgShapeIntensity }}%</p>
-					<input type="range" v-model="svgShapeIntensity" min="0" max="100" class="styled-range" />
 				</div>
 			</div>
 		</div>
@@ -280,6 +280,7 @@ import {
 	WrapviewUtils,
 	WrapviewFontSet,
 	WrapviewSvgLayer,
+	WrapviewSVGEditor,
 } from "@etlok-systems/wrapview";
 
 export default {
@@ -292,65 +293,52 @@ export default {
 				width: 0,
 			},
 			activeTab: 0,
-			svgShapes: [],
 			svgTextColor: "#000000",
-			svgFontSize: 8,
+			svgFontSize: 24,
 			svgTextDecoration: "",
 			svgFontFamily: "Arial",
 			svgTextValue: "WARRIORS",
 			svgTextShape: "none",
-			svgShapeIntensity: 50,
 			svgOutlineColor: "#000000",
 			svgOutlineThickness: 0.5,
 			svgOutlineEnabled: false,
 			svgInitialized: false,
 			currentSvgLayer: null,
+			svgEditor: null,
 		};
 	},
 	mounted() {
 		this.$nextTick(() => {
-			this.initializeSvgText();
+			this.initSVGEditor();
 		});
 	},
 	watch: {
 		svgTextColor(val) {
-			this.updateLastTextShape("fill", val);
+			this.renderFabricText();
 		},
 		svgFontSize(val) {
-			this.updateLastTextShape("fontSize", val);
+			this.renderFabricText();
 		},
 		svgTextDecoration(val) {
-			let fontWeight = "";
-			let fontStyle = "";
-			if (val === "bold") fontWeight = "bold";
-			if (val === "italic") fontStyle = "italic";
-			if (val === "bold italic") {
-				fontWeight = "bold";
-				fontStyle = "italic";
-			}
-			this.updateLastTextShape("fontWeight", fontWeight);
-			this.updateLastTextShape("fontStyle", fontStyle);
+			this.renderFabricText();
 		},
 		svgFontFamily(val) {
-			this.updateLastTextShape("fontFamily", val);
+			this.renderFabricText();
 		},
 		svgTextValue(val) {
-			this.updateLastTextShape("value", val);
+			this.renderFabricText();
 		},
 		svgTextShape(val) {
-			this.updateLastTextShape("textShape", val);
-		},
-		svgShapeIntensity(val) {
-			this.updateLastTextShape("shapeIntensity", val);
+			this.renderFabricText();
 		},
 		svgOutlineColor(val) {
-			this.updateLastTextShape("outlineColor", val);
+			this.renderFabricText();
 		},
 		svgOutlineThickness(val) {
-			this.updateLastTextShape("outlineThickness", val);
+			this.renderFabricText();
 		},
 		svgOutlineEnabled(val) {
-			this.updateLastTextShape("outlineEnabled", val);
+			this.renderFabricText();
 		},
 	},
 	methods: {
@@ -742,131 +730,294 @@ export default {
 				});
 		},
 
-		initializeSvgText() {
+		initSVGEditor() {
 			if (this.svgInitialized) return;
-			let fontWeight = "";
-			let fontStyle = "";
-			if (this.svgTextDecoration === "bold") fontWeight = "bold";
-			if (this.svgTextDecoration === "italic") fontStyle = "italic";
-			if (this.svgTextDecoration === "bold italic") {
-				fontWeight = "bold";
-				fontStyle = "italic";
-			}
-
-			this.svgShapes.push({
-				type: "text",
-				value: this.svgTextValue,
-				x: 60,
-				y: 60,
-				fontSize: this.svgFontSize,
-				fill: this.svgTextColor,
-				fontFamily: this.svgFontFamily,
-				fontWeight,
-				fontStyle,
-				textShape: this.svgTextShape,
-				shapeIntensity: this.svgShapeIntensity,
-				outlineColor: this.svgOutlineColor,
-				outlineThickness: this.svgOutlineThickness,
-				outlineEnabled: this.svgOutlineEnabled,
+			
+			// Create a hidden container for the SVG editor
+			const container = document.createElement('div');
+			container.id = 'hidden-svg-editor';
+			container.style.display = 'none';
+			document.body.appendChild(container);
+			
+			// Initialize WrapviewSVGEditor
+			this.svgEditor = new WrapviewSVGEditor(this.$refs["wrapView"].instance());
+			
+			// Set up change callback to update 3D model
+			this.svgEditor.setOnChange((dataUrl) => {
+				this.addSvgLayer();
 			});
+			
+			// Attach editor to hidden container
+			this.svgEditor.attachTo(container);
+			
 			this.svgInitialized = true;
-			this.updateSvgPreview();
 		},
 
-		updateSvgPreview() {
-			var svgData = this.buildSvgData();
-			var canvas = document.getElementById("svgPreviewCanvas");
-			if (!canvas) return;
-			var ctx = canvas.getContext("2d");
-			var DOMURL = window.URL || window.webkitURL || window;
-			var img = new window.Image();
-			var svg = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
-			var url = DOMURL.createObjectURL(svg);
-			img.onload = function () {
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
-				ctx.drawImage(img, 0, 0);
-				DOMURL.revokeObjectURL(url);
-			};
-			img.src = url;
-		},
-		buildSvgData() {
-			var svg = `<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'>`;
-			for (var i = 0; i < this.svgShapes.length; i++) {
-				var shape = this.svgShapes[i];
-				if (shape.type === "text") {
-					var style = `font-size:${shape.fontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
-					if (shape.fontWeight) style += ` font-weight:${shape.fontWeight};`;
-					if (shape.fontStyle) style += ` font-style:${shape.fontStyle};`;
-					if (shape.outlineEnabled && shape.outlineColor && shape.outlineThickness > 0) {
-						style += ` stroke:${shape.outlineColor}; stroke-width:${shape.outlineThickness}px; paint-order: stroke fill;`;
-					}
-
-					if (shape.textShape && shape.textShape !== "none") {
-						// Apply text path transformation for shapes
-						var pathData = this.getTextPathForShape(
-							shape.textShape,
-							shape.shapeIntensity || 50
-						);
-						svg += `<defs><path id='textPath${i}' d='${pathData}' fill='none'/></defs>`;
-						svg += `<text style='${style}'><textPath href='#textPath${i}' startOffset='50%' text-anchor='middle'>${shape.value}</textPath></text>`;
-					} else {
-						svg += `<text x='${shape.x}' y='${shape.y}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${shape.value}</text>`;
-					}
+		renderFabricText() {
+			if (!this.svgEditor || !this.svgEditor._canvas) return;
+			
+			// Update the editor's internal configuration directly
+			const canvas = this.svgEditor._canvas;
+			const config = this.svgEditor._index3Config;
+			
+			// Update font size
+			config.fontSize = this.svgFontSize;
+			
+			// Get DOM elements that the editor uses
+			const textInput = document.getElementById('textInput');
+			const fontFamily = document.getElementById('fontFamily');
+			const textColor = document.getElementById('textColor');
+			const outlineEnabled = document.getElementById('outlineEnabled');
+			const outlineColor = document.getElementById('outlineColor');
+			const outlineWidth = document.getElementById('outlineWidth');
+			
+			if (textInput) textInput.value = this.svgTextValue;
+			if (fontFamily) fontFamily.value = this.svgFontFamily;
+			if (textColor) textColor.value = this.svgTextColor;
+			if (outlineEnabled) outlineEnabled.checked = this.svgOutlineEnabled;
+			if (outlineColor) outlineColor.value = this.svgOutlineColor;
+			if (outlineWidth) outlineWidth.value = this.svgOutlineThickness;
+			
+			// Set the current effect
+			this.svgEditor._currentEffect = this.svgTextShape || 'none';
+			
+			// Trigger a re-render using the editor's internal render logic
+			canvas.clear();
+			
+			const getBaseTextOptions = () => {
+				let fontWeight = 'normal';
+				let fontStyle = 'normal';
+				if (this.svgTextDecoration === 'bold') fontWeight = 'bold';
+				if (this.svgTextDecoration === 'italic') fontStyle = 'italic';
+				if (this.svgTextDecoration === 'bold italic') {
+					fontWeight = 'bold';
+					fontStyle = 'italic';
 				}
-			}
-			svg += `</svg>`;
-			return svg;
-		},
-
-		getTextPathForShape(shapeType, intensity) {
-			const width = 120;
-			const height = 120;
-			const centerY = 60;
-			const startX = 20;
-			const endX = 100;
-			const curve = (intensity / 100) * 30; // Scale intensity to pixel offset
-
-			switch (shapeType) {
-				case "arch":
-					return `M ${startX} ${centerY} Q ${width / 2} ${centerY - curve
-						} ${endX} ${centerY}`;
-				case "bridge":
-					return `M ${startX} ${centerY} Q ${width / 2} ${centerY + curve
-						} ${endX} ${centerY}`;
-				case "bulge":
-					return `M ${startX} ${centerY} Q ${width / 2} ${centerY + curve
-						} ${endX} ${centerY}`;
-				case "flag":
-					return `M ${startX} ${centerY} Q ${width / 3} ${centerY - curve} ${width / 2
-						} ${centerY} Q ${(2 * width) / 3} ${centerY + curve
-						} ${endX} ${centerY}`;
-				case "wave":
-					return `M ${startX} ${centerY} Q ${width / 3} ${centerY + curve} ${width / 2
-						} ${centerY} Q ${(2 * width) / 3} ${centerY - curve
-						} ${endX} ${centerY}`;
-				case "angle":
-					return `M ${startX} ${centerY + curve / 2} L ${width / 2} ${centerY - curve / 2
-						} L ${endX} ${centerY + curve / 2}`;
-				case "circle":
-					const radius = 30 + (intensity / 100) * 10;
-					return `M ${width / 2 - radius
-						} ${centerY} A ${radius} ${radius} 0 0 1 ${width / 2 + radius
-						} ${centerY}`;
+				
+				return {
+					fontSize: this.svgFontSize,
+					fontFamily: this.svgFontFamily,
+					fontWeight: fontWeight,
+					fontStyle: fontStyle,
+					fill: this.svgTextColor,
+					originX: 'center',
+					originY: 'center',
+					stroke: this.svgOutlineEnabled ? this.svgOutlineColor : undefined,
+					strokeWidth: this.svgOutlineEnabled ? this.svgOutlineThickness : 0
+				};
+			};
+			
+			// Use the effects from the WrapviewSVGEditor (directly access the effects)
+			const text = this.svgTextValue;
+			const effect = this.svgTextShape || 'none';
+			const options = getBaseTextOptions();
+			const radius = 150;
+			
+			let obj;
+			
+			switch (effect) {
+				case 'none':
+					obj = new fabric.Text(text, {
+						...options,
+						left: canvas.width / 2,
+						top: canvas.height / 2
+					});
+					break;
+				case 'arch':
+					obj = this._createArchEffect(text, options, radius, canvas);
+					break;
+				case 'bridge':
+					obj = this._createBridgeEffect(text, options, canvas);
+					break;
+				case 'valley':
+					obj = this._createValleyEffect(text, options, canvas);
+					break;
+				case 'bulge':
+					obj = this._createBulgeEffect(text, options, canvas);
+					break;
+				case 'flag':
+					obj = this._createFlagEffect(text, options, canvas);
+					break;
+				case 'distort':
+					obj = this._createDistortEffect(text, options, canvas);
+					break;
+				case 'circle':
+					obj = this._createCircleEffect(text, options, canvas);
+					break;
 				default:
-					return `M ${startX} ${centerY} L ${endX} ${centerY}`;
+					obj = new fabric.Text(text, {
+						...options,
+						left: canvas.width / 2,
+						top: canvas.height / 2
+					});
+			}
+			
+			if (obj) {
+				canvas.add(obj);
+				canvas.centerObject(obj);
+				obj.setCoords();
+				canvas.requestRenderAll();
+				
+				// Update the 3D model
+				this.addSvgLayer();
 			}
 		},
-		updateLastTextShape(key, value) {
-			if (!this.svgShapes.length) return;
-			const last = this.svgShapes[this.svgShapes.length - 1];
-			if (last.type === "text") {
-				last[key] = value;
-				this.updateSvgPreview();
+		
+		// Helper methods that mirror WrapviewSVGEditor effects
+		_createArchEffect(text, options, radius, canvas) {
+			const group = new fabric.Group([], {
+				left: canvas.width / 2,
+				top: canvas.height / 2,
+				originX: 'center',
+				originY: 'center'
+			});
+			const len = text.length;
+			for (let i = 0; i < len; i++) {
+				const char = text[i];
+				const charAngle = -Math.PI / 2 + (i - (len - 1) / 2) * 0.2;
+				const c = new fabric.Text(char, {
+					...options,
+					left: Math.cos(charAngle) * radius,
+					top: Math.sin(charAngle) * radius,
+					angle: (charAngle * 180 / Math.PI) + 90
+				});
+				group.addWithUpdate(c);
 			}
-			this.addSvgLayer();
+			return group;
+		},
+		
+		_createBridgeEffect(text, options, canvas) {
+			const group = new fabric.Group([], {
+				left: canvas.width / 2,
+				top: canvas.height / 2,
+				originX: 'center',
+				originY: 'center'
+			});
+			const chars = text.split('').map(c => new fabric.Text(c, options));
+			const totalWidth = chars.reduce((acc, c) => acc + c.width, 0);
+			let currentX = -totalWidth / 2;
+			const len = text.length;
+			const mid = (len - 1) / 2;
+			chars.forEach((ch, i) => {
+				const normX = (i - mid) / (mid || 1);
+				const y = 50 * (normX * normX);
+				ch.set({ left: currentX + ch.width / 2, top: y, originX: 'center', originY: 'center' });
+				currentX += ch.width;
+				group.addWithUpdate(ch);
+			});
+			return group;
+		},
+		
+		_createValleyEffect(text, options, canvas) {
+			const group = new fabric.Group([], {
+				left: canvas.width / 2,
+				top: canvas.height / 2,
+				originX: 'center',
+				originY: 'center'
+			});
+			const chars = text.split('').map(c => new fabric.Text(c, options));
+			const totalWidth = chars.reduce((acc, c) => acc + c.width, 0);
+			let currentX = -totalWidth / 2;
+			const mid = (chars.length - 1) / 2;
+			chars.forEach((ch, i) => {
+				const normX = (i - mid) / (mid || 1);
+				const y = -50 * (normX * normX) + 25;
+				ch.set({ left: currentX + ch.width / 2, top: y, originX: 'center', originY: 'center' });
+				currentX += ch.width;
+				group.addWithUpdate(ch);
+			});
+			return group;
+		},
+		
+		_createBulgeEffect(text, options, canvas) {
+			const group = new fabric.Group([], {
+				left: canvas.width / 2,
+				top: canvas.height / 2,
+				originX: 'center',
+				originY: 'center'
+			});
+			const chars = text.split('').map(c => new fabric.Text(c, options));
+			const mid = (chars.length - 1) / 2;
+			chars.forEach((ch, i) => {
+				const dist = Math.abs(i - mid);
+				const maxDist = mid || 1;
+				const scale = 1 + 0.8 * (1 - dist / maxDist);
+				ch.set({ fontSize: options.fontSize * scale });
+			});
+			let currentX = -chars.reduce((acc, c) => acc + c.getScaledWidth(), 0) / 2;
+			chars.forEach(ch => {
+				ch.set({ left: currentX + ch.getScaledWidth() / 2, top: 0, originX: 'center', originY: 'center' });
+				currentX += ch.getScaledWidth();
+				group.addWithUpdate(ch);
+			});
+			return group;
+		},
+		
+		_createFlagEffect(text, options, canvas) {
+			const group = new fabric.Group([], {
+				left: canvas.width / 2,
+				top: canvas.height / 2,
+				originX: 'center',
+				originY: 'center'
+			});
+			const chars = text.split('').map(c => new fabric.Text(c, options));
+			let currentX = -chars.reduce((acc, c) => acc + c.width, 0) / 2;
+			chars.forEach((ch, i) => {
+				const y = Math.sin(i * 0.5) * 20;
+				ch.set({ left: currentX + ch.width / 2, top: y, originX: 'center', originY: 'center' });
+				currentX += ch.width;
+				group.addWithUpdate(ch);
+			});
+			return group;
+		},
+		
+		_createDistortEffect(text, options, canvas) {
+			const group = new fabric.Group([], {
+				left: canvas.width / 2,
+				top: canvas.height / 2,
+				originX: 'center',
+				originY: 'center'
+			});
+			const chars = text.split('').map(c => new fabric.Text(c, options));
+			let currentX = -chars.reduce((acc, c) => acc + c.width, 0) / 2;
+			chars.forEach((ch, i) => {
+				const skew = (i % 2 === 0) ? -20 : 20;
+				ch.set({ left: currentX + ch.width / 2, top: 0, skewY: skew, originX: 'center', originY: 'center' });
+				currentX += ch.width;
+				group.addWithUpdate(ch);
+			});
+			return group;
+		},
+		
+		_createCircleEffect(text, options, canvas) {
+			const group = new fabric.Group([], {
+				left: canvas.width / 2,
+				top: canvas.height / 2,
+				originX: 'center',
+				originY: 'center'
+			});
+			const radius = 120;
+			const len = text.length;
+			const angleStep = (2 * Math.PI) / len;
+			for (let i = 0; i < len; i++) {
+				const char = text[i];
+				const angle = i * angleStep - Math.PI / 2;
+				const ch = new fabric.Text(char, {
+					...options,
+					left: Math.cos(angle) * radius,
+					top: Math.sin(angle) * radius,
+					angle: (angle * 180 / Math.PI) + 90,
+					originX: 'center',
+					originY: 'center'
+				});
+				group.addWithUpdate(ch);
+			}
+			return group;
 		},
 
 		addSvgLayer() {
+			if (!this.svgEditor || !this.svgEditor._canvas) return;
+			
 			const panel = this.currentPanel();
 			if (!panel) {
 				console.error("Cannot add SVG layer: panel not found");
@@ -904,8 +1055,8 @@ export default {
 				.texture()
 				.beginEditing()
 				.then(() => {
-					// Build SVG data from current state - scale it up to material size
-					const svgData = this.buildSvgDataForMaterial(size);
+					// Get data URL from SVG editor's canvas
+					const svgData = this.svgEditor.getDataURL();
 
 					// Check if SVG layer already exists
 					const layers = panel.texture().layers();
@@ -932,83 +1083,6 @@ export default {
 				.catch((err) => {
 					console.error("Error in beginEditing():", err);
 				});
-		},
-
-		buildSvgDataForMaterial(size) {
-			// Build SVG with scaled dimensions for the material
-			var svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}'>`;
-
-			for (var i = 0; i < this.svgShapes.length; i++) {
-				var shape = this.svgShapes[i];
-				if (shape.type === "text") {
-					// Scale positions and font size for material
-					const scale = size / 120; // 120 is preview canvas size
-					const scaledX = shape.x * scale;
-					const scaledY = shape.y * scale;
-					const scaledFontSize = shape.fontSize * scale;
-
-					var style = `font-size:${scaledFontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
-					if (shape.fontWeight) style += ` font-weight:${shape.fontWeight};`;
-					if (shape.fontStyle) style += ` font-style:${shape.fontStyle};`;
-					if (shape.outlineEnabled && shape.outlineColor && shape.outlineThickness > 0) {
-						style += ` stroke:${shape.outlineColor}; stroke-width:${shape.outlineThickness * scale}px; paint-order: stroke fill;`;
-					}
-
-					if (shape.textShape && shape.textShape !== "none") {
-						// Apply text path transformation for shapes (scaled)
-						var pathData = this.getTextPathForShapeScaled(
-							shape.textShape,
-							shape.shapeIntensity || 50,
-							size
-						);
-						svg += `<defs><path id='textPath${i}' d='${pathData}' fill='none'/></defs>`;
-						svg += `<text style='${style}'><textPath href='#textPath${i}' startOffset='50%' text-anchor='middle'>${shape.value}</textPath></text>`;
-					} else {
-						svg += `<text x='${scaledX}' y='${scaledY}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${shape.value}</text>`;
-					}
-				}
-			}
-
-			svg += `</svg>`;
-			return svg;
-		},
-
-		getTextPathForShapeScaled(shapeType, intensity, size) {
-			// Generate path for material size
-			const centerY = size / 2;
-			const startX = size * 0.167; // ~20/120
-			const endX = size * 0.833; // ~100/120
-			const curve = (intensity / 100) * (size * 0.25); // Scale curve with size
-
-			switch (shapeType) {
-				case "arch":
-					return `M ${startX} ${centerY} Q ${size / 2} ${centerY - curve
-						} ${endX} ${centerY}`;
-				case "bridge":
-					return `M ${startX} ${centerY} Q ${size / 2} ${centerY + curve
-						} ${endX} ${centerY}`;
-				case "bulge":
-					return `M ${startX} ${centerY} Q ${size / 2} ${centerY + curve
-						} ${endX} ${centerY}`;
-				case "flag":
-					return `M ${startX} ${centerY} Q ${size / 3} ${centerY - curve} ${size / 2
-						} ${centerY} Q ${(2 * size) / 3} ${centerY + curve
-						} ${endX} ${centerY}`;
-				case "wave":
-					return `M ${startX} ${centerY} Q ${size / 3} ${centerY + curve} ${size / 2
-						} ${centerY} Q ${(2 * size) / 3} ${centerY - curve
-						} ${endX} ${centerY}`;
-				case "angle":
-					return `M ${startX} ${centerY + curve / 2} L ${size / 2} ${centerY - curve / 2
-						} L ${endX} ${centerY + curve / 2}`;
-				case "circle":
-					const radius = size * 0.25 + (intensity / 100) * (size * 0.083);
-					return `M ${size / 2 - radius
-						} ${centerY} A ${radius} ${radius} 0 0 1 ${size / 2 + radius
-						} ${centerY}`;
-				default:
-					return `M ${startX} ${centerY} L ${endX} ${centerY}`;
-			}
 		},
 	},
 };
