@@ -100,6 +100,8 @@
 			</div>
 			<div id="tab2" :class="{ 'display-none': activeTab !== 1 }">
 				<div class="color-container">
+					<div class="color" style="background: linear-gradient(135deg, #ffffff 47%, #ff0000 47%, #ff0000 53%, #ffffff 53%); border: 1px solid #ccc" @click="svgTextColor = 'transparent'"
+						title="Transparent"></div>
 					<div class="color" style="background-color: #000000" @click="svgTextColor = '#000000'"
 						title="Black"></div>
 					<div class="color" style="background-color: #ffffff; border: 1px solid #ccc"
