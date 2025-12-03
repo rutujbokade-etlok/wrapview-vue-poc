@@ -235,7 +235,7 @@
 					</div>
 					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'valley' }"
 						@click="svgTextShape = 'valley'">
-						<img src="/icons/bridge.png" style="transform: rotate(180deg);" />
+						<img src="/icons/wave.png" />
 					</div>
 					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'bulge' }"
 						@click="svgTextShape = 'bulge'">
@@ -247,10 +247,6 @@
 					</div>
 					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'distort' }"
 						@click="svgTextShape = 'distort'">
-						<img src="/icons/wave.png" />
-					</div>
-					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'angle' }"
-						@click="svgTextShape = 'angle'">
 						<img src="/icons/angle.png" />
 					</div>
 					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'circle' }"
