@@ -6,7 +6,7 @@
 		</div>
 		<div></div>
 	</div>
-	<Wrapview ref="wrapView" @onInitalized="environmentMounted"></Wrapview>
+	<Wrapview class="wrapViewContainer" ref="wrapView" @onInitalized="environmentMounted"></Wrapview>
 	<div id="orbitControls"></div>
 	<section class="bottom-panel">
 		<div class="svg-preview-panel" style="display: none;">
@@ -163,27 +163,27 @@
 			<div id="tab3" :class="{ 'display-none': activeTab !== 2 }">
 				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Arial' }"
 					@click="svgFontFamily = 'Arial'">
-					<h4>Warriors</h4>
+					<h4 style="font-weight: 600;font-family: Arial;">{{svgTextValue}}</h4>
 					<p>Arial</p>
 				</div>
 				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Verdana' }"
 					@click="svgFontFamily = 'Verdana'">
-					<h4>Warriors</h4>
+					<h4 style="font-weight: 600;font-family: Verdana;">{{svgTextValue}}</h4>
 					<p>Verdana</p>
 				</div>
 				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Times New Roman' }"
 					@click="svgFontFamily = 'Times New Roman'">
-					<h4>Warriors</h4>
+					<h4 style="font-weight: 600;font-family: 'Times New Roman';">{{svgTextValue}}</h4>
 					<p>Times New Roman</p>
 				</div>
 				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Courier New' }"
 					@click="svgFontFamily = 'Courier New'">
-					<h4>Warriors</h4>
+					<h4 style="font-weight: 600;font-family: 'Courier New';">{{svgTextValue}}</h4>
 					<p>Courier New</p>
 				</div>
 				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Georgia' }"
 					@click="svgFontFamily = 'Georgia'">
-					<h4>Warriors</h4>
+					<h4 style="font-weight: 600;font-family: 'Georgia';">{{svgTextValue}}</h4>
 					<p>Georgia</p>
 				</div>
 			</div>
@@ -296,7 +296,7 @@ export default {
 			svgTextColor: "#000000",
 			svgFontSize: 8,
 			svgTextDecoration: "",
-			svgFontFamily: "Arial",
+			svgFontFamily: "Caramel",
 			svgTextValue: "WARRIORS",
 			svgTextShape: "none",
 			svgShapeIntensity: 50,
@@ -308,6 +308,7 @@ export default {
 		};
 	},
 	mounted() {
+		console.log("check")
 		this.$nextTick(() => {
 			this.initializeSvgText();
 		});
@@ -441,12 +442,12 @@ export default {
 					.add(hemLight.createLight(), dirLight.createLight());
 
 				const envPaths = [
-					"environment/px.jpg",
-					"environment/nx.jpg",
-					"environment/py.jpg",
-					"environment/ny.jpg",
-					"environment/pz.jpg",
-					"environment/nz.jpg",
+					"/environment/px.jpg",
+					"/environment/nx.jpg",
+					"/environment/py.jpg",
+					"/environment/ny.jpg",
+					"/environment/pz.jpg",
+					"/environment/nz.jpg",
 				];
 
 				const envLight = new WrapviewLight({ type: "ambient", intensity: 1 });
@@ -484,13 +485,13 @@ export default {
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
-							diffuse: "./3001C_SMALL/textures/F_3001C_SMALL_diffuse_1005.png",
-							normal: "./3001C_SMALL/textures/F_3001C_SMALL_normal_1005.png",
-							alpha: "./3001C_SMALL/textures/F_3001C_SMALL_opacity_1005.png",
-							roughness:
-								"./3001C_SMALL/textures/F_3001C_SMALL_roughness_1005.png",
+							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1005.png",
+							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1005.png",
+							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1005.png",
+							// roughness:
+							// 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1005.png",
 							metalness:
-								"./3001C_SMALL/textures/F_3001C_SMALL_metalness_1005.png",
+								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1005.png",
 						},
 					}
 				);
@@ -499,13 +500,13 @@ export default {
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
-							diffuse: "./3001C_SMALL/textures/F_3001C_SMALL_diffuse_1006.png",
-							normal: "./3001C_SMALL/textures/F_3001C_SMALL_normal_1006.png",
-							alpha: "./3001C_SMALL/textures/F_3001C_SMALL_opacity_1006.png",
-							roughness:
-								"./3001C_SMALL/textures/F_3001C_SMALL_roughness_1006.png",
+							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1006.png",
+							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1006.png",
+							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1006.png",
+							// roughness:
+							// 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1006.png",
 							metalness:
-								"./3001C_SMALL/textures/F_3001C_SMALL_metalness_1006.png",
+								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1006.png",
 						},
 					}
 				);
@@ -514,13 +515,13 @@ export default {
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
-							diffuse: "./3001C_SMALL/textures/F_3001C_SMALL_diffuse_1003.png",
-							normal: "./3001C_SMALL/textures/F_3001C_SMALL_normal_1003.png",
-							alpha: "./3001C_SMALL/textures/F_3001C_SMALL_opacity_1003.png",
-							roughness:
-								"./3001C_SMALL/textures/F_3001C_SMALL_roughness_1003.png",
+							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1003.png",
+							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1003.png",
+							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1003.png",
+							// roughness:
+							// 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1003.png",
 							metalness:
-								"./3001C_SMALL/textures/F_3001C_SMALL_metalness_1003.png",
+								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1003.png",
 						},
 					}
 				);
@@ -529,13 +530,13 @@ export default {
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
-							diffuse: "./3001C_SMALL/textures/F_3001C_SMALL_diffuse_1004.png",
-							normal: "./3001C_SMALL/textures/F_3001C_SMALL_normal_1004.png",
-							alpha: "./3001C_SMALL/textures/F_3001C_SMALL_opacity_1004.png",
-							roughness:
-								"./3001C_SMALL/textures/F_3001C_SMALL_roughness_1004.png",
+							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1004.png",
+							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1004.png",
+							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1004.png",
+							// roughness:
+							// 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1004.png",
 							metalness:
-								"./3001C_SMALL/textures/F_3001C_SMALL_metalness_1004.png",
+								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1004.png",
 						},
 					}
 				);
@@ -544,14 +545,14 @@ export default {
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
-							base: "./3001C_SMALL/textures/F_3001C_SMALL_common.png", // Base layer for text editing
-							diffuse: "./3001C_SMALL/textures/F_3001C_SMALL_common.png",
-							normal: "./3001C_SMALL/textures/F_3001C_SMALL_normal_1001.png",
-							alpha: "./3001C_SMALL/textures/F_3001C_SMALL_opacity_1001.png",
-							roughness:
-								"./3001C_SMALL/textures/F_3001C_SMALL_roughness_1001.png",
+							base: "/3001C_SMALL/textures/F_3001C_SMALL_common.png", // Base layer for text editing
+							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
+							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1001.png",
+							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1001.png",
+							// roughness:
+							// 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1001.png",
 							metalness:
-								"./3001C_SMALL/textures/F_3001C_SMALL_metalness_1001.png",
+								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1001.png",
 						},
 						build: {
 							parameters: {
@@ -566,13 +567,13 @@ export default {
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
-							diffuse: "./3001C_SMALL/textures/F_3001C_SMALL_common.png",
-							normal: "./3001C_SMALL/textures/F_3001C_SMALL_normal_1002.png",
-							alpha: "./3001C_SMALL/textures/F_3001C_SMALL_opacity_1002.png",
-							roughness:
-								"./3001C_SMALL/textures/F_3001C_SMALL_roughness_1002.png",
+							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
+							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1002.png",
+							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1002.png",
+							// roughness:
+							// 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1002.png",
 							metalness:
-								"./3001C_SMALL/textures/F_3001C_SMALL_metalness_1002.png",
+								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1002.png",
 						},
 					}
 				);
@@ -581,7 +582,7 @@ export default {
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
-							diffuse: "./3001C_SMALL/textures/Basic_Offset_2193.png",
+							diffuse: "/3001C_SMALL/textures/Basic_Offset_2193.png",
 						},
 					}
 				);
@@ -620,6 +621,7 @@ export default {
 			});
 		},
 		loadObjects(materials) {
+			console.log(materials)
 			return new Promise((resolve, reject) => {
 				const item = new WrapviewObject({
 					transform: {
@@ -637,9 +639,12 @@ export default {
 					},
 				});
 				item.setMaterials(materials);
-				item.load("./3001C_SMALL/3001C_SMALL_LOD0.glb").then(() => {
+				item.load("/3001C_SMALL/3001C_SMALL_LOD0.glb").then(() => {
+					console.log(item);
 					this.$refs["wrapView"].instance().addObject(item);
+					console.log(this.$refs["wrapView"].instance());
 				});
+
 				resolve();
 			});
 		},
@@ -1024,6 +1029,7 @@ export default {
 
 .header {
 	position: absolute;
+	z-index: 999;
 	top: 0%;
 	left: 0;
 	width: 100%;
@@ -1037,6 +1043,7 @@ export default {
 
 #orbitControls {
 	position: absolute;
+	z-index: 999;
 	top: 0;
 	left: 0;
 	height: 100vh;
@@ -1045,6 +1052,7 @@ export default {
 
 .bottom-panel {
 	position: absolute;
+	z-index: 999;
 	bottom: 0%;
 	left: 0;
 	padding: 15px;
@@ -1313,5 +1321,11 @@ export default {
 	border: 1px solid #000;
 	border-radius: 50%;
 	cursor: pointer;
+}
+
+.wrapViewContainer{
+	position: relative;
+	z-index: 998;
+
 }
 </style>
