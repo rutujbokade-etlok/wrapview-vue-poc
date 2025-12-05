@@ -792,7 +792,7 @@ export default {
 					fontStyle = 'italic';
 				}
 				
-				return {
+				const options = {
 					fontSize: this.svgFontSize,
 					fontFamily: this.svgFontFamily,
 					fontWeight: fontWeight,
@@ -800,9 +800,16 @@ export default {
 					fill: this.svgTextColor,
 					originX: 'center',
 					originY: 'center',
-					stroke: this.svgOutlineEnabled ? this.svgOutlineColor : undefined,
-					strokeWidth: this.svgOutlineEnabled ? this.svgOutlineThickness : 0
+					objectCaching: false,
+					paintFirst: 'stroke'
 				};
+				
+				if (this.svgOutlineEnabled && this.svgOutlineColor) {
+					options.stroke = this.svgOutlineColor;
+					options.strokeWidth = this.svgOutlineThickness || 0.5;
+				}
+				
+				return options;
 			};
 			
 			// Use the effects from the WrapviewSVGEditor (directly access the effects)
@@ -867,17 +874,26 @@ export default {
 				left: canvas.width / 2,
 				top: canvas.height / 2,
 				originX: 'center',
-				originY: 'center'
+				originY: 'center',
+				objectCaching: false
 			});
 			const len = text.length;
+			const intensity = 1;
+			const angleSpread = Math.PI * 0.5 * intensity;
+			const effectiveRadius = radius * (1 + Math.abs(intensity));
+			
 			for (let i = 0; i < len; i++) {
 				const char = text[i];
-				const charAngle = -Math.PI / 2 + (i - (len - 1) / 2) * 0.2;
+				const angle = (i / (len - 1 || 1) - 0.5) * angleSpread;
 				const c = new fabric.Text(char, {
 					...options,
-					left: Math.cos(charAngle) * radius,
-					top: Math.sin(charAngle) * radius,
-					angle: (charAngle * 180 / Math.PI) + 90
+					selectable: false,
+					evented: false
+				});
+				c.set({
+					left: Math.sin(angle) * effectiveRadius,
+					top: -Math.abs(Math.sin(angle)) * effectiveRadius * 0.5,
+					angle: angle * (180 / Math.PI)
 				});
 				group.addWithUpdate(c);
 			}
@@ -889,20 +905,30 @@ export default {
 				left: canvas.width / 2,
 				top: canvas.height / 2,
 				originX: 'center',
-				originY: 'center'
+				originY: 'center',
+				objectCaching: false
 			});
-			const chars = text.split('').map(c => new fabric.Text(c, options));
-			const totalWidth = chars.reduce((acc, c) => acc + c.width, 0);
-			let currentX = -totalWidth / 2;
 			const len = text.length;
-			const mid = (len - 1) / 2;
-			chars.forEach((ch, i) => {
-				const normX = (i - mid) / (mid || 1);
-				const y = 50 * (normX * normX);
-				ch.set({ left: currentX + ch.width / 2, top: y, originX: 'center', originY: 'center' });
-				currentX += ch.width;
+			const intensity = 1;
+			const angleSpread = Math.PI * 0.5 * intensity;
+			const radius = Math.max(100, options.fontSize * 3);
+			const effectiveRadius = radius * (1 + Math.abs(intensity));
+			
+			for (let i = 0; i < len; i++) {
+				const char = text[i];
+				const angle = (i / (len - 1 || 1) - 0.5) * angleSpread;
+				const ch = new fabric.Text(char, {
+					...options,
+					selectable: false,
+					evented: false
+				});
+				ch.set({
+					left: Math.sin(angle) * effectiveRadius,
+					top: Math.abs(Math.sin(angle)) * effectiveRadius * 0.5,
+					angle: angle * (180 / Math.PI)
+				});
 				group.addWithUpdate(ch);
-			});
+			}
 			return group;
 		},
 		
@@ -911,19 +937,34 @@ export default {
 				left: canvas.width / 2,
 				top: canvas.height / 2,
 				originX: 'center',
-				originY: 'center'
+				originY: 'center',
+				objectCaching: false
 			});
-			const chars = text.split('').map(c => new fabric.Text(c, options));
-			const totalWidth = chars.reduce((acc, c) => acc + c.width, 0);
-			let currentX = -totalWidth / 2;
-			const mid = (chars.length - 1) / 2;
-			chars.forEach((ch, i) => {
-				const normX = (i - mid) / (mid || 1);
-				const y = -50 * (normX * normX) + 25;
-				ch.set({ left: currentX + ch.width / 2, top: y, originX: 'center', originY: 'center' });
-				currentX += ch.width;
+			const len = text.length;
+			const intensity = 1;
+			const baseSpacing = options.fontSize * 0.6;
+			const strokeWidth = options.strokeWidth || 0;
+			const extraSpacing = strokeWidth > 0 ? strokeWidth * 1.1 : 0;
+			const charSpacing = baseSpacing + extraSpacing;
+			const totalWidth = len * charSpacing;
+			const startX = -totalWidth / 2;
+			
+			for (let i = 0; i < len; i++) {
+				const char = text[i];
+				const progress = i / (len - 1 || 1);
+				const curve = Math.sin(progress * Math.PI);
+				const ch = new fabric.Text(char, {
+					...options,
+					selectable: false,
+					evented: false
+				});
+				ch.set({
+					left: startX + i * charSpacing,
+					top: curve * options.fontSize * 2 * intensity,
+					angle: 0
+				});
 				group.addWithUpdate(ch);
-			});
+			}
 			return group;
 		},
 		
@@ -932,22 +973,34 @@ export default {
 				left: canvas.width / 2,
 				top: canvas.height / 2,
 				originX: 'center',
-				originY: 'center'
+				originY: 'center',
+				objectCaching: false
 			});
-			const chars = text.split('').map(c => new fabric.Text(c, options));
-			const mid = (chars.length - 1) / 2;
-			chars.forEach((ch, i) => {
-				const dist = Math.abs(i - mid);
-				const maxDist = mid || 1;
-				const scale = 1 + 0.8 * (1 - dist / maxDist);
-				ch.set({ fontSize: options.fontSize * scale });
-			});
-			let currentX = -chars.reduce((acc, c) => acc + c.getScaledWidth(), 0) / 2;
-			chars.forEach(ch => {
-				ch.set({ left: currentX + ch.getScaledWidth() / 2, top: 0, originX: 'center', originY: 'center' });
-				currentX += ch.getScaledWidth();
+			const len = text.length;
+			const intensity = 1;
+			const baseSpacing = options.fontSize * 0.6;
+			const strokeWidth = options.strokeWidth || 0;
+			const extraSpacing = strokeWidth > 0 ? strokeWidth * 1.1 : 0;
+			const charSpacing = baseSpacing + extraSpacing;
+			const totalWidth = len * charSpacing;
+			const startX = -totalWidth / 2;
+			
+			for (let i = 0; i < len; i++) {
+				const char = text[i];
+				const progress = i / (len - 1 || 1);
+				const curve = Math.sin(progress * Math.PI);
+				const ch = new fabric.Text(char, {
+					...options,
+					selectable: false,
+					evented: false
+				});
+				ch.set({
+					left: startX + i * charSpacing,
+					top: -curve * options.fontSize * 2 * intensity,
+					angle: 0
+				});
 				group.addWithUpdate(ch);
-			});
+			}
 			return group;
 		},
 		
@@ -956,16 +1009,34 @@ export default {
 				left: canvas.width / 2,
 				top: canvas.height / 2,
 				originX: 'center',
-				originY: 'center'
+				originY: 'center',
+				objectCaching: false
 			});
-			const chars = text.split('').map(c => new fabric.Text(c, options));
-			let currentX = -chars.reduce((acc, c) => acc + c.width, 0) / 2;
-			chars.forEach((ch, i) => {
-				const y = Math.sin(i * 0.5) * 20;
-				ch.set({ left: currentX + ch.width / 2, top: y, originX: 'center', originY: 'center' });
-				currentX += ch.width;
+			const len = text.length;
+			const intensity = 1;
+			const baseSpacing = options.fontSize * 0.6;
+			const strokeWidth = options.strokeWidth || 0;
+			const extraSpacing = strokeWidth > 0 ? strokeWidth * 1.1 : 0;
+			const charSpacing = baseSpacing + extraSpacing;
+			const totalWidth = len * charSpacing;
+			const startX = -totalWidth / 2;
+			
+			for (let i = 0; i < len; i++) {
+				const char = text[i];
+				const progress = i / len;
+				const wave = Math.sin(progress * Math.PI * 2);
+				const ch = new fabric.Text(char, {
+					...options,
+					selectable: false,
+					evented: false
+				});
+				ch.set({
+					left: startX + i * charSpacing,
+					top: wave * options.fontSize * intensity,
+					angle: Math.cos(progress * Math.PI * 2) * 15 * intensity
+				});
 				group.addWithUpdate(ch);
-			});
+			}
 			return group;
 		},
 		
@@ -974,16 +1045,34 @@ export default {
 				left: canvas.width / 2,
 				top: canvas.height / 2,
 				originX: 'center',
-				originY: 'center'
+				originY: 'center',
+				objectCaching: false
 			});
-			const chars = text.split('').map(c => new fabric.Text(c, options));
-			let currentX = -chars.reduce((acc, c) => acc + c.width, 0) / 2;
-			chars.forEach((ch, i) => {
-				const skew = (i % 2 === 0) ? -20 : 20;
-				ch.set({ left: currentX + ch.width / 2, top: 0, skewY: skew, originX: 'center', originY: 'center' });
-				currentX += ch.width;
+			const len = text.length;
+			const intensity = 1;
+			const baseSpacing = options.fontSize * 0.6;
+			const strokeWidth = options.strokeWidth || 0;
+			const extraSpacing = strokeWidth > 0 ? strokeWidth * 1.1 : 0;
+			const charSpacing = baseSpacing + extraSpacing;
+			const totalWidth = len * charSpacing;
+			const startX = -totalWidth / 2;
+			
+			for (let i = 0; i < len; i++) {
+				const char = text[i];
+				const progress = i / len;
+				const wave = Math.sin(progress * Math.PI * 3);
+				const ch = new fabric.Text(char, {
+					...options,
+					selectable: false,
+					evented: false
+				});
+				ch.set({
+					left: startX + i * charSpacing,
+					top: wave * options.fontSize * 0.8 * intensity,
+					angle: wave * 10 * intensity
+				});
 				group.addWithUpdate(ch);
-			});
+			}
 			return group;
 		},
 		
@@ -992,21 +1081,27 @@ export default {
 				left: canvas.width / 2,
 				top: canvas.height / 2,
 				originX: 'center',
-				originY: 'center'
+				originY: 'center',
+				objectCaching: false
 			});
-			const radius = 120;
 			const len = text.length;
-			const angleStep = (2 * Math.PI) / len;
+			const intensity = 1;
+			const radius = Math.max(100, options.fontSize * 3);
+			const effectiveRadius = radius * (1 + Math.abs(intensity) * 0.5);
+			const angleSpread = Math.PI * (1 + intensity);
+			
 			for (let i = 0; i < len; i++) {
 				const char = text[i];
-				const angle = i * angleStep - Math.PI / 2;
+				const angle = (i / (len - 1 || 1)) * angleSpread - angleSpread / 2;
 				const ch = new fabric.Text(char, {
 					...options,
-					left: Math.cos(angle) * radius,
-					top: Math.sin(angle) * radius,
-					angle: (angle * 180 / Math.PI) + 90,
-					originX: 'center',
-					originY: 'center'
+					selectable: false,
+					evented: false
+				});
+				ch.set({
+					left: Math.sin(angle) * effectiveRadius,
+					top: -Math.cos(angle) * effectiveRadius,
+					angle: angle * (180 / Math.PI)
 				});
 				group.addWithUpdate(ch);
 			}
