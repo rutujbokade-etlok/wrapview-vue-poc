@@ -480,6 +480,15 @@ export default {
 					}
 				);
 
+
+
+			var color = new WrapviewParameter(null, "textColor");
+			color.set({
+				type: "fixed",
+				value: "#2b2b2b",
+				descriptor: "Black",
+			});
+
 				const collar = new WrapviewTexturedMaterial(
 					this.$refs["wrapView"].instance(),
 					{
@@ -498,6 +507,7 @@ export default {
 								base: true,
 								size: 2048,
 								layers: [],
+								color: color
 							},
 						},
 					}
@@ -521,6 +531,7 @@ export default {
 								base: true,
 								size: 2048,
 								layers: [],
+								color: color
 							},
 						},
 					}
@@ -544,6 +555,7 @@ export default {
 								base: true,
 								size: 2048,
 								layers: [],
+								color: color
 							},
 						},
 					}
@@ -567,6 +579,7 @@ export default {
 								base: true, // Enable base layer building for text editing
 								size: 2048,
 								layers: [],
+								color: color
 							},
 						},
 					}
@@ -589,7 +602,8 @@ export default {
 							parameters: {
 								base: true, // Enable base layer building for text editing
 								size: 2048,
-								layers: []
+								layers: [],
+								color: color
 							},
 						},
 					}
@@ -613,6 +627,7 @@ export default {
 								base: true,
 								size: 2048,
 								layers: [],
+								color: color
 							},
 						},
 					}
@@ -860,19 +875,6 @@ export default {
 				"FRONT_BODY",
 				"BACK_BODY",
 			];
-
-			// Just tint base layers; do not switch maps for non-front panels
-			const applyColor = colorTargets.map((id) => {
-				const mat = this.materials.get(id);
-				if (!mat) return Promise.resolve();
-
-				mat.texture()
-					.beginEditing().then(() => {
-						mat.settings?.buildable?.diffuse?.baseLayer?.().setColorParameter(color);;
-						mat.settings?.buildable?.diffuse?.baseLayer?.().setNeedsUpdate();;
-					})
-				return Promise.resolve();
-			});
 
 			// Begin editing the texture before adding layers
 			panel
