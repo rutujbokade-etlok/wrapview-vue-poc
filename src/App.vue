@@ -90,11 +90,13 @@
 				<div style="padding: 10px; display: flex; flex-direction: row; flex-wrap: wrap; gap: 15px;">
 					<label style="flex: 1; min-width: 200px;">
 						<span style="display: block; margin-bottom: 5px; font-weight: bold">Edit Text</span>
-						<input type="text" v-model="svgTextValue" placeholder="Enter text" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
+						<input type="text" v-model="svgTextValue" placeholder="Enter text"
+							style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
 					</label>
 					<label style="flex: 0 0 150px; min-width: 150px;">
 						<span style="display: block; margin-bottom: 5px; font-weight: bold">Text Size (px)</span>
-						<input type="number" v-model.number="svgFontSize" min="8" max="72" step="1" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
+						<input type="number" v-model.number="svgFontSize" min="8" max="72" step="1"
+							style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
 					</label>
 				</div>
 			</div>
@@ -163,22 +165,22 @@
 			<div id="tab3" :class="{ 'display-none': activeTab !== 2 }">
 				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Asap Condensed' }"
 					@click="svgFontFamily = 'Asap Condensed'">
-					<h4 style="font-weight: 600;font-family: 'Asap Condensed', sans-serif;">{{svgTextValue}}</h4>
+					<h4 style="font-weight: 600;font-family: 'Asap Condensed', sans-serif;">{{ svgTextValue }}</h4>
 					<p>Asap Condensed</p>
 				</div>
 				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Baloo 2' }"
 					@click="svgFontFamily = 'Baloo 2'">
-					<h4 style="font-weight: 600;font-family: 'Baloo 2', sans-serif;">{{svgTextValue}}</h4>
+					<h4 style="font-weight: 600;font-family: 'Baloo 2', sans-serif;">{{ svgTextValue }}</h4>
 					<p>Baloo</p>
 				</div>
 				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Caprasimo' }"
 					@click="svgFontFamily = 'Caprasimo'">
-					<h4 style="font-weight: 600;font-family: 'Caprasimo', serif;">{{svgTextValue}}</h4>
+					<h4 style="font-weight: 600;font-family: 'Caprasimo', serif;">{{ svgTextValue }}</h4>
 					<p>Caprasimo</p>
 				</div>
 				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Caramel' }"
 					@click="svgFontFamily = 'Caramel'">
-					<h4 style="font-weight: 600;font-family: 'Caramel', cursive">{{svgTextValue}}</h4>
+					<h4 style="font-weight: 600;font-family: 'Caramel', cursive">{{ svgTextValue }}</h4>
 					<p>Caramel</p>
 				</div>
 			</div>
@@ -209,7 +211,8 @@
 				</div>
 				<div class="outline-footer" style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
 					<p style="margin: 0;">Outline Thickness (pt)</p>
-					<input type="number" v-model.number="svgOutlineThickness" min="0" max="10" step="0.01" style="width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
+					<input type="number" v-model.number="svgOutlineThickness" min="0" max="10" step="0.01"
+						style="width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
 				</div>
 			</div>
 			<div id="tab5" :class="{ 'display-none': activeTab !== 4 }">
@@ -622,15 +625,6 @@ export default {
 					}
 				);
 
-				// var color = new WrapviewParameter(this.currentPanel(), "textColor");
-				// color.set({
-				// 	type: "fixed",
-				// 	value: "#2b2b2b",
-				// 	descriptor: "Black",
-				// });
-
-				// rightArmSleeve.settings.build.parameters.color.set(color)
-
 				promises.push(
 					collar.init(),
 					backNeckTape.init(),
@@ -698,94 +692,6 @@ export default {
 				return null;
 			}
 			return panel;
-		},
-		addTextLayer() {
-			const panel = this.currentPanel();
-			if (!panel) {
-				console.error("Cannot add text layer: panel not found");
-				return;
-			}
-
-			if (!panel.texture()) {
-				console.error("Cannot add text layer: panel texture not initialized");
-				return;
-			}
-
-			var fonts = new WrapviewFontSet();
-			fonts.load([
-				{
-					name: "Roboto",
-					source: "google",
-					id: "1",
-					value: function (n) {
-						return this[n];
-					},
-				},
-			]);
-
-			var color = new WrapviewParameter(panel, "textColor");
-			color.set({
-				type: "fixed",
-				value: "#000000",
-				descriptor: "Black",
-			});
-
-			var outline = new WrapviewParameter(panel, "outlineColor");
-			outline.set({
-				type: "fixed",
-				value: "#000000",
-				descriptor: "Black",
-			});
-
-			var size = panel.settings.build.parameters.size;
-			const textLayer = new WrapviewTextLayer(WrapviewUtils.guid(), {
-				pivot: {
-					x: 0.5,
-					y: 0.5,
-				},
-				position: {
-					x: size / 2,
-					y: size / 2,
-				},
-				angle: 0,
-				fontSize: 70,
-				font: fonts.first(),
-				color: color,
-				outline: {
-					include: false,
-					color: outline,
-					thickness: 1,
-				},
-			});
-
-			// Begin editing the texture before adding layers
-			panel
-				.texture()
-				.beginEditing()
-				.then(() => {
-					var layerIndex = panel.texture().addLayer(textLayer);
-					textLayer
-						.load(
-							{
-								text: {
-									type: "fixed",
-									value: "Text",
-								},
-							},
-							panel
-						)
-						.then(() => {
-							panel.texture().editLayer(layerIndex);
-							panel.texture().render();
-							// panel.texture().endEditing();
-						})
-						.catch((err) => {
-							console.error("Error loading text layer:", err);
-						});
-				})
-				.catch((err) => {
-					console.error("Error in beginEditing():", err);
-				});
 		},
 
 		initializeSvgText() {
@@ -918,7 +824,6 @@ export default {
 				console.error("Cannot add SVG layer: panel not found");
 				return;
 			}
-			console.log(this.materials.get("RIGHT_ARM_SLEEVE").settings.buildable.diffuse)
 
 			if (!panel.texture()) {
 				console.error("Cannot add SVG layer: panel texture not initialized");
@@ -940,11 +845,32 @@ export default {
 			var color = new WrapviewParameter(panel, "textColor");
 			color.set({
 				type: "fixed",
-				value: "#1c5982",
+				value: "#2b2b2b",
 				descriptor: "Black",
 			});
-			panel.settings.buildable.diffuse.baseLayer().setColorParameter(color);
-            panel.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
+
+			// Apply the gray tint to all panels
+			const colorTargets = [
+				"COLLAR",
+				"BACK_NECK_TAPE",
+				"LEFT_ARM_SLEEVE",
+				"RIGHT_ARM_SLEEVE",
+				"FRONT_BODY",
+				"BACK_BODY",
+			];
+
+			// Just tint base layers; do not switch maps for non-front panels
+			const applyColor = colorTargets.map((id) => {
+				const mat = this.materials.get(id);
+				if (!mat) return Promise.resolve();
+
+				mat.texture()
+					.beginEditing().then(() => {
+						mat.settings?.buildable?.diffuse?.baseLayer?.().setColorParameter(color);;
+						mat.settings?.buildable?.diffuse?.baseLayer?.().setNeedsUpdate();;
+					})
+				return Promise.resolve();
+			});
 
 			// Begin editing the texture before adding layers
 			panel
@@ -968,58 +894,11 @@ export default {
 					this.currentSvgLayer
 						.load({ svgData: svgData })
 						.then(() => {
-							// panel.texture().endEditing();
-
-							var color = new WrapviewParameter(this.currentPanel(), "textColor");
-							color.set({
-								type: "fixed",
-								value: "#2b2b2b",
-								descriptor: "Black",
-							});
-
-							// Apply the gray tint to all panels
-							const colorTargets = [
-								"COLLAR",
-								"BACK_NECK_TAPE",
-								"LEFT_ARM_SLEEVE",
-								"RIGHT_ARM_SLEEVE",
-								"FRONT_BODY",
-								"BACK_BODY",
-							];
-
-							const applyColor = colorTargets.map((id) => {
-								const mat = this.materials.get(id);
-								if (!mat) return Promise.resolve();
-
-								const baseLayer =
-									mat.settings?.buildable?.diffuse?.baseLayer?.();
-								if (!baseLayer) {
-									console.warn(`No baseLayer for ${id}`);
-									return Promise.resolve();
-								}
-
-								return mat
-									.beginEditing?.()
-									?.then(() => {
-										baseLayer.setColorParameter(color);
-										baseLayer.setNeedsUpdate();
-										mat.material().map = mat.texture()?.texture();
-										mat.material().needsUpdate = true;
-
-										// Only update the SVG layer editing for FRONT_BODY
-										if (id === "FRONT_BODY") {
-											mat.texture().editLayer(layerIndex);
-											mat.texture().render();
-										}
-									})
-									.catch((err) =>
-										console.warn(`Failed to apply color for ${id}`, err)
-									);
-							});
-
-							Promise.all(applyColor).catch((err) =>
-								console.warn("Color apply error", err)
-							);
+							const mat = this.materials.get("FRONT_BODY");
+							if (mat) {
+								mat.texture().editLayer(layerIndex);
+								mat.texture().render();
+							}
 						})
 						.catch((err) => {
 							console.error("Error loading SVG layer:", err);
@@ -1414,7 +1293,7 @@ export default {
 	cursor: pointer;
 }
 
-.wrapViewContainer{
+.wrapViewContainer {
 	position: relative;
 	z-index: 998;
 
