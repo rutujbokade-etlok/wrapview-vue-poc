@@ -87,14 +87,17 @@
 		</div>
 		<div class="content">
 			<div id="tab1" :class="{ 'display-none': activeTab !== 0 }">
-				<div style="padding: 10px; display: flex; flex-direction: row; flex-wrap: wrap; gap: 15px;">
-					<label style="flex: 1; min-width: 200px;">
+				<div style="padding: 10px; display: flex; flex-direction: column; flex-wrap: wrap; gap: 15px;">
+					<label style="flex: 1;">
 						<span style="display: block; margin-bottom: 5px; font-weight: bold">Edit Text</span>
-						<input type="text" v-model="svgTextValue" placeholder="Enter text" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
+						<input type="text" v-model="svgTextValue" placeholder="Enter text"
+							style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
 					</label>
-					<label style="flex: 0 0 150px; min-width: 150px;">
+					<label style="flex: 1; width: 100%;">
 						<span style="display: block; margin-bottom: 5px; font-weight: bold">Text Size (px)</span>
-						<input type="number" v-model.number="svgFontSize" min="8" max="72" step="1" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
+						<!-- <input type="number" v-model.number="svgFontSize" min="8" max="72" step="1"
+							style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" /> -->
+						<input type="range" v-model="svgFontSize" min="0" max="50" class="styled-range w-full" />
 					</label>
 				</div>
 			</div>
@@ -135,30 +138,25 @@
 				</div>
 			</div>
 			<div id="tab3" :class="{ 'display-none': activeTab !== 2 }">
-				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Arial' }"
-					@click="svgFontFamily = 'Arial'">
-					<h4 style="font-weight: 600;font-family: Arial;">{{svgTextValue}}</h4>
-					<p>Arial</p>
+				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Asap Condensed' }"
+					@click="svgFontFamily = 'Asap Condensed'">
+					<h4 style="font-weight: 600;font-family: 'Asap Condensed', sans-serif;">{{ svgTextValue }}</h4>
+					<p>Asap Condensed</p>
 				</div>
-				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Verdana' }"
-					@click="svgFontFamily = 'Verdana'">
-					<h4 style="font-weight: 600;font-family: Verdana;">{{svgTextValue}}</h4>
-					<p>Verdana</p>
+				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Baloo 2' }"
+					@click="svgFontFamily = 'Baloo 2'">
+					<h4 style="font-weight: 600;font-family: 'Baloo 2', sans-serif;">{{ svgTextValue }}</h4>
+					<p>Baloo</p>
 				</div>
-				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Times New Roman' }"
-					@click="svgFontFamily = 'Times New Roman'">
-					<h4 style="font-weight: 600;font-family: 'Times New Roman';">{{svgTextValue}}</h4>
-					<p>Times New Roman</p>
+				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Caprasimo' }"
+					@click="svgFontFamily = 'Caprasimo'">
+					<h4 style="font-weight: 600;font-family: 'Caprasimo', serif;">{{ svgTextValue }}</h4>
+					<p>Caprasimo</p>
 				</div>
-				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Courier New' }"
-					@click="svgFontFamily = 'Courier New'">
-					<h4 style="font-weight: 600;font-family: 'Courier New';">{{svgTextValue}}</h4>
-					<p>Courier New</p>
-				</div>
-				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Georgia' }"
-					@click="svgFontFamily = 'Georgia'">
-					<h4 style="font-weight: 600;font-family: 'Georgia';">{{svgTextValue}}</h4>
-					<p>Georgia</p>
+				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Caramel' }"
+					@click="svgFontFamily = 'Caramel'">
+					<h4 style="font-weight: 600;font-family: 'Caramel', cursive">{{ svgTextValue }}</h4>
+					<p>Caramel</p>
 				</div>
 			</div>
 			<div id="tab4" :class="{ 'display-none': activeTab !== 3 }">
@@ -186,9 +184,11 @@
 					<div class="color" style="background-color: #ff00ff" @click="svgOutlineColor = '#FF00FF'"
 						title="Magenta"></div>
 				</div>
-				<div class="outline-footer" style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
+				<div class="outline-footer" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
 					<p style="margin: 0;">Outline Thickness (pt)</p>
-					<input type="number" v-model.number="svgOutlineThickness" min="0" max="10" step="1" style="width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
+					<!-- <input type="number" v-model.number="svgOutlineThickness" min="0" max="10" step="0.01"
+						style="width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" /> -->
+					<input type="range" v-model="svgOutlineThickness" min="0" max="10" class="styled-range flex-1" />
 				</div>
 			</div>
 			<div id="tab5" :class="{ 'display-none': activeTab !== 4 }">
@@ -267,10 +267,10 @@ export default {
 			},
 			activeTab: 0,
 			svgShapes: [],
-			svgTextColor: "#000000",
-			svgFontSize: 8,
+			svgTextColor: "#ffffff",
+			svgFontSize: 6,
 			svgTextDecoration: "",
-			svgFontFamily: "Caramel",
+			svgFontFamily: "Asap Condensed",
 			svgTextValue: "WARRIORS",
 			svgTextShape: "none",
 			svgShapeIntensity: 50,
@@ -282,7 +282,6 @@ export default {
 		};
 	},
 	mounted() {
-		console.log("check")
 		this.$nextTick(() => {
 			this.initializeSvgText();
 		});
@@ -375,9 +374,9 @@ export default {
 					this.$refs["wrapView"].instance().camera(),
 					document.getElementById("orbitControls")
 				);
-				orbitController.enablePan = false;
-				orbitController.enableZoom = true;
-				orbitController.enableDamping = true;
+				orbitController.enabled = false;
+				orbitController.enableZoom = false;
+				orbitController.enableDamping = false;
 				orbitController.minDistance = 1;
 				orbitController.maxDistance = 2;
 
@@ -455,10 +454,20 @@ export default {
 					}
 				);
 
+
+
+			var color = new WrapviewParameter(null, "textColor");
+			color.set({
+				type: "fixed",
+				value: "#2b2b2b",
+				descriptor: "Black",
+			});
+
 				const collar = new WrapviewTexturedMaterial(
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
+							base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1005.png",
 							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1005.png",
 							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1005.png",
 							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1005.png",
@@ -467,6 +476,14 @@ export default {
 							metalness:
 								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1005.png",
 						},
+						build: {
+							parameters: {
+								base: true,
+								size: 2048,
+								layers: [],
+								color: color
+							},
+						},
 					}
 				);
 
@@ -474,6 +491,7 @@ export default {
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
+							base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1006.png",
 							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1006.png",
 							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1006.png",
 							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1006.png",
@@ -482,6 +500,14 @@ export default {
 							metalness:
 								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1006.png",
 						},
+						build: {
+							parameters: {
+								base: true,
+								size: 2048,
+								layers: [],
+								color: color
+							},
+						},
 					}
 				);
 
@@ -489,6 +515,7 @@ export default {
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
+							base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1003.png",
 							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1003.png",
 							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1003.png",
 							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1003.png",
@@ -497,6 +524,14 @@ export default {
 							metalness:
 								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1003.png",
 						},
+						build: {
+							parameters: {
+								base: true,
+								size: 2048,
+								layers: [],
+								color: color
+							},
+						},
 					}
 				);
 
@@ -504,6 +539,7 @@ export default {
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
+							base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1004.png",
 							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1004.png",
 							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1004.png",
 							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1004.png",
@@ -511,6 +547,14 @@ export default {
 							// 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1004.png",
 							metalness:
 								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1004.png",
+						},
+						build: {
+							parameters: {
+								base: true, // Enable base layer building for text editing
+								size: 2048,
+								layers: [],
+								color: color
+							},
 						},
 					}
 				);
@@ -532,6 +576,8 @@ export default {
 							parameters: {
 								base: true, // Enable base layer building for text editing
 								size: 2048,
+								layers: [],
+								color: color
 							},
 						},
 					}
@@ -541,6 +587,7 @@ export default {
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
+							base: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
 							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
 							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1002.png",
 							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1002.png",
@@ -548,6 +595,14 @@ export default {
 							// 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1002.png",
 							metalness:
 								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1002.png",
+						},
+						build: {
+							parameters: {
+								base: true,
+								size: 2048,
+								layers: [],
+								color: color
+							},
 						},
 					}
 				);
@@ -595,7 +650,6 @@ export default {
 			});
 		},
 		loadObjects(materials) {
-			console.log(materials)
 			return new Promise((resolve, reject) => {
 				const item = new WrapviewObject({
 					transform: {
@@ -603,7 +657,7 @@ export default {
 							y: -Math.PI,
 						},
 						position: {
-							y: 0.13,
+							y: 0.16,
 						},
 						scale: {
 							x: 0.8,
@@ -614,9 +668,7 @@ export default {
 				});
 				item.setMaterials(materials);
 				item.load("/3001C_SMALL/3001C_SMALL_LOD0.glb").then(() => {
-					console.log(item);
 					this.$refs["wrapView"].instance().addObject(item);
-					console.log(this.$refs["wrapView"].instance());
 				});
 
 				resolve();
@@ -631,94 +683,6 @@ export default {
 				return null;
 			}
 			return panel;
-		},
-		addTextLayer() {
-			const panel = this.currentPanel();
-			if (!panel) {
-				console.error("Cannot add text layer: panel not found");
-				return;
-			}
-
-			if (!panel.texture()) {
-				console.error("Cannot add text layer: panel texture not initialized");
-				return;
-			}
-
-			var fonts = new WrapviewFontSet();
-			fonts.load([
-				{
-					name: "Roboto",
-					source: "google",
-					id: "1",
-					value: function (n) {
-						return this[n];
-					},
-				},
-			]);
-
-			var color = new WrapviewParameter(panel, "textColor");
-			color.set({
-				type: "fixed",
-				value: "#000000",
-				descriptor: "Black",
-			});
-
-			var outline = new WrapviewParameter(panel, "outlineColor");
-			outline.set({
-				type: "fixed",
-				value: "#000000",
-				descriptor: "Black",
-			});
-
-			var size = panel.settings.build.parameters.size;
-			const textLayer = new WrapviewTextLayer(WrapviewUtils.guid(), {
-				pivot: {
-					x: 0.5,
-					y: 0.5,
-				},
-				position: {
-					x: size / 2,
-					y: size / 2,
-				},
-				angle: 0,
-				fontSize: 70,
-				font: fonts.first(),
-				color: color,
-				outline: {
-					include: false,
-					color: outline,
-					thickness: 1,
-				},
-			});
-
-			// Begin editing the texture before adding layers
-			panel
-				.texture()
-				.beginEditing()
-				.then(() => {
-					var layerIndex = panel.texture().addLayer(textLayer);
-					textLayer
-						.load(
-							{
-								text: {
-									type: "fixed",
-									value: "Text",
-								},
-							},
-							panel
-						)
-						.then(() => {
-							panel.texture().editLayer(layerIndex);
-							panel.texture().render();
-							// panel.texture().endEditing();
-						})
-						.catch((err) => {
-							console.error("Error loading text layer:", err);
-						});
-				})
-				.catch((err) => {
-					console.error("Error in beginEditing():", err);
-				});
 		},
 
 		initializeSvgText() {
@@ -1075,11 +1039,19 @@ export default {
 			var color = new WrapviewParameter(panel, "textColor");
 			color.set({
 				type: "fixed",
-				value: "#1c5982",
+				value: "#2b2b2b",
 				descriptor: "Black",
 			});
-			panel.settings.buildable.diffuse.baseLayer().setColorParameter(color);
-            panel.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
+
+			// Apply the gray tint to all panels
+			const colorTargets = [
+				"COLLAR",
+				"BACK_NECK_TAPE",
+				"LEFT_ARM_SLEEVE",
+				"RIGHT_ARM_SLEEVE",
+				"FRONT_BODY",
+				"BACK_BODY",
+			];
 
 			// Begin editing the texture before adding layers
 			panel
@@ -1103,9 +1075,11 @@ export default {
 					this.currentSvgLayer
 						.load({ svgData: svgData })
 						.then(() => {
-							panel.texture().editLayer(layerIndex);
-							panel.texture().render();
-							// panel.texture().endEditing();
+							const mat = this.materials.get("FRONT_BODY");
+							if (mat) {
+								mat.texture().editLayer(layerIndex);
+								mat.texture().render();
+							}
 						})
 						.catch((err) => {
 							console.error("Error loading SVG layer:", err);
@@ -1475,7 +1449,8 @@ export default {
 }
 
 .content {
-	margin-top: 10px;
+	margin: 10px 0;
+	padding-bottom: 30px;
 }
 
 #tab2 {
@@ -1680,7 +1655,7 @@ export default {
 	cursor: pointer;
 }
 
-.wrapViewContainer{
+.wrapViewContainer {
 	position: relative;
 	z-index: 998;
 
