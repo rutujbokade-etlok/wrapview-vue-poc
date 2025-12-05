@@ -171,20 +171,17 @@
 					<p>{{ svgOutlineThickness }}pt</p>
 				</div>
 				<div class="color-container">
-					<div class="color" style="background-color: #000000" @click="svgOutlineColor = '#000000'"
-						title="Black"></div>
-					<div class="color" style="background-color: #ffffff; border: 1px solid #ccc"
-						@click="svgOutlineColor = '#FFFFFF'" title="White"></div>
-					<div class="color" style="background-color: #ff0000" @click="svgOutlineColor = '#FF0000'"
-						title="Red"></div>
-					<div class="color" style="background-color: #00ff00" @click="svgOutlineColor = '#00FF00'"
-						title="Lime"></div>
-					<div class="color" style="background-color: #0000ff" @click="svgOutlineColor = '#0000FF'"
-						title="Blue"></div>
-					<div class="color" style="background-color: #ffff00" @click="svgOutlineColor = '#FFFF00'"
-						title="Yellow"></div>
-					<div class="color" style="background-color: #ff00ff" @click="svgOutlineColor = '#FF00FF'"
-						title="Magenta"></div>
+					<div class="color" style="background-color: #FFFFFF; border: 1px solid #DDDDDD" @click="svgOutlineColor = '#FFFFFF'" title="White"></div>
+					<div class="color" style="background-color: #000000" @click="svgOutlineColor = '#000000'" title="Black"></div>
+					<div class="color" style="background-color: #595F5E" @click="svgOutlineColor = '#595F5E'" title="Dark Gray"></div>
+					<div class="color" style="background-color: #C30C27" @click="svgOutlineColor = '#C30C27'" title="Red"></div>
+					<div class="color" style="background-color: #FF761C" @click="svgOutlineColor = '#FF761C'" title="Orange"></div>
+					<div class="color" style="background-color: #FFD725" @click="svgOutlineColor = '#FFD725'" title="Yellow"></div>
+					<div class="color" style="background-color: #289B24" @click="svgOutlineColor = '#289B24'" title="Green"></div>
+					<div class="color" style="background-color: #0091AA" @click="svgOutlineColor = '#0091AA'" title="Cyan"></div>
+					<div class="color" style="background-color: #045594" @click="svgOutlineColor = '#045594'" title="Blue"></div>
+					<div class="color" style="background-color: #B523B1" @click="svgOutlineColor = '#B523B1'" title="Purple"></div>
+					<div class="color" style="background-color: #AD3D80" @click="svgOutlineColor = '#AD3D80'" title="Purple Pink"></div>
 				</div>
 				<div class="outline-footer" style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
 					<p style="margin: 0;">Outline Thickness (pt)</p>
@@ -783,11 +780,13 @@ export default {
 		createTextElementSVG(shape, canvasSize) {
 			const baseStyle = `font-size:${shape.fontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
 			const styleWithStroke = this.buildStyleWithOutline(baseStyle, shape, 1);
-			
+
 			if (shape.textShape && shape.textShape !== "none") {
 				return this.createShapedTextSVG(shape, canvasSize, styleWithStroke);
 			} else {
-				return `<text x='${shape.x}' y='${shape.y}' text-anchor='middle' dominant-baseline='middle' style='${styleWithStroke}'>${shape.value}</text>`;
+				const cx = canvasSize / 2;
+				const cy = canvasSize / 2;
+				return `<text x='${cx}' y='${cy}' text-anchor='middle' dominant-baseline='middle' style='${styleWithStroke}'>${shape.value}</text>`;
 			}
 		},
 
@@ -805,6 +804,20 @@ export default {
 					const y = canvasSize / 2 + Math.sin(angle) * shapeData.radius;
 					const rotation = (angle * 180 / Math.PI) + 90;
 					svg += `<text x='${x}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${rotation} ${x} ${y})'>${this.escapeXml(char)}</text>`;
+				});
+			} else if (shape.textShape === "bridge") {
+				const chars = text.split('');
+				const spacing = canvasSize * 0.08;
+				const totalWidth = chars.reduce((acc) => acc + spacing, 0) + (chars.length ? -spacing : 0) + chars.reduce((acc, _c) => acc + spacing, 0);
+				const charWidth = canvasSize * 0.08;
+				let currentX = (canvasSize - charWidth * chars.length) / 2;
+				const mid = (chars.length - 1) / 2;
+
+				chars.forEach((char, i) => {
+					const normX = (i - mid) / (mid || 1);
+					const y = 50 * (normX * normX);
+					svg += `<text x='${currentX + charWidth / 2}' y='${y + canvasSize / 2}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${this.escapeXml(char)}</text>`;
+					currentX += charWidth;
 				});
 			} else if (shape.textShape === "valley") {
 				svg += this.createValleyTextSVG(text, shape, canvasSize, style);
@@ -827,6 +840,8 @@ export default {
 			const chars = text.split('');
 			const len = chars.length;
 			const mid = (len - 1) / 2;
+			const shapeData = this.getTextPathForShape(shape.textShape, shape.shapeIntensity, text);
+			const curveScale = shapeData.curveScale || 50;
 			let svg = "";
 
 			const charWidth = canvasSize * 0.08;
@@ -835,9 +850,11 @@ export default {
 
 			chars.forEach((char, i) => {
 				const normX = (i - mid) / (mid || 1);
-				const y = canvasSize / 2 - 50 * (normX * normX) + 25;
+				const y = -curveScale * (normX * normX) + (curveScale * 0.5);
 				const tiltAngle = normX * -40;
-				svg += `<text x='${currentX + charWidth / 2}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${tiltAngle} ${currentX + charWidth / 2} ${y})'>${this.escapeXml(char)}</text>`;
+				const posX = currentX + charWidth / 2;
+				const posY = canvasSize / 2 + y;
+				svg += `<text x='${posX}' y='${posY}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${tiltAngle} ${posX} ${posY})'>${this.escapeXml(char)}</text>`;
 				currentX += charWidth;
 			});
 
@@ -848,13 +865,15 @@ export default {
 			const chars = text.split('');
 			const len = chars.length;
 			const mid = (len - 1) / 2;
+			const shapeData = this.getTextPathForShape(shape.textShape, shape.shapeIntensity, text);
+			const bulgeAmount = shapeData.bulgeAmount || 0.8;
 			let svg = "";
 
 			// Calculate scales
 			const scales = chars.map((_, i) => {
 				const dist = Math.abs(i - mid);
 				const maxDist = mid || 1;
-				return 1 + 0.8 * (1 - dist / maxDist);
+				return 1 + bulgeAmount * (1 - dist / maxDist);
 			});
 
 			const charWidth = canvasSize * 0.08;
@@ -878,6 +897,8 @@ export default {
 
 		createFlagTextSVG(text, shape, canvasSize, style) {
 			const chars = text.split('');
+			const shapeData = this.getTextPathForShape(shape.textShape, shape.shapeIntensity, text);
+			const waveAmount = shapeData.waveAmount || 20;
 			let svg = "";
 
 			const charWidth = canvasSize * 0.08;
@@ -885,8 +906,10 @@ export default {
 			let currentX = (canvasSize - totalWidth) / 2;
 
 			chars.forEach((char, i) => {
-				const y = canvasSize / 2 + Math.sin(i * 0.5) * 20;
-				svg += `<text x='${currentX + charWidth / 2}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${this.escapeXml(char)}</text>`;
+				const y = Math.sin(i * 0.5) * waveAmount;
+				const posX = currentX + charWidth / 2;
+				const posY = canvasSize / 2 + y;
+				svg += `<text x='${posX}' y='${posY}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${this.escapeXml(char)}</text>`;
 				currentX += charWidth;
 			});
 
@@ -896,9 +919,11 @@ export default {
 		createDistortTextSVG(text, shape, canvasSize, style) {
 			const chars = text.split('');
 			const len = chars.length;
+			const shapeData = this.getTextPathForShape(shape.textShape, shape.shapeIntensity, text);
+			const distortAmount = shapeData.distortAmount || 0.5;
 			let svg = "";
 
-			const scales = chars.map((_, i) => 0.5 + 0.5 * (i / (len - 1 || 1)));
+			const scales = chars.map((_, i) => 0.5 + distortAmount * (i / (len - 1 || 1)));
 			const charWidth = canvasSize * 0.08;
 			const totalWidth = scales.reduce((acc, scale) => acc + charWidth * scale, 0);
 			let currentX = (canvasSize - totalWidth) / 2;
@@ -942,12 +967,14 @@ export default {
 			const chars = text.split('');
 			const len = chars.length;
 			const mid = (len - 1) / 2;
+			const shapeData = this.getTextPathForShape(shape.textShape, shape.shapeIntensity, text);
+			const pinchAmount = shapeData.pinchAmount || 0.5;
 			let svg = "";
 
 			const scales = chars.map((_, i) => {
 				const dist = Math.abs(i - mid);
 				const maxDist = mid || 1;
-				return 1 - 0.5 * (1 - dist / maxDist);
+				return 1 - pinchAmount * (1 - dist / maxDist);
 			});
 
 			const charWidth = canvasSize * 0.08;
@@ -995,10 +1022,11 @@ export default {
 			const width = 120;
 			const height = 120;
 			const centerY = 60;
+			const intensityFactor = (intensity || 50) / 100; // Convert 0-100 to 0-1
 			
 			switch (shapeType) {
 				case "arch": {
-					const radius = 130;
+					const radius = intensityFactor;
 					const len = text.length || 1;
 					const angleRange = Math.PI * 0.8;
 					const startAngle = -Math.PI / 2 - angleRange / 2;
@@ -1008,31 +1036,36 @@ export default {
 				case "valley": {
 					const len = text.length || 1;
 					const mid = (len - 1) / 2;
-					return { type: "valley", mid, len };
+					const curveScale = 50 * intensityFactor;
+					return { type: "valley", mid, len, curveScale };
 				}
 				case "bulge": {
 					const len = text.length || 1;
 					const mid = (len - 1) / 2;
-					return { type: "bulge", mid, len };
+					const bulgeAmount = 0.8 * intensityFactor;
+					return { type: "bulge", mid, len, bulgeAmount };
 				}
 				case "flag":
 				case "wave": {
 					const len = text.length || 1;
-					return { type: "flag", len };
+					const waveAmount = 20 * intensityFactor;
+					return { type: "flag", len, waveAmount };
 				}
 				case "distort": {
 					const len = text.length || 1;
-					return { type: "distort", len };
+					const distortAmount = 0.5 * intensityFactor;
+					return { type: "distort", len, distortAmount };
 				}
 				case "circle": {
-					const radius = 110;
+					const radius = 110 * intensityFactor;
 					const len = text.length || 1;
 					return { type: "circle", radius, len };
 				}
 				case "pinch": {
 					const len = text.length || 1;
 					const mid = (len - 1) / 2;
-					return { type: "pinch", mid, len };
+					const pinchAmount = 0.5 * intensityFactor;
+					return { type: "pinch", mid, len, pinchAmount };
 				}
 				default:
 					return { type: "none" };
@@ -1141,9 +1174,9 @@ export default {
 			if (shape.textShape && shape.textShape !== "none") {
 				return this.createShapedTextSVGMaterial(shape, size, styleWithStroke, scale);
 			} else {
-				const scaledX = shape.x * scale;
-				const scaledY = shape.y * scale;
-				return `<text x='${scaledX}' y='${scaledY}' text-anchor='middle' dominant-baseline='middle' style='${styleWithStroke}'>${shape.value}</text>`;
+				const cx = size / 2;
+				const cy = size / 2;
+				return `<text x='${cx}' y='${cy}' text-anchor='middle' dominant-baseline='middle' style='${styleWithStroke}'>${shape.value}</text>`;
 			}
 		},
 
@@ -1161,6 +1194,21 @@ export default {
 					const y = size / 2 + Math.sin(angle) * shapeData.radius;
 					const rotation = (angle * 180 / Math.PI) + 90;
 					svg += `<text x='${x}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${rotation} ${x} ${y})'>${this.escapeXml(char)}</text>`;
+				});
+			} else if (shape.textShape === "bridge") {
+				const chars = text.split('');
+				const charWidth = size * 0.08;
+				const totalWidth = charWidth * chars.length;
+				let currentX = (size - totalWidth) / 2;
+				const mid = (chars.length - 1) / 2;
+
+				chars.forEach((char, i) => {
+					const normX = (i - mid) / (mid || 1);
+					const y = 50 * (normX * normX);
+					const posX = currentX + charWidth / 2;
+					const posY = size / 2 + y;
+					svg += `<text x='${posX}' y='${posY}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${this.escapeXml(char)}</text>`;
+					currentX += charWidth;
 				});
 			} else if (shape.textShape === "valley") {
 				svg += this.createValleyTextSVGMaterial(text, shape, size, style, scale);
@@ -1183,18 +1231,26 @@ export default {
 			const chars = text.split('');
 			const len = chars.length;
 			const mid = (len - 1) / 2;
+			const shapeData = this.getTextPathForShapeScaled(shape.textShape, shape.shapeIntensity, size, text);
+			const curveScale = shapeData.curveScale || (50 * scale);
 			let svg = "";
 
-			const charWidth = size * 0.08;
-			const totalWidth = charWidth * len;
+			// Calculate character spacing based on estimated widths
+			const estimatedCharWidth = size * 0.06;
+			const spacing = size * 0.001;
+			const totalWidth = chars.length * estimatedCharWidth + spacing * Math.max(chars.length - 1, 0);
 			let currentX = (size - totalWidth) / 2;
 
 			chars.forEach((char, i) => {
 				const normX = (i - mid) / (mid || 1);
-				const y = size / 2 - 50 * scale * (normX * normX) + 25 * scale;
-				const tiltAngle = normX * -40;
-				svg += `<text x='${currentX + charWidth / 2}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${tiltAngle} ${currentX + charWidth / 2} ${y})'>${this.escapeXml(char)}</text>`;
-				currentX += charWidth;
+				// Valley curve: center is lowest (max Y), edges are highest (min Y)
+				const y = -curveScale * (normX * normX) + (curveScale * 0.5);
+				// Tilt characters inward (toward center)
+				const tiltAngle = normX * -40; // Negative tilt on left, positive on right
+				const posX = currentX + estimatedCharWidth / 2;
+				const posY = size / 2 + y;
+				svg += `<text x='${posX}' y='${posY}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${tiltAngle} ${posX} ${posY})'>${this.escapeXml(char)}</text>`;
+				currentX += estimatedCharWidth + spacing;
 			});
 
 			return svg;
@@ -1204,15 +1260,17 @@ export default {
 			const chars = text.split('');
 			const len = chars.length;
 			const mid = (len - 1) / 2;
+			const shapeData = this.getTextPathForShapeScaled(shape.textShape, shape.shapeIntensity, size, text);
+			const bulgeAmount = shapeData.bulgeAmount || 1;
 			let svg = "";
 
 			const scales = chars.map((_, i) => {
 				const dist = Math.abs(i - mid);
 				const maxDist = mid || 1;
-				return 1 + 0.8 * (1 - dist / maxDist);
+				return 1 + bulgeAmount * (1 - dist / maxDist);
 			});
 
-			const charWidth = size * 0.08;
+			const charWidth = size * 0.05;
 			const totalWidth = scales.reduce((acc, s) => acc + charWidth * s, 0);
 			let currentX = (size - totalWidth) / 2;
 
@@ -1233,15 +1291,19 @@ export default {
 
 		createFlagTextSVGMaterial(text, shape, size, style, scale) {
 			const chars = text.split('');
+			const shapeData = this.getTextPathForShapeScaled(shape.textShape, shape.shapeIntensity, size, text);
+			const waveAmount = shapeData.waveAmount || (20 * scale);
 			let svg = "";
 
-			const charWidth = size * 0.08;
+			const charWidth = size * 0.05;
 			const totalWidth = charWidth * chars.length;
 			let currentX = (size - totalWidth) / 2;
 
 			chars.forEach((char, i) => {
-				const y = size / 2 + Math.sin(i * 0.5) * 20 * scale;
-				svg += `<text x='${currentX + charWidth / 2}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${this.escapeXml(char)}</text>`;
+				const y = Math.sin(i * 0.5) * waveAmount;
+				const posX = currentX + charWidth / 2;
+				const posY = size / 2 + y;
+				svg += `<text x='${posX}' y='${posY}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${this.escapeXml(char)}</text>`;
 				currentX += charWidth;
 			});
 
@@ -1251,10 +1313,12 @@ export default {
 		createDistortTextSVGMaterial(text, shape, size, style, scale) {
 			const chars = text.split('');
 			const len = chars.length;
+			const shapeData = this.getTextPathForShapeScaled(shape.textShape, shape.shapeIntensity, size, text);
+			const distortAmount = shapeData.distortAmount || 0.5;
 			let svg = "";
 
-			const scales = chars.map((_, i) => 0.5 + 0.5 * (i / (len - 1 || 1)));
-			const charWidth = size * 0.08;
+			const scales = chars.map((_, i) => 0.5 + distortAmount * (i / (len - 1 || 1)));
+			const charWidth = size * 0.05;
 			const totalWidth = scales.reduce((acc, s) => acc + charWidth * s, 0);
 			let currentX = (size - totalWidth) / 2;
 
@@ -1276,7 +1340,8 @@ export default {
 		createCircleTextSVGMaterial(text, shape, size, style, scale) {
 			const chars = text.split('');
 			const len = chars.length;
-			const radius = 110 * scale;
+			const shapeData = this.getTextPathForShapeScaled(shape.textShape, shape.shapeIntensity, size, text);
+			const radius = shapeData.radius || ((size / 120) * 0.5);
 			const centerX = size / 2;
 			const centerY = size / 2;
 			const angleStep = (2 * Math.PI) / len;
@@ -1297,15 +1362,17 @@ export default {
 			const chars = text.split('');
 			const len = chars.length;
 			const mid = (len - 1) / 2;
+			const shapeData = this.getTextPathForShapeScaled(shape.textShape, shape.shapeIntensity, size, text);
+			const pinchAmount = shapeData.pinchAmount || 0.5;
 			let svg = "";
 
 			const scales = chars.map((_, i) => {
 				const dist = Math.abs(i - mid);
 				const maxDist = mid || 1;
-				return 1 - 0.5 * (1 - dist / maxDist);
+				return 1 - pinchAmount * (1 - dist / maxDist);
 			});
 
-			const charWidth = size * 0.08;
+			const charWidth = size * 0.05;
 			const totalWidth = scales.reduce((acc, s) => acc + charWidth * s, 0);
 			let currentX = (size - totalWidth) / 2;
 
@@ -1329,10 +1396,11 @@ export default {
 			const centerY = size / 2;
 			const startX = size * 0.167;
 			const endX = size * 0.833;
+			const intensityFactor = (intensity || 50) / 100; // Convert 0-100 to 0-1
 			
 			switch (shapeType) {
 				case "arch": {
-					const radius = 130 * (size / 120);
+					const radius = 13 * (size / 120) * intensityFactor;
 					const len = text.length || 1;
 					const angleRange = Math.PI * 0.8;
 					const startAngle = -Math.PI / 2 - angleRange / 2;
@@ -1342,31 +1410,36 @@ export default {
 				case "valley": {
 					const len = text.length || 1;
 					const mid = (len - 1) / 2;
-					return { type: "valley", mid, len, curveScale: 50 * (size / 120) };
+					const curveScale = 5 * (size / 120) * intensityFactor;
+					return { type: "valley", mid, len, curveScale };
 				}
 				case "bulge": {
 					const len = text.length || 1;
 					const mid = (len - 1) / 2;
-					return { type: "bulge", mid, len };
+					const bulgeAmount = 0.5 * intensityFactor;
+					return { type: "bulge", mid, len, bulgeAmount };
 				}
 				case "flag":
 				case "wave": {
 					const len = text.length || 1;
-					return { type: "flag", len };
+					const waveAmount = 20 * (size / 120) * intensityFactor;
+					return { type: "flag", len, waveAmount };
 				}
 				case "distort": {
 					const len = text.length || 1;
-					return { type: "distort", len };
+					const distortAmount = 0.5 * intensityFactor;
+					return { type: "distort", len, distortAmount };
 				}
 				case "circle": {
-					const radius = 110 * (size / 120);
+					const radius = 11 * (size / 120) * intensityFactor;
 					const len = text.length || 1;
 					return { type: "circle", radius, len };
 				}
 				case "pinch": {
 					const len = text.length || 1;
 					const mid = (len - 1) / 2;
-					return { type: "pinch", mid, len };
+					const pinchAmount =  intensityFactor;
+					return { type: "pinch", mid, len, pinchAmount };
 				}
 				default:
 					return { type: "none" };
