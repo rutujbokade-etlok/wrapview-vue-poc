@@ -161,30 +161,25 @@
 				</div>
 			</div>
 			<div id="tab3" :class="{ 'display-none': activeTab !== 2 }">
-				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Arial' }"
-					@click="svgFontFamily = 'Arial'">
-					<h4 style="font-weight: 600;font-family: Arial;">{{svgTextValue}}</h4>
-					<p>Arial</p>
+				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Asap Condensed' }"
+					@click="svgFontFamily = 'Asap Condensed'">
+					<h4 style="font-weight: 600;font-family: 'Asap Condensed', sans-serif;">{{svgTextValue}}</h4>
+					<p>Asap Condensed</p>
 				</div>
-				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Verdana' }"
-					@click="svgFontFamily = 'Verdana'">
-					<h4 style="font-weight: 600;font-family: Verdana;">{{svgTextValue}}</h4>
-					<p>Verdana</p>
+				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Baloo 2' }"
+					@click="svgFontFamily = 'Baloo 2'">
+					<h4 style="font-weight: 600;font-family: 'Baloo 2', sans-serif;">{{svgTextValue}}</h4>
+					<p>Baloo</p>
 				</div>
-				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Times New Roman' }"
-					@click="svgFontFamily = 'Times New Roman'">
-					<h4 style="font-weight: 600;font-family: 'Times New Roman';">{{svgTextValue}}</h4>
-					<p>Times New Roman</p>
+				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Caprasimo' }"
+					@click="svgFontFamily = 'Caprasimo'">
+					<h4 style="font-weight: 600;font-family: 'Caprasimo', serif;">{{svgTextValue}}</h4>
+					<p>Caprasimo</p>
 				</div>
-				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Courier New' }"
-					@click="svgFontFamily = 'Courier New'">
-					<h4 style="font-weight: 600;font-family: 'Courier New';">{{svgTextValue}}</h4>
-					<p>Courier New</p>
-				</div>
-				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Georgia' }"
-					@click="svgFontFamily = 'Georgia'">
-					<h4 style="font-weight: 600;font-family: 'Georgia';">{{svgTextValue}}</h4>
-					<p>Georgia</p>
+				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Caramel' }"
+					@click="svgFontFamily = 'Caramel'">
+					<h4 style="font-weight: 600;font-family: 'Caramel', cursive">{{svgTextValue}}</h4>
+					<p>Caramel</p>
 				</div>
 			</div>
 			<div id="tab4" :class="{ 'display-none': activeTab !== 3 }">
@@ -293,10 +288,10 @@ export default {
 			},
 			activeTab: 0,
 			svgShapes: [],
-			svgTextColor: "#000000",
-			svgFontSize: 8,
+			svgTextColor: "#ffffff",
+			svgFontSize: 6,
 			svgTextDecoration: "",
-			svgFontFamily: "Caramel",
+			svgFontFamily: "Asap Condensed",
 			svgTextValue: "WARRIORS",
 			svgTextShape: "none",
 			svgShapeIntensity: 50,
@@ -308,7 +303,6 @@ export default {
 		};
 	},
 	mounted() {
-		console.log("check")
 		this.$nextTick(() => {
 			this.initializeSvgText();
 		});
@@ -401,9 +395,9 @@ export default {
 					this.$refs["wrapView"].instance().camera(),
 					document.getElementById("orbitControls")
 				);
-				orbitController.enablePan = false;
-				orbitController.enableZoom = true;
-				orbitController.enableDamping = true;
+				orbitController.enabled = false;
+				orbitController.enableZoom = false;
+				orbitController.enableDamping = false;
 				orbitController.minDistance = 1;
 				orbitController.maxDistance = 2;
 
@@ -587,6 +581,15 @@ export default {
 					}
 				);
 
+				// var color = new WrapviewParameter(this.currentPanel(), "textColor");
+				// color.set({
+				// 	type: "fixed",
+				// 	value: "#2b2b2b",
+				// 	descriptor: "Black",
+				// });
+
+				// rightArmSleeve.settings.build.parameters.color.set(color)
+
 				promises.push(
 					collar.init(),
 					backNeckTape.init(),
@@ -621,7 +624,6 @@ export default {
 			});
 		},
 		loadObjects(materials) {
-			console.log(materials)
 			return new Promise((resolve, reject) => {
 				const item = new WrapviewObject({
 					transform: {
@@ -629,7 +631,7 @@ export default {
 							y: -Math.PI,
 						},
 						position: {
-							y: 0.13,
+							y: 0.16,
 						},
 						scale: {
 							x: 0.8,
@@ -640,9 +642,7 @@ export default {
 				});
 				item.setMaterials(materials);
 				item.load("/3001C_SMALL/3001C_SMALL_LOD0.glb").then(() => {
-					console.log(item);
 					this.$refs["wrapView"].instance().addObject(item);
-					console.log(this.$refs["wrapView"].instance());
 				});
 
 				resolve();
@@ -877,6 +877,7 @@ export default {
 				console.error("Cannot add SVG layer: panel not found");
 				return;
 			}
+			console.log(this.materials.get("RIGHT_ARM_SLEEVE").settings.buildable.diffuse)
 
 			if (!panel.texture()) {
 				console.error("Cannot add SVG layer: panel texture not initialized");
@@ -929,6 +930,31 @@ export default {
 							panel.texture().editLayer(layerIndex);
 							panel.texture().render();
 							// panel.texture().endEditing();
+
+							var color = new WrapviewParameter(this.currentPanel(), "textColor");
+							color.set({
+								type: "fixed",
+								value: "#2b2b2b",
+								descriptor: "Black",
+							});
+
+// this.materials.get("COLLAR")?.settings.buildable.diffuse.baseLayer().setColorParameter(color);
+// this.materials.get("COLLAR")?.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
+
+// this.materials.get("BACK_NECK_TAPE")?.settings.buildable.diffuse.baseLayer().setColorParameter(color);
+// this.materials.get("BACK_NECK_TAPE")?.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
+
+// this.materials.get("LEFT_ARM_SLEEVE")?.settings.buildable.diffuse.baseLayer().setColorParameter(color);
+// this.materials.get("LEFT_ARM_SLEEVE")?.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
+
+this.materials.get("RIGHT_ARM_SLEEVE")?.settings.buildable.diffuse.baseLayer().setColorParameter(color);
+this.materials.get("RIGHT_ARM_SLEEVE")?.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
+
+this.materials.get("FRONT_BODY")?.settings.buildable.diffuse.baseLayer().setColorParameter(color);
+this.materials.get("FRONT_BODY")?.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
+
+// this.materials.get("BACK_BODY")?.settings.buildable.diffuse.baseLayer().setColorParameter(color);
+// this.materials.get("BACK_BODY")?.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
 						})
 						.catch((err) => {
 							console.error("Error loading SVG layer:", err);
