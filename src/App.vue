@@ -100,64 +100,38 @@
 			</div>
 			<div id="tab2" :class="{ 'display-none': activeTab !== 1 }">
 				<div class="color-container">
-					<div class="color" style="background-color: #000000" @click="svgTextColor = '#000000'"
-						title="Black"></div>
-					<div class="color" style="background-color: #ffffff; border: 1px solid #ccc"
-						@click="svgTextColor = '#FFFFFF'" title="White"></div>
-					<div class="color" style="background-color: #808080" @click="svgTextColor = '#808080'" title="Gray">
-					</div>
-					<div class="color" style="background-color: #c0c0c0" @click="svgTextColor = '#C0C0C0'"
-						title="Silver"></div>
-					<div class="color" style="background-color: #ff0000" @click="svgTextColor = '#FF0000'" title="Red">
-					</div>
-					<div class="color" style="background-color: #8b0000" @click="svgTextColor = '#8B0000'"
-						title="Dark Red"></div>
-					<div class="color" style="background-color: #ffa500" @click="svgTextColor = '#FFA500'"
-						title="Orange"></div>
-					<div class="color" style="background-color: #ff8c00" @click="svgTextColor = '#FF8C00'"
-						title="Dark Orange">
-					</div>
-					<div class="color" style="background-color: #ffff00" @click="svgTextColor = '#FFFF00'"
-						title="Yellow"></div>
-					<div class="color" style="background-color: #ffd700" @click="svgTextColor = '#FFD700'" title="Gold">
-					</div>
-					<div class="color" style="background-color: #00ff00" @click="svgTextColor = '#00FF00'" title="Lime">
-					</div>
-					<div class="color" style="background-color: #008000" @click="svgTextColor = '#008000'"
-						title="Green"></div>
-					<div class="color" style="background-color: #006400" @click="svgTextColor = '#006400'"
-						title="Dark Green">
-					</div>
-					<div class="color" style="background-color: #00ffff" @click="svgTextColor = '#00FFFF'" title="Cyan">
-					</div>
-					<div class="color" style="background-color: #008b8b" @click="svgTextColor = '#008B8B'"
-						title="Dark Cyan">
-					</div>
-					<div class="color" style="background-color: #0000ff" @click="svgTextColor = '#0000FF'" title="Blue">
-					</div>
-					<div class="color" style="background-color: #000080" @click="svgTextColor = '#000080'" title="Navy">
-					</div>
-					<div class="color" style="background-color: #4169e1" @click="svgTextColor = '#4169E1'"
-						title="Royal Blue">
-					</div>
-					<div class="color" style="background-color: #800080" @click="svgTextColor = '#800080'"
-						title="Purple"></div>
-					<div class="color" style="background-color: #4b0082" @click="svgTextColor = '#4B0082'"
-						title="Indigo"></div>
-					<div class="color" style="background-color: #ff00ff" @click="svgTextColor = '#FF00FF'"
-						title="Magenta"></div>
-					<div class="color" style="background-color: #ff1493" @click="svgTextColor = '#FF1493'"
-						title="Deep Pink">
-					</div>
-					<div class="color" style="background-color: #ffc0cb" @click="svgTextColor = '#FFC0CB'" title="Pink">
-					</div>
-					<div class="color" style="background-color: #a52a2a" @click="svgTextColor = '#A52A2A'"
-						title="Brown"></div>
-					<div class="color" style="background-color: #d2691e" @click="svgTextColor = '#D2691E'"
-						title="Chocolate">
-					</div>
-					<div class="color" style="background-color: #f5f5dc" @click="svgTextColor = '#F5F5DC'"
-						title="Beige"></div>
+					<div class="color" style="background-color: #FFFFFF; border: 1px solid #DDDDDD" @click="svgTextColor = '#FFFFFF'" title="White"></div>
+					<div class="color" style="background-color: #000000" @click="svgTextColor = '#000000'" title="Black"></div>
+					<div class="color" style="background: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc), linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc); background-size: 8px 8px; background-position: 0 0, 4px 4px; border: 1px solid #DDDDDD" @click="svgTextColor = 'transparent'" title="Transparent"></div>
+					<div class="color" style="background-color: #595F5E" @click="svgTextColor = '#595F5E'" title="Dark Gray"></div>
+					<div class="color" style="background-color: #FF0086" @click="svgTextColor = '#FF0086'" title="Hot Pink"></div>
+					<div class="color" style="background-color: #FFA5B6" @click="svgTextColor = '#FFA5B6'" title="Light Pink"></div>
+					<div class="color" style="background-color: #FF80B6" @click="svgTextColor = '#FF80B6'" title="Medium Pink"></div>
+					<div class="color" style="background-color: #AD3D80" @click="svgTextColor = '#AD3D80'" title="Purple Pink"></div>
+					<div class="color" style="background-color: #732735" @click="svgTextColor = '#732735'" title="Maroon"></div>
+					<div class="color" style="background-color: #C30C27" @click="svgTextColor = '#C30C27'" title="Red"></div>
+					<div class="color" style="background-color: #EF2B3B" @click="svgTextColor = '#EF2B3B'" title="Bright Red"></div>
+					<div class="color" style="background-color: #FF761C" @click="svgTextColor = '#FF761C'" title="Orange"></div>
+					<div class="color" style="background-color: #FFAB29" @click="svgTextColor = '#FFAB29'" title="Light Orange"></div>
+					<div class="color" style="background-color: #FFC032" @click="svgTextColor = '#FFC032'" title="Gold Orange"></div>
+					<div class="color" style="background-color: #FFD725" @click="svgTextColor = '#FFD725'" title="Yellow"></div>
+					<div class="color" style="background-color: #F9E85C" @click="svgTextColor = '#F9E85C'" title="Light Yellow"></div>
+					<div class="color" style="background-color: #815E24" @click="svgTextColor = '#815E24'" title="Brown"></div>
+					<div class="color" style="background-color: #60C8A9" @click="svgTextColor = '#60C8A9'" title="Mint"></div>
+					<div class="color" style="background-color: #98DD22" @click="svgTextColor = '#98DD22'" title="Lime Green"></div>
+					<div class="color" style="background-color: #289B24" @click="svgTextColor = '#289B24'" title="Green"></div>
+					<div class="color" style="background-color: #005E31" @click="svgTextColor = '#005E31'" title="Dark Green"></div>
+					<div class="color" style="background-color: #27472D" @click="svgTextColor = '#27472D'" title="Forest Green"></div>
+					<div class="color" style="background-color: #00686C" @click="svgTextColor = '#00686C'" title="Teal"></div>
+					<div class="color" style="background-color: #0091AA" @click="svgTextColor = '#0091AA'" title="Cyan"></div>
+					<div class="color" style="background-color: #1DA6EB" @click="svgTextColor = '#1DA6EB'" title="Sky Blue"></div>
+					<div class="color" style="background-color: #86B6E6" @click="svgTextColor = '#86B6E6'" title="Light Blue"></div>
+					<div class="color" style="background-color: #045594" @click="svgTextColor = '#045594'" title="Blue"></div>
+					<div class="color" style="background-color: #0E3EB0" @click="svgTextColor = '#0E3EB0'" title="Royal Blue"></div>
+					<div class="color" style="background-color: #073575" @click="svgTextColor = '#073575'" title="Dark Blue"></div>
+					<div class="color" style="background-color: #032C4F" @click="svgTextColor = '#032C4F'" title="Navy"></div>
+					<div class="color" style="background-color: #A271BF" @click="svgTextColor = '#A271BF'" title="Light Purple"></div>
+					<div class="color" style="background-color: #B523B1" @click="svgTextColor = '#B523B1'" title="Purple"></div>
 				</div>
 			</div>
 			<div id="tab3" :class="{ 'display-none': activeTab !== 2 }">
@@ -214,7 +188,7 @@
 				</div>
 				<div class="outline-footer" style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
 					<p style="margin: 0;">Outline Thickness (pt)</p>
-					<input type="number" v-model.number="svgOutlineThickness" min="0" max="10" step="0.01" style="width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
+					<input type="number" v-model.number="svgOutlineThickness" min="0" max="10" step="1" style="width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
 				</div>
 			</div>
 			<div id="tab5" :class="{ 'display-none': activeTab !== 4 }">
@@ -227,9 +201,9 @@
 						@click="svgTextShape = 'arch'">
 						<img src="/icons/arch.png" />
 					</div>
-					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'bridge' }"
-						@click="svgTextShape = 'bridge'">
-						<img src="/icons/bridge.png" />
+					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'valley' }"
+						@click="svgTextShape = 'valley'">
+						<img src="/icons/wave.png" />
 					</div>
 					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'bulge' }"
 						@click="svgTextShape = 'bulge'">
@@ -239,17 +213,17 @@
 						@click="svgTextShape = 'flag'">
 						<img src="/icons/flag.png" />
 					</div>
-					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'wave' }"
-						@click="svgTextShape = 'wave'">
-						<img src="/icons/wave.png" />
-					</div>
-					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'angle' }"
-						@click="svgTextShape = 'angle'">
+					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'distort' }"
+						@click="svgTextShape = 'distort'">
 						<img src="/icons/angle.png" />
 					</div>
 					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'circle' }"
 						@click="svgTextShape = 'circle'">
 						<img src="/icons/circle.png" />
+					</div>
+					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'pinch' }"
+						@click="svgTextShape = 'pinch'">
+						<img src="/icons/pinch.png" />
 					</div>
 				</div>
 				<div class="style-footer">
@@ -301,7 +275,7 @@ export default {
 			svgTextShape: "none",
 			svgShapeIntensity: 50,
 			svgOutlineColor: "#000000",
-			svgOutlineThickness: 0.5,
+			svgOutlineThickness: 1,
 			svgOutlineEnabled: false,
 			svgInitialized: false,
 			currentSvgLayer: null,
@@ -799,66 +773,269 @@ export default {
 			for (var i = 0; i < this.svgShapes.length; i++) {
 				var shape = this.svgShapes[i];
 				if (shape.type === "text") {
-					var style = `font-size:${shape.fontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
-					if (shape.fontWeight) style += ` font-weight:${shape.fontWeight};`;
-					if (shape.fontStyle) style += ` font-style:${shape.fontStyle};`;
-					if (shape.outlineEnabled && shape.outlineColor && shape.outlineThickness > 0) {
-						style += ` stroke:${shape.outlineColor}; stroke-width:${shape.outlineThickness}px; paint-order: stroke fill;`;
-					}
-
-					if (shape.textShape && shape.textShape !== "none") {
-						// Apply text path transformation for shapes
-						var pathData = this.getTextPathForShape(
-							shape.textShape,
-							shape.shapeIntensity || 50
-						);
-						svg += `<defs><path id='textPath${i}' d='${pathData}' fill='none'/></defs>`;
-						svg += `<text style='${style}'><textPath href='#textPath${i}' startOffset='50%' text-anchor='middle'>${shape.value}</textPath></text>`;
-					} else {
-						svg += `<text x='${shape.x}' y='${shape.y}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${shape.value}</text>`;
-					}
+					svg += this.createTextElementSVG(shape, 120);
 				}
 			}
 			svg += `</svg>`;
 			return svg;
 		},
 
-		getTextPathForShape(shapeType, intensity) {
+		createTextElementSVG(shape, canvasSize) {
+			const baseStyle = `font-size:${shape.fontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
+			const styleWithStroke = this.buildStyleWithOutline(baseStyle, shape, 1);
+			
+			if (shape.textShape && shape.textShape !== "none") {
+				return this.createShapedTextSVG(shape, canvasSize, styleWithStroke);
+			} else {
+				return `<text x='${shape.x}' y='${shape.y}' text-anchor='middle' dominant-baseline='middle' style='${styleWithStroke}'>${shape.value}</text>`;
+			}
+		},
+
+		createShapedTextSVG(shape, canvasSize, style) {
+			const text = shape.value;
+			const len = text.length;
+			let svg = "";
+
+			if (shape.textShape === "arch") {
+				const shapeData = this.getTextPathForShape(shape.textShape, shape.shapeIntensity, text);
+				const chars = text.split('');
+				chars.forEach((char, i) => {
+					const angle = shapeData.startAngle + (i / (len - 1 || 1)) * shapeData.angleRange;
+					const x = canvasSize / 2 + Math.cos(angle) * shapeData.radius;
+					const y = canvasSize / 2 + Math.sin(angle) * shapeData.radius;
+					const rotation = (angle * 180 / Math.PI) + 90;
+					svg += `<text x='${x}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${rotation} ${x} ${y})'>${this.escapeXml(char)}</text>`;
+				});
+			} else if (shape.textShape === "valley") {
+				svg += this.createValleyTextSVG(text, shape, canvasSize, style);
+			} else if (shape.textShape === "bulge") {
+				svg += this.createBulgeTextSVG(text, shape, canvasSize, style);
+			} else if (shape.textShape === "flag" || shape.textShape === "wave") {
+				svg += this.createFlagTextSVG(text, shape, canvasSize, style);
+			} else if (shape.textShape === "distort") {
+				svg += this.createDistortTextSVG(text, shape, canvasSize, style);
+			} else if (shape.textShape === "circle") {
+				svg += this.createCircleTextSVG(text, shape, canvasSize, style);
+			} else if (shape.textShape === "pinch") {
+				svg += this.createPinchTextSVG(text, shape, canvasSize, style);
+			}
+
+			return svg;
+		},
+
+		createValleyTextSVG(text, shape, canvasSize, style) {
+			const chars = text.split('');
+			const len = chars.length;
+			const mid = (len - 1) / 2;
+			let svg = "";
+
+			const charWidth = canvasSize * 0.08;
+			const totalWidth = charWidth * len;
+			let currentX = (canvasSize - totalWidth) / 2;
+
+			chars.forEach((char, i) => {
+				const normX = (i - mid) / (mid || 1);
+				const y = canvasSize / 2 - 50 * (normX * normX) + 25;
+				const tiltAngle = normX * -40;
+				svg += `<text x='${currentX + charWidth / 2}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${tiltAngle} ${currentX + charWidth / 2} ${y})'>${this.escapeXml(char)}</text>`;
+				currentX += charWidth;
+			});
+
+			return svg;
+		},
+
+		createBulgeTextSVG(text, shape, canvasSize, style) {
+			const chars = text.split('');
+			const len = chars.length;
+			const mid = (len - 1) / 2;
+			let svg = "";
+
+			// Calculate scales
+			const scales = chars.map((_, i) => {
+				const dist = Math.abs(i - mid);
+				const maxDist = mid || 1;
+				return 1 + 0.8 * (1 - dist / maxDist);
+			});
+
+			const charWidth = canvasSize * 0.08;
+			const totalWidth = scales.reduce((acc, scale) => acc + charWidth * scale, 0);
+			let currentX = (canvasSize - totalWidth) / 2;
+
+			chars.forEach((char, i) => {
+				const scale = scales[i];
+				const scaledWidth = charWidth * scale;
+				const scaledFontSize = shape.fontSize * scale;
+				const scaledStyle = style.replace(
+					`font-size:${shape.fontSize}px`,
+					`font-size:${scaledFontSize}px`
+				);
+				svg += `<text x='${currentX + scaledWidth / 2}' y='${canvasSize / 2}' text-anchor='middle' dominant-baseline='middle' style='${scaledStyle}'>${this.escapeXml(char)}</text>`;
+				currentX += scaledWidth;
+			});
+
+			return svg;
+		},
+
+		createFlagTextSVG(text, shape, canvasSize, style) {
+			const chars = text.split('');
+			let svg = "";
+
+			const charWidth = canvasSize * 0.08;
+			const totalWidth = charWidth * chars.length;
+			let currentX = (canvasSize - totalWidth) / 2;
+
+			chars.forEach((char, i) => {
+				const y = canvasSize / 2 + Math.sin(i * 0.5) * 20;
+				svg += `<text x='${currentX + charWidth / 2}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${this.escapeXml(char)}</text>`;
+				currentX += charWidth;
+			});
+
+			return svg;
+		},
+
+		createDistortTextSVG(text, shape, canvasSize, style) {
+			const chars = text.split('');
+			const len = chars.length;
+			let svg = "";
+
+			const scales = chars.map((_, i) => 0.5 + 0.5 * (i / (len - 1 || 1)));
+			const charWidth = canvasSize * 0.08;
+			const totalWidth = scales.reduce((acc, scale) => acc + charWidth * scale, 0);
+			let currentX = (canvasSize - totalWidth) / 2;
+
+			chars.forEach((char, i) => {
+				const scale = scales[i];
+				const scaledWidth = charWidth * scale;
+				const scaledFontSize = shape.fontSize * scale;
+				const scaledStyle = style.replace(
+					`font-size:${shape.fontSize}px`,
+					`font-size:${scaledFontSize}px`
+				);
+				svg += `<text x='${currentX + scaledWidth / 2}' y='${canvasSize / 2}' text-anchor='middle' dominant-baseline='middle' style='${scaledStyle}'>${this.escapeXml(char)}</text>`;
+				currentX += scaledWidth;
+			});
+
+			return svg;
+		},
+
+		createCircleTextSVG(text, shape, canvasSize, style) {
+			const chars = text.split('');
+			const len = chars.length;
+			const radius = 110 * (canvasSize / 120);
+			const centerX = canvasSize / 2;
+			const centerY = canvasSize / 2;
+			const angleStep = (2 * Math.PI) / len;
+			let svg = "";
+
+			chars.forEach((char, i) => {
+				const angle = i * angleStep - Math.PI / 2;
+				const x = centerX + Math.cos(angle) * radius;
+				const y = centerY + Math.sin(angle) * radius;
+				const rotation = (angle * 180 / Math.PI) + 90;
+				svg += `<text x='${x}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${rotation} ${x} ${y})'>${this.escapeXml(char)}</text>`;
+			});
+
+			return svg;
+		},
+
+		createPinchTextSVG(text, shape, canvasSize, style) {
+			const chars = text.split('');
+			const len = chars.length;
+			const mid = (len - 1) / 2;
+			let svg = "";
+
+			const scales = chars.map((_, i) => {
+				const dist = Math.abs(i - mid);
+				const maxDist = mid || 1;
+				return 1 - 0.5 * (1 - dist / maxDist);
+			});
+
+			const charWidth = canvasSize * 0.08;
+			const totalWidth = scales.reduce((acc, scale) => acc + charWidth * scale, 0);
+			let currentX = (canvasSize - totalWidth) / 2;
+
+			chars.forEach((char, i) => {
+				const scale = scales[i];
+				const scaledWidth = charWidth * scale;
+				const scaledFontSize = shape.fontSize * scale;
+				const scaledStyle = style.replace(
+					`font-size:${shape.fontSize}px`,
+					`font-size:${scaledFontSize}px`
+				);
+				svg += `<text x='${currentX + scaledWidth / 2}' y='${canvasSize / 2}' text-anchor='middle' dominant-baseline='middle' style='${scaledStyle}'>${this.escapeXml(char)}</text>`;
+				currentX += scaledWidth;
+			});
+
+			return svg;
+		},
+
+		buildStyleWithOutline(baseStyle, shape, scale = 1) {
+			let style = baseStyle;
+			if (shape.fontWeight) style += ` font-weight:${shape.fontWeight};`;
+			if (shape.fontStyle) style += ` font-style:${shape.fontStyle};`;
+			if (shape.outlineEnabled && shape.outlineColor && shape.outlineThickness > 0) {
+				style += ` stroke:${shape.outlineColor}; stroke-width:${shape.outlineThickness * scale}px; paint-order: stroke fill;`;
+			}
+			return style;
+		},
+
+		escapeXml(str) {
+			return String(str).replace(/[<>&'"]/g, function (c) {
+				switch (c) {
+					case '<': return '&lt;';
+					case '>': return '&gt;';
+					case '&': return '&amp;';
+					case '\'': return '&apos;';
+					case '"': return '&quot;';
+				}
+			});
+		},
+
+		getTextPathForShape(shapeType, intensity, text = "") {
 			const width = 120;
 			const height = 120;
 			const centerY = 60;
-			const startX = 20;
-			const endX = 100;
-			const curve = (intensity / 100) * 30; // Scale intensity to pixel offset
-
+			
 			switch (shapeType) {
-				case "arch":
-					return `M ${startX} ${centerY} Q ${width / 2} ${centerY - curve
-						} ${endX} ${centerY}`;
-				case "bridge":
-					return `M ${startX} ${centerY} Q ${width / 2} ${centerY + curve
-						} ${endX} ${centerY}`;
-				case "bulge":
-					return `M ${startX} ${centerY} Q ${width / 2} ${centerY + curve
-						} ${endX} ${centerY}`;
+				case "arch": {
+					const radius = 130;
+					const len = text.length || 1;
+					const angleRange = Math.PI * 0.8;
+					const startAngle = -Math.PI / 2 - angleRange / 2;
+					
+					return { type: "arch", radius, len, angleRange, startAngle };
+				}
+				case "valley": {
+					const len = text.length || 1;
+					const mid = (len - 1) / 2;
+					return { type: "valley", mid, len };
+				}
+				case "bulge": {
+					const len = text.length || 1;
+					const mid = (len - 1) / 2;
+					return { type: "bulge", mid, len };
+				}
 				case "flag":
-					return `M ${startX} ${centerY} Q ${width / 3} ${centerY - curve} ${width / 2
-						} ${centerY} Q ${(2 * width) / 3} ${centerY + curve
-						} ${endX} ${centerY}`;
-				case "wave":
-					return `M ${startX} ${centerY} Q ${width / 3} ${centerY + curve} ${width / 2
-						} ${centerY} Q ${(2 * width) / 3} ${centerY - curve
-						} ${endX} ${centerY}`;
-				case "angle":
-					return `M ${startX} ${centerY + curve / 2} L ${width / 2} ${centerY - curve / 2
-						} L ${endX} ${centerY + curve / 2}`;
-				case "circle":
-					const radius = 30 + (intensity / 100) * 10;
-					return `M ${width / 2 - radius
-						} ${centerY} A ${radius} ${radius} 0 0 1 ${width / 2 + radius
-						} ${centerY}`;
+				case "wave": {
+					const len = text.length || 1;
+					return { type: "flag", len };
+				}
+				case "distort": {
+					const len = text.length || 1;
+					return { type: "distort", len };
+				}
+				case "circle": {
+					const radius = 110;
+					const len = text.length || 1;
+					return { type: "circle", radius, len };
+				}
+				case "pinch": {
+					const len = text.length || 1;
+					const mid = (len - 1) / 2;
+					return { type: "pinch", mid, len };
+				}
 				default:
-					return `M ${startX} ${centerY} L ${endX} ${centerY}`;
+					return { type: "none" };
 			}
 		},
 		updateLastTextShape(key, value) {
@@ -946,31 +1123,9 @@ export default {
 			for (var i = 0; i < this.svgShapes.length; i++) {
 				var shape = this.svgShapes[i];
 				if (shape.type === "text") {
-					// Scale positions and font size for material
 					const scale = size / 120; // 120 is preview canvas size
-					const scaledX = shape.x * scale;
-					const scaledY = shape.y * scale;
 					const scaledFontSize = shape.fontSize * scale;
-
-					var style = `font-size:${scaledFontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
-					if (shape.fontWeight) style += ` font-weight:${shape.fontWeight};`;
-					if (shape.fontStyle) style += ` font-style:${shape.fontStyle};`;
-					if (shape.outlineEnabled && shape.outlineColor && shape.outlineThickness > 0) {
-						style += ` stroke:${shape.outlineColor}; stroke-width:${shape.outlineThickness * scale}px; paint-order: stroke fill;`;
-					}
-
-					if (shape.textShape && shape.textShape !== "none") {
-						// Apply text path transformation for shapes (scaled)
-						var pathData = this.getTextPathForShapeScaled(
-							shape.textShape,
-							shape.shapeIntensity || 50,
-							size
-						);
-						svg += `<defs><path id='textPath${i}' d='${pathData}' fill='none'/></defs>`;
-						svg += `<text style='${style}'><textPath href='#textPath${i}' startOffset='50%' text-anchor='middle'>${shape.value}</textPath></text>`;
-					} else {
-						svg += `<text x='${scaledX}' y='${scaledY}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${shape.value}</text>`;
-					}
+					svg += this.createTextElementSVGMaterial(shape, size, scale);
 				}
 			}
 
@@ -978,41 +1133,243 @@ export default {
 			return svg;
 		},
 
-		getTextPathForShapeScaled(shapeType, intensity, size) {
-			// Generate path for material size
-			const centerY = size / 2;
-			const startX = size * 0.167; // ~20/120
-			const endX = size * 0.833; // ~100/120
-			const curve = (intensity / 100) * (size * 0.25); // Scale curve with size
+		createTextElementSVGMaterial(shape, size, scale) {
+			const scaledFontSize = shape.fontSize * scale;
+			const baseStyle = `font-size:${scaledFontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
+			const styleWithStroke = this.buildStyleWithOutline(baseStyle, shape, scale);
+			
+			if (shape.textShape && shape.textShape !== "none") {
+				return this.createShapedTextSVGMaterial(shape, size, styleWithStroke, scale);
+			} else {
+				const scaledX = shape.x * scale;
+				const scaledY = shape.y * scale;
+				return `<text x='${scaledX}' y='${scaledY}' text-anchor='middle' dominant-baseline='middle' style='${styleWithStroke}'>${shape.value}</text>`;
+			}
+		},
 
+		createShapedTextSVGMaterial(shape, size, style, scale) {
+			const text = shape.value;
+			const len = text.length;
+			let svg = "";
+
+			if (shape.textShape === "arch") {
+				const shapeData = this.getTextPathForShapeScaled(shape.textShape, shape.shapeIntensity, size, text);
+				const chars = text.split('');
+				chars.forEach((char, i) => {
+					const angle = shapeData.startAngle + (i / (len - 1 || 1)) * shapeData.angleRange;
+					const x = size / 2 + Math.cos(angle) * shapeData.radius;
+					const y = size / 2 + Math.sin(angle) * shapeData.radius;
+					const rotation = (angle * 180 / Math.PI) + 90;
+					svg += `<text x='${x}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${rotation} ${x} ${y})'>${this.escapeXml(char)}</text>`;
+				});
+			} else if (shape.textShape === "valley") {
+				svg += this.createValleyTextSVGMaterial(text, shape, size, style, scale);
+			} else if (shape.textShape === "bulge") {
+				svg += this.createBulgeTextSVGMaterial(text, shape, size, style, scale);
+			} else if (shape.textShape === "flag" || shape.textShape === "wave") {
+				svg += this.createFlagTextSVGMaterial(text, shape, size, style, scale);
+			} else if (shape.textShape === "distort") {
+				svg += this.createDistortTextSVGMaterial(text, shape, size, style, scale);
+			} else if (shape.textShape === "circle") {
+				svg += this.createCircleTextSVGMaterial(text, shape, size, style, scale);
+			} else if (shape.textShape === "pinch") {
+				svg += this.createPinchTextSVGMaterial(text, shape, size, style, scale);
+			}
+
+			return svg;
+		},
+
+		createValleyTextSVGMaterial(text, shape, size, style, scale) {
+			const chars = text.split('');
+			const len = chars.length;
+			const mid = (len - 1) / 2;
+			let svg = "";
+
+			const charWidth = size * 0.08;
+			const totalWidth = charWidth * len;
+			let currentX = (size - totalWidth) / 2;
+
+			chars.forEach((char, i) => {
+				const normX = (i - mid) / (mid || 1);
+				const y = size / 2 - 50 * scale * (normX * normX) + 25 * scale;
+				const tiltAngle = normX * -40;
+				svg += `<text x='${currentX + charWidth / 2}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${tiltAngle} ${currentX + charWidth / 2} ${y})'>${this.escapeXml(char)}</text>`;
+				currentX += charWidth;
+			});
+
+			return svg;
+		},
+
+		createBulgeTextSVGMaterial(text, shape, size, style, scale) {
+			const chars = text.split('');
+			const len = chars.length;
+			const mid = (len - 1) / 2;
+			let svg = "";
+
+			const scales = chars.map((_, i) => {
+				const dist = Math.abs(i - mid);
+				const maxDist = mid || 1;
+				return 1 + 0.8 * (1 - dist / maxDist);
+			});
+
+			const charWidth = size * 0.08;
+			const totalWidth = scales.reduce((acc, s) => acc + charWidth * s, 0);
+			let currentX = (size - totalWidth) / 2;
+
+			chars.forEach((char, i) => {
+				const charScale = scales[i];
+				const scaledWidth = charWidth * charScale;
+				const scaledFontSize = shape.fontSize * scale * charScale;
+				const scaledStyle = style.replace(
+					`font-size:${shape.fontSize * scale}px`,
+					`font-size:${scaledFontSize}px`
+				);
+				svg += `<text x='${currentX + scaledWidth / 2}' y='${size / 2}' text-anchor='middle' dominant-baseline='middle' style='${scaledStyle}'>${this.escapeXml(char)}</text>`;
+				currentX += scaledWidth;
+			});
+
+			return svg;
+		},
+
+		createFlagTextSVGMaterial(text, shape, size, style, scale) {
+			const chars = text.split('');
+			let svg = "";
+
+			const charWidth = size * 0.08;
+			const totalWidth = charWidth * chars.length;
+			let currentX = (size - totalWidth) / 2;
+
+			chars.forEach((char, i) => {
+				const y = size / 2 + Math.sin(i * 0.5) * 20 * scale;
+				svg += `<text x='${currentX + charWidth / 2}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${this.escapeXml(char)}</text>`;
+				currentX += charWidth;
+			});
+
+			return svg;
+		},
+
+		createDistortTextSVGMaterial(text, shape, size, style, scale) {
+			const chars = text.split('');
+			const len = chars.length;
+			let svg = "";
+
+			const scales = chars.map((_, i) => 0.5 + 0.5 * (i / (len - 1 || 1)));
+			const charWidth = size * 0.08;
+			const totalWidth = scales.reduce((acc, s) => acc + charWidth * s, 0);
+			let currentX = (size - totalWidth) / 2;
+
+			chars.forEach((char, i) => {
+				const charScale = scales[i];
+				const scaledWidth = charWidth * charScale;
+				const scaledFontSize = shape.fontSize * scale * charScale;
+				const scaledStyle = style.replace(
+					`font-size:${shape.fontSize * scale}px`,
+					`font-size:${scaledFontSize}px`
+				);
+				svg += `<text x='${currentX + scaledWidth / 2}' y='${size / 2}' text-anchor='middle' dominant-baseline='middle' style='${scaledStyle}'>${this.escapeXml(char)}</text>`;
+				currentX += scaledWidth;
+			});
+
+			return svg;
+		},
+
+		createCircleTextSVGMaterial(text, shape, size, style, scale) {
+			const chars = text.split('');
+			const len = chars.length;
+			const radius = 110 * scale;
+			const centerX = size / 2;
+			const centerY = size / 2;
+			const angleStep = (2 * Math.PI) / len;
+			let svg = "";
+
+			chars.forEach((char, i) => {
+				const angle = i * angleStep - Math.PI / 2;
+				const x = centerX + Math.cos(angle) * radius;
+				const y = centerY + Math.sin(angle) * radius;
+				const rotation = (angle * 180 / Math.PI) + 90;
+				svg += `<text x='${x}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${rotation} ${x} ${y})'>${this.escapeXml(char)}</text>`;
+			});
+
+			return svg;
+		},
+
+		createPinchTextSVGMaterial(text, shape, size, style, scale) {
+			const chars = text.split('');
+			const len = chars.length;
+			const mid = (len - 1) / 2;
+			let svg = "";
+
+			const scales = chars.map((_, i) => {
+				const dist = Math.abs(i - mid);
+				const maxDist = mid || 1;
+				return 1 - 0.5 * (1 - dist / maxDist);
+			});
+
+			const charWidth = size * 0.08;
+			const totalWidth = scales.reduce((acc, s) => acc + charWidth * s, 0);
+			let currentX = (size - totalWidth) / 2;
+
+			chars.forEach((char, i) => {
+				const charScale = scales[i];
+				const scaledWidth = charWidth * charScale;
+				const scaledFontSize = shape.fontSize * scale * charScale;
+				const scaledStyle = style.replace(
+					`font-size:${shape.fontSize * scale}px`,
+					`font-size:${scaledFontSize}px`
+				);
+				svg += `<text x='${currentX + scaledWidth / 2}' y='${size / 2}' text-anchor='middle' dominant-baseline='middle' style='${scaledStyle}'>${this.escapeXml(char)}</text>`;
+				currentX += scaledWidth;
+			});
+
+			return svg;
+		},
+
+		getTextPathForShapeScaled(shapeType, intensity, size, text = "") {
+			// Generate character positioning data for material size
+			const centerY = size / 2;
+			const startX = size * 0.167;
+			const endX = size * 0.833;
+			
 			switch (shapeType) {
-				case "arch":
-					return `M ${startX} ${centerY} Q ${size / 2} ${centerY - curve
-						} ${endX} ${centerY}`;
-				case "bridge":
-					return `M ${startX} ${centerY} Q ${size / 2} ${centerY + curve
-						} ${endX} ${centerY}`;
-				case "bulge":
-					return `M ${startX} ${centerY} Q ${size / 2} ${centerY + curve
-						} ${endX} ${centerY}`;
+				case "arch": {
+					const radius = 130 * (size / 120);
+					const len = text.length || 1;
+					const angleRange = Math.PI * 0.8;
+					const startAngle = -Math.PI / 2 - angleRange / 2;
+					
+					return { type: "arch", radius, len, angleRange, startAngle };
+				}
+				case "valley": {
+					const len = text.length || 1;
+					const mid = (len - 1) / 2;
+					return { type: "valley", mid, len, curveScale: 50 * (size / 120) };
+				}
+				case "bulge": {
+					const len = text.length || 1;
+					const mid = (len - 1) / 2;
+					return { type: "bulge", mid, len };
+				}
 				case "flag":
-					return `M ${startX} ${centerY} Q ${size / 3} ${centerY - curve} ${size / 2
-						} ${centerY} Q ${(2 * size) / 3} ${centerY + curve
-						} ${endX} ${centerY}`;
-				case "wave":
-					return `M ${startX} ${centerY} Q ${size / 3} ${centerY + curve} ${size / 2
-						} ${centerY} Q ${(2 * size) / 3} ${centerY - curve
-						} ${endX} ${centerY}`;
-				case "angle":
-					return `M ${startX} ${centerY + curve / 2} L ${size / 2} ${centerY - curve / 2
-						} L ${endX} ${centerY + curve / 2}`;
-				case "circle":
-					const radius = size * 0.25 + (intensity / 100) * (size * 0.083);
-					return `M ${size / 2 - radius
-						} ${centerY} A ${radius} ${radius} 0 0 1 ${size / 2 + radius
-						} ${centerY}`;
+				case "wave": {
+					const len = text.length || 1;
+					return { type: "flag", len };
+				}
+				case "distort": {
+					const len = text.length || 1;
+					return { type: "distort", len };
+				}
+				case "circle": {
+					const radius = 110 * (size / 120);
+					const len = text.length || 1;
+					return { type: "circle", radius, len };
+				}
+				case "pinch": {
+					const len = text.length || 1;
+					const mid = (len - 1) / 2;
+					return { type: "pinch", mid, len };
+				}
 				default:
-					return `M ${startX} ${centerY} L ${endX} ${centerY}`;
+					return { type: "none" };
 			}
 		},
 	},
@@ -1133,8 +1490,8 @@ export default {
 }
 
 .color {
-	height: 28px;
-	width: 28px;
+	height: 24px;
+	width: 24px;
 	border-radius: 50%;
 	background-color: aqua;
 	margin-left: 10px;
