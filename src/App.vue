@@ -479,6 +479,7 @@ export default {
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
+							base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1005.png",
 							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1005.png",
 							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1005.png",
 							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1005.png",
@@ -487,6 +488,13 @@ export default {
 							metalness:
 								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1005.png",
 						},
+						build: {
+							parameters: {
+								base: true,
+								size: 2048,
+								layers: [],
+							},
+						},
 					}
 				);
 
@@ -494,6 +502,7 @@ export default {
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
+							base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1006.png",
 							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1006.png",
 							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1006.png",
 							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1006.png",
@@ -502,6 +511,13 @@ export default {
 							metalness:
 								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1006.png",
 						},
+						build: {
+							parameters: {
+								base: true,
+								size: 2048,
+								layers: [],
+							},
+						},
 					}
 				);
 
@@ -509,6 +525,7 @@ export default {
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
+							base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1003.png",
 							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1003.png",
 							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1003.png",
 							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1003.png",
@@ -517,6 +534,13 @@ export default {
 							metalness:
 								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1003.png",
 						},
+						build: {
+							parameters: {
+								base: true,
+								size: 2048,
+								layers: [],
+							},
+						},
 					}
 				);
 
@@ -524,6 +548,7 @@ export default {
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
+							base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1004.png",
 							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1004.png",
 							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1004.png",
 							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1004.png",
@@ -531,6 +556,13 @@ export default {
 							// 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1004.png",
 							metalness:
 								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1004.png",
+						},
+						build: {
+							parameters: {
+								base: true, // Enable base layer building for text editing
+								size: 2048,
+								layers: [],
+							},
 						},
 					}
 				);
@@ -552,6 +584,7 @@ export default {
 							parameters: {
 								base: true, // Enable base layer building for text editing
 								size: 2048,
+								layers: []
 							},
 						},
 					}
@@ -561,6 +594,7 @@ export default {
 					this.$refs["wrapView"].instance(),
 					{
 						resources: {
+							base: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
 							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
 							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1002.png",
 							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1002.png",
@@ -568,6 +602,13 @@ export default {
 							// 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1002.png",
 							metalness:
 								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1002.png",
+						},
+						build: {
+							parameters: {
+								base: true,
+								size: 2048,
+								layers: [],
+							},
 						},
 					}
 				);
@@ -927,8 +968,6 @@ export default {
 					this.currentSvgLayer
 						.load({ svgData: svgData })
 						.then(() => {
-							panel.texture().editLayer(layerIndex);
-							panel.texture().render();
 							// panel.texture().endEditing();
 
 							var color = new WrapviewParameter(this.currentPanel(), "textColor");
@@ -938,23 +977,49 @@ export default {
 								descriptor: "Black",
 							});
 
-// this.materials.get("COLLAR")?.settings.buildable.diffuse.baseLayer().setColorParameter(color);
-// this.materials.get("COLLAR")?.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
+							// Apply the gray tint to all panels
+							const colorTargets = [
+								"COLLAR",
+								"BACK_NECK_TAPE",
+								"LEFT_ARM_SLEEVE",
+								"RIGHT_ARM_SLEEVE",
+								"FRONT_BODY",
+								"BACK_BODY",
+							];
 
-// this.materials.get("BACK_NECK_TAPE")?.settings.buildable.diffuse.baseLayer().setColorParameter(color);
-// this.materials.get("BACK_NECK_TAPE")?.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
+							const applyColor = colorTargets.map((id) => {
+								const mat = this.materials.get(id);
+								if (!mat) return Promise.resolve();
 
-// this.materials.get("LEFT_ARM_SLEEVE")?.settings.buildable.diffuse.baseLayer().setColorParameter(color);
-// this.materials.get("LEFT_ARM_SLEEVE")?.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
+								const baseLayer =
+									mat.settings?.buildable?.diffuse?.baseLayer?.();
+								if (!baseLayer) {
+									console.warn(`No baseLayer for ${id}`);
+									return Promise.resolve();
+								}
 
-this.materials.get("RIGHT_ARM_SLEEVE")?.settings.buildable.diffuse.baseLayer().setColorParameter(color);
-this.materials.get("RIGHT_ARM_SLEEVE")?.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
+								return mat
+									.beginEditing?.()
+									?.then(() => {
+										baseLayer.setColorParameter(color);
+										baseLayer.setNeedsUpdate();
+										mat.material().map = mat.texture()?.texture();
+										mat.material().needsUpdate = true;
 
-this.materials.get("FRONT_BODY")?.settings.buildable.diffuse.baseLayer().setColorParameter(color);
-this.materials.get("FRONT_BODY")?.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
+										// Only update the SVG layer editing for FRONT_BODY
+										if (id === "FRONT_BODY") {
+											mat.texture().editLayer(layerIndex);
+											mat.texture().render();
+										}
+									})
+									.catch((err) =>
+										console.warn(`Failed to apply color for ${id}`, err)
+									);
+							});
 
-// this.materials.get("BACK_BODY")?.settings.buildable.diffuse.baseLayer().setColorParameter(color);
-// this.materials.get("BACK_BODY")?.settings.buildable.diffuse.baseLayer().setNeedsUpdate();
+							Promise.all(applyColor).catch((err) =>
+								console.warn("Color apply error", err)
+							);
 						})
 						.catch((err) => {
 							console.error("Error loading SVG layer:", err);
