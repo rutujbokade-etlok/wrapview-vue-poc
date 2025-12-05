@@ -87,16 +87,17 @@
 		</div>
 		<div class="content">
 			<div id="tab1" :class="{ 'display-none': activeTab !== 0 }">
-				<div style="padding: 10px; display: flex; flex-direction: row; flex-wrap: wrap; gap: 15px;">
-					<label style="flex: 1; min-width: 200px;">
+				<div style="padding: 10px; display: flex; flex-direction: column; flex-wrap: wrap; gap: 15px;">
+					<label style="flex: 1;">
 						<span style="display: block; margin-bottom: 5px; font-weight: bold">Edit Text</span>
 						<input type="text" v-model="svgTextValue" placeholder="Enter text"
 							style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
 					</label>
-					<label style="flex: 0 0 150px; min-width: 150px;">
+					<label style="flex: 1; width: 100%;">
 						<span style="display: block; margin-bottom: 5px; font-weight: bold">Text Size (px)</span>
-						<input type="number" v-model.number="svgFontSize" min="8" max="72" step="1"
-							style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
+						<!-- <input type="number" v-model.number="svgFontSize" min="8" max="72" step="1"
+							style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" /> -->
+						<input type="range" v-model="svgFontSize" min="0" max="50" class="styled-range w-full" />
 					</label>
 				</div>
 			</div>
@@ -209,10 +210,11 @@
 					<div class="color" style="background-color: #ff00ff" @click="svgOutlineColor = '#FF00FF'"
 						title="Magenta"></div>
 				</div>
-				<div class="outline-footer" style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
+				<div class="outline-footer" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
 					<p style="margin: 0;">Outline Thickness (pt)</p>
-					<input type="number" v-model.number="svgOutlineThickness" min="0" max="10" step="0.01"
-						style="width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
+					<!-- <input type="number" v-model.number="svgOutlineThickness" min="0" max="10" step="0.01"
+						style="width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" /> -->
+					<input type="range" v-model="svgOutlineThickness" min="0" max="10" class="styled-range flex-1" />
 				</div>
 			</div>
 			<div id="tab5" :class="{ 'display-none': activeTab !== 4 }">
@@ -1088,7 +1090,8 @@ export default {
 }
 
 .content {
-	margin-top: 10px;
+	margin: 10px 0;
+	padding-bottom: 30px;
 }
 
 #tab2 {
