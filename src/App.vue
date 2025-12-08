@@ -1,31 +1,47 @@
 <template>
-	<div class="header">
-		<div><img src="/icons/Arrow.png" alt="" srcset="" /></div>
-		<div>
-			<img src="/icons/Logo.png" alt="" srcset="" />
-		</div>
-		<div></div>
-	</div>
-	<Wrapview class="wrapViewContainer" ref="wrapView" @onInitalized="environmentMounted"></Wrapview>
-	<div id="orbitControls"></div>
-	<section class="bottom-panel">
-		<div class="svg-preview-panel" style="display: none;">
-			<h4>SVG Preview</h4>
-			<div style="display: flex; align-items: center; gap: 10px">
-				<canvas id="svgPreviewCanvas" width="120" height="120" style="border: 1px solid #ccc"></canvas>
-				<div style="display: flex; flex-direction: column; gap: 5px">
-					<label>Text Color: <input type="color" v-model="svgTextColor" /></label>
-					<label>Font Size:
-						<input type="number" v-model="svgFontSize" min="8" max="72" /></label>
-					<label>Decoration:
-						<select v-model="svgTextDecoration">
-							<option value="">None</option>
-							<option value="bold">Bold</option>
-							<option value="italic">Italic</option>
-							<option value="bold italic">Bold Italic</option>
-						</select>
-					</label>
-					<button @click="addSvgLayer" style="
+  <div class="header">
+    <div><img src="/icons/Arrow.png" alt="" srcset="" /></div>
+    <div>
+      <img src="/icons/Logo.png" alt="" srcset="" />
+    </div>
+    <div></div>
+  </div>
+  <Wrapview
+    class="wrapViewContainer"
+    ref="wrapView"
+    @onInitalized="environmentMounted"
+  ></Wrapview>
+  <div id="orbitControls"></div>
+  <section class="bottom-panel">
+    <div class="svg-preview-panel" style="display: none">
+      <h4>SVG Preview</h4>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <canvas
+          id="svgPreviewCanvas"
+          width="120"
+          height="120"
+          style="border: 1px solid #ccc"
+        ></canvas>
+        <div style="display: flex; flex-direction: column; gap: 5px">
+          <label
+            >Text Color: <input type="color" v-model="svgTextColor"
+          /></label>
+          <label
+            >Font Size:
+            <input type="number" v-model="svgFontSize" min="8" max="72"
+          /></label>
+          <label
+            >Decoration:
+            <select v-model="svgTextDecoration">
+              <option value="">None</option>
+              <option value="bold">Bold</option>
+              <option value="italic">Italic</option>
+              <option value="bold italic">Bold Italic</option>
+            </select>
+          </label>
+          <button
+            @click="addSvgLayer"
+            style="
               margin-top: 10px;
               padding: 8px 12px;
               background-color: #0070c8;
@@ -34,983 +50,2254 @@
               border-radius: 4px;
               cursor: pointer;
               width: 100%;
-            ">
-						Apply to 3D Model
-					</button>
-				</div>
-			</div>
-		</div>
-		<div class="thumb-container">
-			<div class="thumb"></div>
-		</div>
-		<div class="top-tabs">
-			<div class="tab">
-				<img src="/icons/Colors.png" />
-			</div>
-			<div class="tab">
-				<img src="/icons/Layers.png" />
-			</div>
-			<div class="tab active">
-				<img src="/icons/TextEditor.png" />
-			</div>
-			<div class="tab">
-				<img src="/icons/Images.png" />
-			</div>
-			<div class="tab">
-				<img src="/icons/Personalize.png" />
-			</div>
-			<div class="tab">
-				<img src="/icons/Done.png" />
-			</div>
-		</div>
-		<div class="bottom-tabs">
-			<div class="tab" :class="{ active: activeTab === 0 }" v-on:click="changeTab(0)">
-				<img src="/icons/Edit.svg" />
-				<p>Edit Text</p>
-			</div>
-			<div class="tab" :class="{ active: activeTab === 1 }" v-on:click="changeTab(1)">
-				<img src="/icons/EditColor.svg" style="height: 24px; width: 24px" />
-				<p>Edit Color</p>
-			</div>
-			<div class="tab" :class="{ active: activeTab === 2 }" v-on:click="changeTab(2)">
-				<img src="/icons/Aa.svg" />
-				<p>Font</p>
-			</div>
-			<div class="tab" :class="{ active: activeTab === 3 }" v-on:click="changeTab(3)">
-				<img src="/icons/AOutline.svg" />
-				<p>Outline</p>
-			</div>
-			<div class="tab" :class="{ active: activeTab === 4 }" v-on:click="changeTab(4)">
-				<img src="/icons/Arch.svg" />
-				<p>Shape</p>
-			</div>
-		</div>
-		<div class="content">
-			<div id="tab1" :class="{ 'display-none': activeTab !== 0 }">
-				<div style="padding: 10px; display: flex; flex-direction: column; flex-wrap: wrap; gap: 15px;">
-					<label style="flex: 1;">
-						<span style="display: block; margin-bottom: 5px; font-weight: bold">Edit Text</span>
-						<input type="text" v-model="svgTextValue" placeholder="Enter text"
-							style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
-					</label>
-					<label style="flex: 1; width: 100%;">
-						<span style="display: block; margin-bottom: 5px; font-weight: bold">Text Size (px)</span>
-						<!-- <input type="number" v-model.number="svgFontSize" min="8" max="72" step="1"
+            "
+          >
+            Apply to 3D Model
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="thumb-container">
+      <div class="thumb"></div>
+    </div>
+    <div class="top-tabs">
+      <div class="tab">
+        <img src="/icons/Colors.png" />
+      </div>
+      <div class="tab">
+        <img src="/icons/Layers.png" />
+      </div>
+      <div class="tab active">
+        <img src="/icons/TextEditor.png" />
+      </div>
+      <div class="tab">
+        <img src="/icons/Images.png" />
+      </div>
+      <div class="tab">
+        <img src="/icons/Personalize.png" />
+      </div>
+      <div class="tab">
+        <img src="/icons/Done.png" />
+      </div>
+    </div>
+    <div class="bottom-tabs">
+      <div
+        class="tab"
+        :class="{ active: activeTab === 0 }"
+        v-on:click="changeTab(0)"
+      >
+        <img src="/icons/Edit.svg" />
+        <p>Edit Text</p>
+      </div>
+      <div
+        class="tab"
+        :class="{ active: activeTab === 1 }"
+        v-on:click="changeTab(1)"
+      >
+        <img src="/icons/EditColor.svg" style="height: 24px; width: 24px" />
+        <p>Edit Color</p>
+      </div>
+      <div
+        class="tab"
+        :class="{ active: activeTab === 2 }"
+        v-on:click="changeTab(2)"
+      >
+        <img src="/icons/Aa.svg" />
+        <p>Font</p>
+      </div>
+      <div
+        class="tab"
+        :class="{ active: activeTab === 3 }"
+        v-on:click="changeTab(3)"
+      >
+        <img src="/icons/AOutline.svg" />
+        <p>Outline</p>
+      </div>
+      <div
+        class="tab"
+        :class="{ active: activeTab === 4 }"
+        v-on:click="changeTab(4)"
+      >
+        <img src="/icons/Arch.svg" />
+        <p>Shape</p>
+      </div>
+    </div>
+    <div class="content">
+      <div id="tab1" :class="{ 'display-none': activeTab !== 0 }">
+        <div
+          style="
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            gap: 15px;
+          "
+        >
+          <label style="flex: 1">
+            <span style="display: block; margin-bottom: 5px; font-weight: bold"
+              >Edit Text</span
+            >
+            <input
+              type="text"
+              v-model="svgTextValue"
+              placeholder="Enter text"
+              style="
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+              "
+            />
+          </label>
+          <label style="flex: 1; width: 100%">
+            <span style="display: block; margin-bottom: 5px; font-weight: bold"
+              >Text Size (px)</span
+            >
+            <!-- <input type="number" v-model.number="svgFontSize" min="8" max="72" step="1"
 							style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" /> -->
-						<input type="range" v-model="svgFontSize" min="0" max="50" class="styled-range w-full" />
-					</label>
-				</div>
-			</div>
-			<div id="tab2" :class="{ 'display-none': activeTab !== 1 }">
-				<div class="color-container">
-					<div class="color" style="background-color: #FFFFFF; border: 1px solid #DDDDDD" @click="svgTextColor = '#FFFFFF'" title="White"></div>
-					<div class="color" style="background-color: #000000" @click="svgTextColor = '#000000'" title="Black"></div>
-					<div class="color" style="background: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc), linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc); background-size: 8px 8px; background-position: 0 0, 4px 4px; border: 1px solid #DDDDDD" @click="svgTextColor = 'transparent'" title="Transparent"></div>
-					<div class="color" style="background-color: #595F5E" @click="svgTextColor = '#595F5E'" title="Dark Gray"></div>
-					<div class="color" style="background-color: #FF0086" @click="svgTextColor = '#FF0086'" title="Hot Pink"></div>
-					<div class="color" style="background-color: #FFA5B6" @click="svgTextColor = '#FFA5B6'" title="Light Pink"></div>
-					<div class="color" style="background-color: #FF80B6" @click="svgTextColor = '#FF80B6'" title="Medium Pink"></div>
-					<div class="color" style="background-color: #AD3D80" @click="svgTextColor = '#AD3D80'" title="Purple Pink"></div>
-					<div class="color" style="background-color: #732735" @click="svgTextColor = '#732735'" title="Maroon"></div>
-					<div class="color" style="background-color: #C30C27" @click="svgTextColor = '#C30C27'" title="Red"></div>
-					<div class="color" style="background-color: #EF2B3B" @click="svgTextColor = '#EF2B3B'" title="Bright Red"></div>
-					<div class="color" style="background-color: #FF761C" @click="svgTextColor = '#FF761C'" title="Orange"></div>
-					<div class="color" style="background-color: #FFAB29" @click="svgTextColor = '#FFAB29'" title="Light Orange"></div>
-					<div class="color" style="background-color: #FFC032" @click="svgTextColor = '#FFC032'" title="Gold Orange"></div>
-					<div class="color" style="background-color: #FFD725" @click="svgTextColor = '#FFD725'" title="Yellow"></div>
-					<div class="color" style="background-color: #F9E85C" @click="svgTextColor = '#F9E85C'" title="Light Yellow"></div>
-					<div class="color" style="background-color: #815E24" @click="svgTextColor = '#815E24'" title="Brown"></div>
-					<div class="color" style="background-color: #60C8A9" @click="svgTextColor = '#60C8A9'" title="Mint"></div>
-					<div class="color" style="background-color: #98DD22" @click="svgTextColor = '#98DD22'" title="Lime Green"></div>
-					<div class="color" style="background-color: #289B24" @click="svgTextColor = '#289B24'" title="Green"></div>
-					<div class="color" style="background-color: #005E31" @click="svgTextColor = '#005E31'" title="Dark Green"></div>
-					<div class="color" style="background-color: #27472D" @click="svgTextColor = '#27472D'" title="Forest Green"></div>
-					<div class="color" style="background-color: #00686C" @click="svgTextColor = '#00686C'" title="Teal"></div>
-					<div class="color" style="background-color: #0091AA" @click="svgTextColor = '#0091AA'" title="Cyan"></div>
-					<div class="color" style="background-color: #1DA6EB" @click="svgTextColor = '#1DA6EB'" title="Sky Blue"></div>
-					<div class="color" style="background-color: #86B6E6" @click="svgTextColor = '#86B6E6'" title="Light Blue"></div>
-					<div class="color" style="background-color: #045594" @click="svgTextColor = '#045594'" title="Blue"></div>
-					<div class="color" style="background-color: #0E3EB0" @click="svgTextColor = '#0E3EB0'" title="Royal Blue"></div>
-					<div class="color" style="background-color: #073575" @click="svgTextColor = '#073575'" title="Dark Blue"></div>
-					<div class="color" style="background-color: #032C4F" @click="svgTextColor = '#032C4F'" title="Navy"></div>
-					<div class="color" style="background-color: #A271BF" @click="svgTextColor = '#A271BF'" title="Light Purple"></div>
-					<div class="color" style="background-color: #B523B1" @click="svgTextColor = '#B523B1'" title="Purple"></div>
-				</div>
-			</div>
-			<div id="tab3" :class="{ 'display-none': activeTab !== 2 }">
-				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Asap Condensed' }"
-					@click="svgFontFamily = 'Asap Condensed'">
-					<h4 style="font-weight: 600;font-family: 'Asap Condensed', sans-serif;">{{ svgTextValue }}</h4>
-					<p>Asap Condensed</p>
-				</div>
-				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Baloo 2' }"
-					@click="svgFontFamily = 'Baloo 2'">
-					<h4 style="font-weight: 600;font-family: 'Baloo 2', sans-serif;">{{ svgTextValue }}</h4>
-					<p>Baloo</p>
-				</div>
-				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Caprasimo' }"
-					@click="svgFontFamily = 'Caprasimo'">
-					<h4 style="font-weight: 600;font-family: 'Caprasimo', serif;">{{ svgTextValue }}</h4>
-					<p>Caprasimo</p>
-				</div>
-				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Caramel' }"
-					@click="svgFontFamily = 'Caramel'">
-					<h4 style="font-weight: 600;font-family: 'Caramel', cursive">{{ svgTextValue }}</h4>
-					<p>Caramel</p>
-				</div>
-			</div>
-			<div id="tab4" :class="{ 'display-none': activeTab !== 3 }">
-				<div class="outline-header">
-					<div>
-						<p>Enable Outline</p>
-						<input type="checkbox" v-model="svgOutlineEnabled"
-							style="width: 20px; height: 20px; cursor: pointer;" />
-					</div>
-					<p>{{ svgOutlineThickness }}pt</p>
-				</div>
-				<div class="color-container">
-					<div class="color" style="background-color: #FFFFFF; border: 1px solid #DDDDDD" @click="svgOutlineColor = '#FFFFFF'" title="White"></div>
-					<div class="color" style="background-color: #000000" @click="svgOutlineColor = '#000000'" title="Black"></div>
-					<div class="color" style="background-color: #595F5E" @click="svgOutlineColor = '#595F5E'" title="Dark Gray"></div>
-					<div class="color" style="background-color: #C30C27" @click="svgOutlineColor = '#C30C27'" title="Red"></div>
-					<div class="color" style="background-color: #FF761C" @click="svgOutlineColor = '#FF761C'" title="Orange"></div>
-					<div class="color" style="background-color: #FFD725" @click="svgOutlineColor = '#FFD725'" title="Yellow"></div>
-					<div class="color" style="background-color: #289B24" @click="svgOutlineColor = '#289B24'" title="Green"></div>
-					<div class="color" style="background-color: #0091AA" @click="svgOutlineColor = '#0091AA'" title="Cyan"></div>
-					<div class="color" style="background-color: #045594" @click="svgOutlineColor = '#045594'" title="Blue"></div>
-					<div class="color" style="background-color: #B523B1" @click="svgOutlineColor = '#B523B1'" title="Purple"></div>
-					<div class="color" style="background-color: #AD3D80" @click="svgOutlineColor = '#AD3D80'" title="Purple Pink"></div>
-				</div>
-				<div class="outline-footer" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-					<p style="margin: 0;">Outline Thickness (pt)</p>
-					<!-- <input type="number" v-model.number="svgOutlineThickness" min="0" max="10" step="0.01"
+            <input
+              type="range"
+              v-model="svgFontSize"
+              min="0"
+              max="50"
+              class="styled-range w-full"
+            />
+          </label>
+        </div>
+      </div>
+      <div id="tab2" :class="{ 'display-none': activeTab !== 1 }">
+        <div class="color-container">
+          <div
+            class="color"
+            style="background-color: #ffffff; border: 1px solid #dddddd"
+            @click="svgTextColor = '#FFFFFF'"
+            title="White"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #000000"
+            @click="svgTextColor = '#000000'"
+            title="Black"
+          ></div>
+          <div
+            class="color"
+            style="
+              background: linear-gradient(
+                  45deg,
+                  #ccc 25%,
+                  transparent 25%,
+                  transparent 75%,
+                  #ccc 75%,
+                  #ccc
+                ),
+                linear-gradient(
+                  45deg,
+                  #ccc 25%,
+                  transparent 25%,
+                  transparent 75%,
+                  #ccc 75%,
+                  #ccc
+                );
+              background-size: 8px 8px;
+              background-position: 0 0, 4px 4px;
+              border: 1px solid #dddddd;
+            "
+            @click="svgTextColor = 'transparent'"
+            title="Transparent"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #595f5e"
+            @click="svgTextColor = '#595F5E'"
+            title="Dark Gray"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #ff0086"
+            @click="svgTextColor = '#FF0086'"
+            title="Hot Pink"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #ffa5b6"
+            @click="svgTextColor = '#FFA5B6'"
+            title="Light Pink"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #ff80b6"
+            @click="svgTextColor = '#FF80B6'"
+            title="Medium Pink"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #ad3d80"
+            @click="svgTextColor = '#AD3D80'"
+            title="Purple Pink"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #732735"
+            @click="svgTextColor = '#732735'"
+            title="Maroon"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #c30c27"
+            @click="svgTextColor = '#C30C27'"
+            title="Red"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #ef2b3b"
+            @click="svgTextColor = '#EF2B3B'"
+            title="Bright Red"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #ff761c"
+            @click="svgTextColor = '#FF761C'"
+            title="Orange"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #ffab29"
+            @click="svgTextColor = '#FFAB29'"
+            title="Light Orange"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #ffc032"
+            @click="svgTextColor = '#FFC032'"
+            title="Gold Orange"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #ffd725"
+            @click="svgTextColor = '#FFD725'"
+            title="Yellow"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #f9e85c"
+            @click="svgTextColor = '#F9E85C'"
+            title="Light Yellow"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #815e24"
+            @click="svgTextColor = '#815E24'"
+            title="Brown"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #60c8a9"
+            @click="svgTextColor = '#60C8A9'"
+            title="Mint"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #98dd22"
+            @click="svgTextColor = '#98DD22'"
+            title="Lime Green"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #289b24"
+            @click="svgTextColor = '#289B24'"
+            title="Green"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #005e31"
+            @click="svgTextColor = '#005E31'"
+            title="Dark Green"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #27472d"
+            @click="svgTextColor = '#27472D'"
+            title="Forest Green"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #00686c"
+            @click="svgTextColor = '#00686C'"
+            title="Teal"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #0091aa"
+            @click="svgTextColor = '#0091AA'"
+            title="Cyan"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #1da6eb"
+            @click="svgTextColor = '#1DA6EB'"
+            title="Sky Blue"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #86b6e6"
+            @click="svgTextColor = '#86B6E6'"
+            title="Light Blue"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #045594"
+            @click="svgTextColor = '#045594'"
+            title="Blue"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #0e3eb0"
+            @click="svgTextColor = '#0E3EB0'"
+            title="Royal Blue"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #073575"
+            @click="svgTextColor = '#073575'"
+            title="Dark Blue"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #032c4f"
+            @click="svgTextColor = '#032C4F'"
+            title="Navy"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #a271bf"
+            @click="svgTextColor = '#A271BF'"
+            title="Light Purple"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #b523b1"
+            @click="svgTextColor = '#B523B1'"
+            title="Purple"
+          ></div>
+        </div>
+      </div>
+      <div id="tab3" :class="{ 'display-none': activeTab !== 2 }">
+        <div
+          class="font-variants"
+          :class="{ 'active-font': svgFontFamily === 'Asap Condensed' }"
+          @click="svgFontFamily = 'Asap Condensed'"
+        >
+          <h4
+            style="font-weight: 600; font-family: 'Asap Condensed', sans-serif"
+          >
+            {{ svgTextValue }}
+          </h4>
+          <p>Asap Condensed</p>
+        </div>
+        <div
+          class="font-variants"
+          :class="{ 'active-font': svgFontFamily === 'Baloo 2' }"
+          @click="svgFontFamily = 'Baloo 2'"
+        >
+          <h4 style="font-weight: 600; font-family: 'Baloo 2', sans-serif">
+            {{ svgTextValue }}
+          </h4>
+          <p>Baloo</p>
+        </div>
+        <div
+          class="font-variants"
+          :class="{ 'active-font': svgFontFamily === 'Caprasimo' }"
+          @click="svgFontFamily = 'Caprasimo'"
+        >
+          <h4 style="font-weight: 600; font-family: 'Caprasimo', serif">
+            {{ svgTextValue }}
+          </h4>
+          <p>Caprasimo</p>
+        </div>
+        <div
+          class="font-variants"
+          :class="{ 'active-font': svgFontFamily === 'Caramel' }"
+          @click="svgFontFamily = 'Caramel'"
+        >
+          <h4 style="font-weight: 600; font-family: 'Caramel', cursive">
+            {{ svgTextValue }}
+          </h4>
+          <p>Caramel</p>
+        </div>
+      </div>
+      <div id="tab4" :class="{ 'display-none': activeTab !== 3 }">
+        <div class="outline-header">
+          <div>
+            <p>Enable Outline</p>
+            <input
+              type="checkbox"
+              v-model="svgOutlineEnabled"
+              style="width: 20px; height: 20px; cursor: pointer"
+            />
+          </div>
+          <p>{{ svgOutlineThickness }}pt</p>
+        </div>
+        <div class="color-container">
+          <div
+            class="color"
+            style="background-color: #ffffff; border: 1px solid #dddddd"
+            @click="svgOutlineColor = '#FFFFFF'"
+            title="White"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #000000"
+            @click="svgOutlineColor = '#000000'"
+            title="Black"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #595f5e"
+            @click="svgOutlineColor = '#595F5E'"
+            title="Dark Gray"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #c30c27"
+            @click="svgOutlineColor = '#C30C27'"
+            title="Red"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #ff761c"
+            @click="svgOutlineColor = '#FF761C'"
+            title="Orange"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #ffd725"
+            @click="svgOutlineColor = '#FFD725'"
+            title="Yellow"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #289b24"
+            @click="svgOutlineColor = '#289B24'"
+            title="Green"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #0091aa"
+            @click="svgOutlineColor = '#0091AA'"
+            title="Cyan"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #045594"
+            @click="svgOutlineColor = '#045594'"
+            title="Blue"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #b523b1"
+            @click="svgOutlineColor = '#B523B1'"
+            title="Purple"
+          ></div>
+          <div
+            class="color"
+            style="background-color: #ad3d80"
+            @click="svgOutlineColor = '#AD3D80'"
+            title="Purple Pink"
+          ></div>
+        </div>
+        <div
+          class="outline-footer"
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+          "
+        >
+          <p style="margin: 0">Outline Thickness (pt)</p>
+          <!-- <input type="number" v-model.number="svgOutlineThickness" min="0" max="10" step="0.01"
 						style="width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" /> -->
-					<input type="range" v-model="svgOutlineThickness" min="0" max="10" class="styled-range flex-1" />
-				</div>
-			</div>
-			<div id="tab5" :class="{ 'display-none': activeTab !== 4 }">
-				<div class="style-content">
-					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'none' }"
-						@click="svgTextShape = 'none'">
-						<h2>None</h2>
-					</div>
-					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'arch' }"
-						@click="svgTextShape = 'arch'">
-						<img src="/icons/arch.png" />
-					</div>
-					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'valley' }"
-						@click="svgTextShape = 'valley'">
-						<img src="/icons/wave.png" />
-					</div>
-					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'bulge' }"
-						@click="svgTextShape = 'bulge'">
-						<img src="/icons/buldge.png" />
-					</div>
-					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'flag' }"
-						@click="svgTextShape = 'flag'">
-						<img src="/icons/flag.png" />
-					</div>
-					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'distort' }"
-						@click="svgTextShape = 'distort'">
-						<img src="/icons/angle.png" />
-					</div>
-					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'circle' }"
-						@click="svgTextShape = 'circle'">
-						<img src="/icons/circle.png" />
-					</div>
-					<div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'pinch' }"
-						@click="svgTextShape = 'pinch'">
-						<img src="/icons/pinch.png" />
-					</div>
-				</div>
-				<div class="style-footer">
-					<p>Shape Intensity: {{ svgShapeIntensity }}%</p>
-					<input type="range" v-model="svgShapeIntensity" min="0" max="100" class="styled-range" />
-				</div>
-			</div>
-		</div>
-	</section>
+          <input
+            type="range"
+            v-model="svgOutlineThickness"
+            min="0"
+            max="10"
+            class="styled-range flex-1"
+          />
+        </div>
+      </div>
+      <div id="tab5" :class="{ 'display-none': activeTab !== 4 }">
+        <div class="style-content">
+          <div
+            class="fontStyle"
+            :class="{ 'active-shape': svgTextShape === 'none' }"
+            @click="svgTextShape = 'none'"
+          >
+            <h2>None</h2>
+          </div>
+          <div
+            class="fontStyle"
+            :class="{ 'active-shape': svgTextShape === 'arch' }"
+            @click="svgTextShape = 'arch'"
+          >
+            <img src="/icons/arch.png" />
+          </div>
+          <div
+            class="fontStyle"
+            :class="{ 'active-shape': svgTextShape === 'valley' }"
+            @click="svgTextShape = 'valley'"
+          >
+            <img src="/icons/wave.png" />
+          </div>
+          <div
+            class="fontStyle"
+            :class="{ 'active-shape': svgTextShape === 'bulge' }"
+            @click="svgTextShape = 'bulge'"
+          >
+            <img src="/icons/buldge.png" />
+          </div>
+          <div
+            class="fontStyle"
+            :class="{ 'active-shape': svgTextShape === 'flag' }"
+            @click="svgTextShape = 'flag'"
+          >
+            <img src="/icons/flag.png" />
+          </div>
+          <div
+            class="fontStyle"
+            :class="{ 'active-shape': svgTextShape === 'distort' }"
+            @click="svgTextShape = 'distort'"
+          >
+            <img src="/icons/angle.png" />
+          </div>
+          <div
+            class="fontStyle"
+            :class="{ 'active-shape': svgTextShape === 'circle' }"
+            @click="svgTextShape = 'circle'"
+          >
+            <img src="/icons/circle.png" />
+          </div>
+          <div
+            class="fontStyle"
+            :class="{ 'active-shape': svgTextShape === 'pinch' }"
+            @click="svgTextShape = 'pinch'"
+          >
+            <img src="/icons/pinch.png" />
+          </div>
+        </div>
+        <div class="style-footer">
+          <p>Shape Intensity: {{ svgShapeIntensity }}%</p>
+          <input
+            type="range"
+            v-model="svgShapeIntensity"
+            min="0"
+            max="100"
+            class="styled-range"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
 </template>
 <script>
 import {
-	Wrapview,
-	Wizard,
-	WrapviewInputControl,
+  Wrapview,
+  Wizard,
+  WrapviewInputControl,
 } from "@etlok-systems/wrapview-vue";
 import {
-	OrbitControls,
-	WrapviewSettings,
-	WrapviewObject,
-	WrapviewMaterialSet,
-	WrapviewShadowMaterial,
-	WrapviewTexturedMaterial,
-	WrapviewStitchMaterial,
-	WrapviewLight,
-	WrapviewTextLayer,
-	WrapviewParameter,
-	WrapviewUtils,
-	WrapviewFontSet,
-	WrapviewSvgLayer,
+  OrbitControls,
+  WrapviewSettings,
+  WrapviewObject,
+  WrapviewMaterialSet,
+  WrapviewShadowMaterial,
+  WrapviewTexturedMaterial,
+  WrapviewStitchMaterial,
+  WrapviewLight,
+  WrapviewTextLayer,
+  WrapviewParameter,
+  WrapviewUtils,
+  WrapviewFontSet,
+  WrapviewSvgLayer,
 } from "@etlok-systems/wrapview";
 
 export default {
-	components: { Wrapview, WrapviewInputControl },
-	data() {
-		return {
-			materials: null,
-			size: {
-				height: 0,
-				width: 0,
-			},
-			activeTab: 0,
-			svgShapes: [],
-			svgTextColor: "#ffffff",
-			svgFontSize: 6,
-			svgTextDecoration: "",
-			svgFontFamily: "Asap Condensed",
-			svgTextValue: "WARRIORS",
-			svgTextShape: "none",
-			svgShapeIntensity: 50,
-			svgOutlineColor: "#000000",
-			svgOutlineThickness: 1,
-			svgOutlineEnabled: false,
-			svgInitialized: false,
-			currentSvgLayer: null,
-		};
-	},
-	mounted() {
-		this.$nextTick(() => {
-			this.initializeSvgText();
-		});
-	},
-	methods: {
-		changeTab(tab) {
-			this.activeTab = tab;
-		},
-		environmentMounted() {
-			this.calculateDimensions();
-			this.loadEnvironment().then(() =>
-				this.loadLights().then(() =>
-					this.loadMaterials().then(({ materials }) =>
-						this.loadObjects(materials).then(() => {
-							this.$refs["wrapView"].show();
-							this.materials = materials;
+  components: { Wrapview, WrapviewInputControl },
+  data() {
+    return {
+      materials: null,
+      size: {
+        height: 0,
+        width: 0,
+      },
+      activeTab: 0,
+      svgShapes: [],
+      svgTextColor: "#ffffff",
+      svgFontSize: 6,
+      svgTextDecoration: "",
+      svgFontFamily: "Asap Condensed",
+      svgTextValue: "WARRIORS",
+      svgTextShape: "none",
+      svgShapeIntensity: 50,
+      svgOutlineColor: "#000000",
+      svgOutlineThickness: 1,
+      svgOutlineEnabled: false,
+      svgInitialized: false,
+      currentSvgLayer: null,
+    };
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.initializeSvgText();
+    });
+  },
+  watch: {
+    svgTextColor(val) {
+      this.updateLastTextShape("fill", val);
+    },
+    svgFontSize(val) {
+      this.updateLastTextShape("fontSize", val);
+    },
+    svgTextDecoration(val) {
+      let fontWeight = "";
+      let fontStyle = "";
+      if (val === "bold") fontWeight = "bold";
+      if (val === "italic") fontStyle = "italic";
+      if (val === "bold italic") {
+        fontWeight = "bold";
+        fontStyle = "italic";
+      }
+      this.updateLastTextShape("fontWeight", fontWeight);
+      this.updateLastTextShape("fontStyle", fontStyle);
+    },
+    svgFontFamily(val) {
+      this.updateLastTextShape("fontFamily", val);
+    },
+    svgTextValue(val) {
+      this.updateLastTextShape("value", val);
+    },
+    svgTextShape(val) {
+      this.updateLastTextShape("textShape", val);
+    },
+    svgShapeIntensity(val) {
+      this.updateLastTextShape("shapeIntensity", val);
+    },
+    svgOutlineColor(val) {
+      this.updateLastTextShape("outlineColor", val);
+    },
+    svgOutlineThickness(val) {
+      this.updateLastTextShape("outlineThickness", val);
+    },
+    svgOutlineEnabled(val) {
+      this.updateLastTextShape("outlineEnabled", val);
+    },
+  },
+  methods: {
+    changeTab(tab) {
+      this.activeTab = tab;
+    },
+    environmentMounted() {
+      this.calculateDimensions();
+      this.loadEnvironment().then(() =>
+        this.loadLights().then(() =>
+          this.loadMaterials().then(({ materials }) =>
+            this.loadObjects(materials).then(() => {
+              this.$refs["wrapView"].show();
+              this.materials = materials;
 
-							this.$refs["wrapView"].instance().animate();
+              this.$refs["wrapView"].instance().animate();
 
-							this.addSvgLayer();
-						})
-					)
-				)
-			);
-		},
-		calculateDimensions() {
-			this.size = {
-				width: window.innerWidth,
-				height: window.innerHeight,
-			};
-		},
-		loadEnvironment() {
-			return new Promise((resolve, reject) => {
-				WrapviewSettings.init();
-				var bgColor = 0xf3f4f6;
+              this.addSvgLayer();
+            })
+          )
+        )
+      );
+    },
+    calculateDimensions() {
+      this.size = {
+        width: window.innerWidth,
+        height: window.innerHeight,
+      };
+    },
+    loadEnvironment() {
+      return new Promise((resolve, reject) => {
+        WrapviewSettings.init();
+        var bgColor = 0xf3f4f6;
 
-				this.$refs["wrapView"].viewer().init({
-					renderer: {
-						antialias: true,
-						alpha: false,
-						preserveDrawingBuffer: true,
-						background: bgColor,
-					},
-					mode: this.mode,
-					agent: this.size,
-				});
+        this.$refs["wrapView"].viewer().init({
+          renderer: {
+            antialias: true,
+            alpha: false,
+            preserveDrawingBuffer: true,
+            background: bgColor,
+          },
+          mode: this.mode,
+          agent: this.size,
+        });
 
-				var orbitController = new OrbitControls(
-					this.$refs["wrapView"].instance().camera(),
-					document.getElementById("orbitControls")
-				);
-				orbitController.enabled = false;
-				orbitController.enableZoom = false;
-				orbitController.enableDamping = false;
-				orbitController.minDistance = 1;
-				orbitController.maxDistance = 2;
+        var orbitController = new OrbitControls(
+          this.$refs["wrapView"].instance().camera(),
+          document.getElementById("orbitControls")
+        );
+        orbitController.enabled = false;
+        orbitController.enableZoom = true;
+        orbitController.enableDamping = false;
+        orbitController.minDistance = 1;
+        orbitController.maxDistance = 2;
 
-				//Set Initial Camera
-				this.resetCamera();
+        //Set Initial Camera
+        this.resetCamera();
 
-				this.$refs["wrapView"].instance().setController(orbitController);
-				resolve();
-			});
-		},
-		resetCamera() {
-			let x = 0;
-			let y = 0;
-			let z = -1.5;
-			this.$refs["wrapView"].instance().camera().position.set(x, y, z);
-		},
-		loadLights() {
-			return new Promise((resolve, reject) => {
-				const dirLight = new WrapviewLight({
-					type: "directional",
-					color: 0xffffff,
-					intensity: 0.5,
-					position: { x: 1, y: 1, z: -2 },
-					target: { x: 0, y: 0, z: 0 },
-				});
+        this.$refs["wrapView"].instance().setController(orbitController);
+        resolve();
+      });
+    },
+    resetCamera() {
+      let x = 0;
+      let y = 0;
+      let z = -1.5;
+      this.$refs["wrapView"].instance().camera().position.set(x, y, z);
+    },
+    loadLights() {
+      return new Promise((resolve, reject) => {
+        // const dirLight = new WrapviewLight({
+        // 	type: "directional",
+        // 	color: 0xffffff,
+        // 	intensity: 0.5,
+        // 	position: { x: 1, y: 1, z: -2 },
+        // 	target: { x: 0, y: 0, z: 0 },
+        // });
 
-				const hemLight = new WrapviewLight({
-					type: "hemisphere",
-					color: 0xffffff,
-					intensity: 1,
-				});
+        // const hemLight = new WrapviewLight({
+        // 	type: "hemisphere",
+        // 	color: 0xffffff,
+        // 	intensity: 1,
+        // });
 
-				this.$refs["wrapView"]
-					.instance()
-					.scene()
-					.add(hemLight.createLight(), dirLight.createLight());
+        // this.$refs["wrapView"]
+        // 	.instance()
+        // 	.scene()
+        // 	.add(hemLight.createLight(), dirLight.createLight());
 
-				const envPaths = [
-					"/environment/px.jpg",
-					"/environment/nx.jpg",
-					"/environment/py.jpg",
-					"/environment/ny.jpg",
-					"/environment/pz.jpg",
-					"/environment/nz.jpg",
-				];
+        // const envPaths = [
+        // 	"/environment/px.jpg",
+        // 	"/environment/nx.jpg",
+        // 	"/environment/py.jpg",
+        // 	"/environment/ny.jpg",
+        // 	"/environment/pz.jpg",
+        // 	"/environment/nz.jpg",
+        // ];
 
-				const envLight = new WrapviewLight({ type: "ambient", intensity: 1 });
-				this.$refs["wrapView"].instance().scene().add(envLight.createLight());
+        // const envLight = new WrapviewLight({ type: "ambient", intensity: 1 });
+        // this.$refs["wrapView"].instance().scene().add(envLight.createLight());
 
-				envLight
-					.loadEnvironmentMap(envPaths)
-					.then((texture) => {
-						this.$refs["wrapView"].instance().scene().environment = texture;
-					})
-					.catch((err) =>
-						console.error("Failed to load environment map:", err)
-					);
+        // envLight
+        // 	.loadEnvironmentMap(envPaths)
+        // 	.then((texture) => {
+        // 		this.$refs["wrapView"].instance().scene().environment = texture;
+        // 	})
+        // 	.catch((err) =>
+        // 		console.error("Failed to load environment map:", err)
+        // );
 
-				resolve();
-			});
-		},
-		loadMaterials() {
-			return new Promise((resolve, reject) => {
-				this.$refs["wrapView"].instance().updateOffsets();
-				const promises = [];
+        var rectAreaLight1 = new WrapviewLight({
+          type: "rectarea",
+          color: 0xffffff,
+          intensity: 5,
+          position: { x: 4, y: 25, z: 9 },
+          width: 30,
+          height: 30,
+        });
 
-				var materials = new WrapviewMaterialSet();
-				const shadow = new WrapviewShadowMaterial(
-					this.$refs["wrapView"].instance(),
-					{
-						resources: {
-							alpha:
-								"https://combibmark.s3.amazonaws.com/models/shadow_ultra_light_inverted.png",
-						},
-					}
-				);
+        var rectAreaLight2 = new WrapviewLight({
+          type: "rectarea",
+          color: 0xffffff,
+          intensity: 5,
+          position: { x: 4, y: 12, z: -8 },
+          width: 30,
+          height: 30,
+        });
 
+        var rectAreaLight3 = new WrapviewLight({
+          type: "rectarea",
+          color: 0xffffff,
+          intensity: 7,
+          position: { x: 0, y: 55, z: 0 },
+          width: 30,
+          height: 30,
+        });
 
+        rectAreaLight1 = rectAreaLight1.createLight();
+        rectAreaLight1.lookAt(0, 0, 0);
+        rectAreaLight2 = rectAreaLight2.createLight();
+        rectAreaLight2.lookAt(0, 0, 0);
+        rectAreaLight3 = rectAreaLight3.createLight();
+        rectAreaLight3.lookAt(0, 0, 0);
 
-			var color = new WrapviewParameter(null, "textColor");
-			color.set({
-				type: "fixed",
-				value: "#2b2b2b",
-				descriptor: "Black",
-			});
+        this.$refs["wrapView"]
+          .instance()
+          .scene()
+          .add(rectAreaLight1, rectAreaLight2, rectAreaLight3);
 
-				const collar = new WrapviewTexturedMaterial(
-					this.$refs["wrapView"].instance(),
-					{
-						resources: {
-							base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1005.png",
-							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1005.png",
-							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1005.png",
-							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1005.png",
-							// roughness:
-							// 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1005.png",
-							metalness:
-								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1005.png",
-						},
-						build: {
-							parameters: {
-								base: true,
-								size: 2048,
-								layers: [],
-								color: color
-							},
-						},
-					}
-				);
+        resolve();
+      });
+    },
+    loadMaterials() {
+      return new Promise((resolve, reject) => {
+        this.$refs["wrapView"].instance().updateOffsets();
+        const promises = [];
 
-				const backNeckTape = new WrapviewTexturedMaterial(
-					this.$refs["wrapView"].instance(),
-					{
-						resources: {
-							base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1006.png",
-							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1006.png",
-							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1006.png",
-							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1006.png",
-							// roughness:
-							// 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1006.png",
-							metalness:
-								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1006.png",
-						},
-						build: {
-							parameters: {
-								base: true,
-								size: 2048,
-								layers: [],
-								color: color
-							},
-						},
-					}
-				);
+        var materials = new WrapviewMaterialSet();
+        const shadow = new WrapviewShadowMaterial(
+          this.$refs["wrapView"].instance(),
+          {
+            resources: {
+              alpha:
+                "https://combibmark.s3.amazonaws.com/models/shadow_ultra_light_inverted.png",
+            },
+          }
+        );
 
-				const leftArmSleeve = new WrapviewTexturedMaterial(
-					this.$refs["wrapView"].instance(),
-					{
-						resources: {
-							base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1003.png",
-							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1003.png",
-							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1003.png",
-							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1003.png",
-							// roughness:
-							// 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1003.png",
-							metalness:
-								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1003.png",
-						},
-						build: {
-							parameters: {
-								base: true,
-								size: 2048,
-								layers: [],
-								color: color
-							},
-						},
-					}
-				);
+        var color = new WrapviewParameter(null, "textColor");
+        color.set({
+          type: "fixed",
+          value: "#2b2b2b",
+          descriptor: "Black",
+        });
 
-				const rightArmSleeve = new WrapviewTexturedMaterial(
-					this.$refs["wrapView"].instance(),
-					{
-						resources: {
-							base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1004.png",
-							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1004.png",
-							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1004.png",
-							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1004.png",
-							// roughness:
-							// 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1004.png",
-							metalness:
-								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1004.png",
-						},
-						build: {
-							parameters: {
-								base: true, // Enable base layer building for text editing
-								size: 2048,
-								layers: [],
-								color: color
-							},
-						},
-					}
-				);
+        const collar = new WrapviewTexturedMaterial(
+          this.$refs["wrapView"].instance(),
+          {
+            resources: {
+              base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1005.png",
+              diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1005.png",
+              normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1005.png",
+              alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1005.png",
+              // roughness:
+              // 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1005.png",
+              metalness:
+                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1005.png",
+            },
+            build: {
+              parameters: {
+                base: true,
+                size: 2048,
+                layers: [],
+                color: color,
+              },
+            },
+          }
+        );
 
-				const frontBody = new WrapviewTexturedMaterial(
-					this.$refs["wrapView"].instance(),
-					{
-						resources: {
-							base: "/3001C_SMALL/textures/F_3001C_SMALL_common.png", // Base layer for text editing
-							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
-							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1001.png",
-							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1001.png",
-							// roughness:
-							// 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1001.png",
-							metalness:
-								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1001.png",
-						},
-						build: {
-							parameters: {
-								base: true, // Enable base layer building for text editing
-								size: 2048,
-								layers: [],
-								color: color
-							},
-						},
-					}
-				);
+        const backNeckTape = new WrapviewTexturedMaterial(
+          this.$refs["wrapView"].instance(),
+          {
+            resources: {
+              base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1006.png",
+              diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1006.png",
+              normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1006.png",
+              alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1006.png",
+              // roughness:
+              // 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1006.png",
+              metalness:
+                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1006.png",
+            },
+            build: {
+              parameters: {
+                base: true,
+                size: 2048,
+                layers: [],
+                color: color,
+              },
+            },
+          }
+        );
 
-				const backBody = new WrapviewTexturedMaterial(
-					this.$refs["wrapView"].instance(),
-					{
-						resources: {
-							base: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
-							diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
-							normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1002.png",
-							alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1002.png",
-							// roughness:
-							// 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1002.png",
-							metalness:
-								"/3001C_SMALL/textures/F_3001C_SMALL_metalness_1002.png",
-						},
-						build: {
-							parameters: {
-								base: true,
-								size: 2048,
-								layers: [],
-								color: color
-							},
-						},
-					}
-				);
+        const leftArmSleeve = new WrapviewTexturedMaterial(
+          this.$refs["wrapView"].instance(),
+          {
+            resources: {
+              base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1003.png",
+              diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1003.png",
+              normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1003.png",
+              alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1003.png",
+              // roughness:
+              // 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1003.png",
+              metalness:
+                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1003.png",
+            },
+            build: {
+              parameters: {
+                base: true,
+                size: 2048,
+                layers: [],
+                color: color,
+              },
+            },
+          }
+        );
 
-				const stitches = new WrapviewStitchMaterial(
-					this.$refs["wrapView"].instance(),
-					{
-						resources: {
-							diffuse: "/3001C_SMALL/textures/Basic_Offset_2193.png",
-						},
-					}
-				);
+        const rightArmSleeve = new WrapviewTexturedMaterial(
+          this.$refs["wrapView"].instance(),
+          {
+            resources: {
+              base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1004.png",
+              diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1004.png",
+              normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1004.png",
+              alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1004.png",
+              // roughness:
+              // 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1004.png",
+              metalness:
+                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1004.png",
+            },
+            build: {
+              parameters: {
+                base: true, // Enable base layer building for text editing
+                size: 2048,
+                layers: [],
+                color: color,
+              },
+            },
+          }
+        );
 
-				promises.push(
-					collar.init(),
-					backNeckTape.init(),
-					leftArmSleeve.init(),
-					rightArmSleeve.init(),
-					frontBody.init(),
-					backBody.init(),
-					shadow.init(),
-					stitches.init()
-				);
+        const frontBody = new WrapviewTexturedMaterial(
+          this.$refs["wrapView"].instance(),
+          {
+            resources: {
+              base: "/3001C_SMALL/textures/F_3001C_SMALL_common.png", // Base layer for text editing
+              diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
+              normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1001.png",
+              alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1001.png",
+              // roughness:
+              // 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1001.png",
+              metalness:
+                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1001.png",
+            },
+            build: {
+              parameters: {
+                base: true, // Enable base layer building for text editing
+                size: 2048,
+                layers: [],
+                color: color,
+              },
+            },
+          }
+        );
 
-				materials.add("COLLAR", collar);
-				materials.add("BACK_NECK_TAPE", backNeckTape);
-				materials.add("LEFT_ARM_SLEEVE", leftArmSleeve);
-				materials.add("RIGHT_ARM_SLEEVE", rightArmSleeve);
-				materials.add("FRONT_BODY", frontBody);
-				materials.add("BACK_BODY", backBody);
-				materials.add("EXT_Stitches", stitches);
-				materials.add("99_ShadowPanel", shadow);
+        const backBody = new WrapviewTexturedMaterial(
+          this.$refs["wrapView"].instance(),
+          {
+            resources: {
+              base: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
+              diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
+              normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1002.png",
+              alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1002.png",
+              // roughness:
+              // 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1002.png",
+              metalness:
+                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1002.png",
+            },
+            build: {
+              parameters: {
+                base: true,
+                size: 2048,
+                layers: [],
+                color: color,
+              },
+            },
+          }
+        );
 
-				const allPromises = Promise.all(promises);
-				allPromises.then(
-					() => {
-						resolve({
-							materials: materials,
-						});
-					},
-					(e) => {
-						console.log("Error!", e);
-					}
-				);
-			});
-		},
-		loadObjects(materials) {
-			return new Promise((resolve, reject) => {
-				const item = new WrapviewObject({
-					transform: {
-						rotation: {
-							y: -Math.PI,
-						},
-						position: {
-							y: 0.16,
-						},
-						scale: {
-							x: 0.8,
-							y: 0.8,
-							z: 0.8,
-						},
-					},
-				});
-				item.setMaterials(materials);
-				item.load("/3001C_SMALL/3001C_SMALL_LOD0.glb").then(() => {
-					this.$refs["wrapView"].instance().addObject(item);
-				});
+        const stitches = new WrapviewStitchMaterial(
+          this.$refs["wrapView"].instance(),
+          {
+            resources: {
+              diffuse: "/3001C_SMALL/textures/Basic_Offset_2193.png",
+            },
+          }
+        );
 
-				resolve();
-			});
-		},
-		currentPanel() {
-			// Get the material from the materials set using the proper getter method
-			// A "panel" in this context is a WrapviewTexturedMaterial that can have text layers
-			const panel = this.materials.get("FRONT_BODY");
-			if (!panel) {
-				console.error("FRONT_BODY panel not found in materials");
-				return null;
-			}
-			return panel;
-		},
+        promises.push(
+          collar.init(),
+          backNeckTape.init(),
+          leftArmSleeve.init(),
+          rightArmSleeve.init(),
+          frontBody.init(),
+          backBody.init(),
+          shadow.init(),
+          stitches.init()
+        );
 
-		initializeSvgText() {
-			if (this.svgInitialized) return;
-			let fontWeight = "";
-			let fontStyle = "";
-			if (this.svgTextDecoration === "bold") fontWeight = "bold";
-			if (this.svgTextDecoration === "italic") fontStyle = "italic";
-			if (this.svgTextDecoration === "bold italic") {
-				fontWeight = "bold";
-				fontStyle = "italic";
-			}
+        materials.add("COLLAR", collar);
+        materials.add("BACK_NECK_TAPE", backNeckTape);
+        materials.add("LEFT_ARM_SLEEVE", leftArmSleeve);
+        materials.add("RIGHT_ARM_SLEEVE", rightArmSleeve);
+        materials.add("FRONT_BODY", frontBody);
+        materials.add("BACK_BODY", backBody);
+        materials.add("EXT_Stitches", stitches);
+        materials.add("99_ShadowPanel", shadow);
 
-			this.svgShapes.push({
-				type: "text",
-				value: this.svgTextValue,
-				x: 60,
-				y: 60,
-				fontSize: this.svgFontSize,
-				fill: this.svgTextColor,
-				fontFamily: this.svgFontFamily,
-				fontWeight,
-				fontStyle,
-				textShape: this.svgTextShape,
-				shapeIntensity: this.svgShapeIntensity,
-				outlineColor: this.svgOutlineColor,
-				outlineThickness: this.svgOutlineThickness,
-				outlineEnabled: this.svgOutlineEnabled,
-			});
-			this.svgInitialized = true;
-			this.updateSvgPreview();
-		},
+        const allPromises = Promise.all(promises);
+        allPromises.then(
+          () => {
+            resolve({
+              materials: materials,
+            });
+          },
+          (e) => {
+            console.log("Error!", e);
+          }
+        );
+      });
+    },
+    loadObjects(materials) {
+      return new Promise((resolve, reject) => {
+        const item = new WrapviewObject({
+          transform: {
+            rotation: {
+              y: -Math.PI,
+            },
+            position: {
+              y: 0.16,
+            },
+            scale: {
+              x: 0.8,
+              y: 0.8,
+              z: 0.8,
+            },
+          },
+        });
+        item.setMaterials(materials);
+        item.load("/3001C_SMALL/3001C_SMALL_LOD0.glb").then(() => {
+          this.$refs["wrapView"].instance().addObject(item);
+        });
 
-		updateSvgPreview() {
-			var svgData = this.buildSvgData();
-			var canvas = document.getElementById("svgPreviewCanvas");
-			if (!canvas) return;
-			var ctx = canvas.getContext("2d");
-			var DOMURL = window.URL || window.webkitURL || window;
-			var img = new window.Image();
-			var svg = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
-			var url = DOMURL.createObjectURL(svg);
-			img.onload = function () {
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
-				ctx.drawImage(img, 0, 0);
-				DOMURL.revokeObjectURL(url);
-			};
-			img.src = url;
-		},
-		buildSvgData() {
-			var svg = `<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'>`;
-			for (var i = 0; i < this.svgShapes.length; i++) {
-				var shape = this.svgShapes[i];
-				if (shape.type === "text") {
-					svg += this.createTextElementSVG(shape, 120);
-				}
-			}
-			svg += `</svg>`;
-			return svg;
-		},
-	},
+        resolve();
+      });
+    },
+    currentPanel() {
+      // Get the material from the materials set using the proper getter method
+      // A "panel" in this context is a WrapviewTexturedMaterial that can have text layers
+      const panel = this.materials.get("FRONT_BODY");
+      if (!panel) {
+        console.error("FRONT_BODY panel not found in materials");
+        return null;
+      }
+      return panel;
+    },
+
+    initializeSvgText() {
+      if (this.svgInitialized) return;
+      let fontWeight = "";
+      let fontStyle = "";
+      if (this.svgTextDecoration === "bold") fontWeight = "bold";
+      if (this.svgTextDecoration === "italic") fontStyle = "italic";
+      if (this.svgTextDecoration === "bold italic") {
+        fontWeight = "bold";
+        fontStyle = "italic";
+      }
+
+      this.svgShapes.push({
+        type: "text",
+        value: this.svgTextValue,
+        x: 60,
+        y: 60,
+        fontSize: this.svgFontSize,
+        fill: this.svgTextColor,
+        fontFamily: this.svgFontFamily,
+        fontWeight,
+        fontStyle,
+        textShape: this.svgTextShape,
+        shapeIntensity: this.svgShapeIntensity,
+        outlineColor: this.svgOutlineColor,
+        outlineThickness: this.svgOutlineThickness,
+        outlineEnabled: this.svgOutlineEnabled,
+      });
+      this.svgInitialized = true;
+      this.updateSvgPreview();
+    },
+
+    updateSvgPreview() {
+      var svgData = this.buildSvgData();
+      var canvas = document.getElementById("svgPreviewCanvas");
+      if (!canvas) return;
+      var ctx = canvas.getContext("2d");
+      var DOMURL = window.URL || window.webkitURL || window;
+      var img = new window.Image();
+      var svg = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+      var url = DOMURL.createObjectURL(svg);
+      img.onload = function () {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+        DOMURL.revokeObjectURL(url);
+      };
+      img.src = url;
+    },
+    buildSvgData() {
+      var svg = `<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'>`;
+      for (var i = 0; i < this.svgShapes.length; i++) {
+        var shape = this.svgShapes[i];
+        if (shape.type === "text") {
+          svg += this.createTextElementSVG(shape, 120);
+        }
+      }
+      svg += `</svg>`;
+      return svg;
+    },
+
+    createTextElementSVG(shape, canvasSize) {
+      const baseStyle = `font-size:${shape.fontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
+      const styleWithStroke = this.buildStyleWithOutline(baseStyle, shape, 1);
+
+      if (shape.textShape && shape.textShape !== "none") {
+        return this.createShapedTextSVG(shape, canvasSize, styleWithStroke);
+      } else {
+        const cx = canvasSize / 2;
+        const cy = canvasSize / 2;
+        return `<text x='${cx}' y='${cy}' text-anchor='middle' dominant-baseline='middle' style='${styleWithStroke}'>${shape.value}</text>`;
+      }
+    },
+
+    createShapedTextSVG(shape, canvasSize, style) {
+      const text = shape.value;
+      const len = text.length;
+      let svg = "";
+
+      if (shape.textShape === "arch") {
+        const shapeData = this.getTextPathForShape(
+          shape.textShape,
+          shape.shapeIntensity,
+          text
+        );
+        const chars = text.split("");
+        chars.forEach((char, i) => {
+          const angle =
+            shapeData.startAngle + (i / (len - 1 || 1)) * shapeData.angleRange;
+          const x = canvasSize / 2 + Math.cos(angle) * shapeData.radius;
+          const y = canvasSize / 2 + Math.sin(angle) * shapeData.radius;
+          const rotation = (angle * 180) / Math.PI + 90;
+          svg += `<text x='${x}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${rotation} ${x} ${y})'>${this.escapeXml(
+            char
+          )}</text>`;
+        });
+      } else if (shape.textShape === "bridge") {
+        const chars = text.split("");
+        const spacing = canvasSize * 0.08;
+        const totalWidth =
+          chars.reduce((acc) => acc + spacing, 0) +
+          (chars.length ? -spacing : 0) +
+          chars.reduce((acc, _c) => acc + spacing, 0);
+        const charWidth = canvasSize * 0.08;
+        let currentX = (canvasSize - charWidth * chars.length) / 2;
+        const mid = (chars.length - 1) / 2;
+
+        chars.forEach((char, i) => {
+          const normX = (i - mid) / (mid || 1);
+          const y = 50 * (normX * normX);
+          svg += `<text x='${currentX + charWidth / 2}' y='${
+            y + canvasSize / 2
+          }' text-anchor='middle' dominant-baseline='middle' style='${style}'>${this.escapeXml(
+            char
+          )}</text>`;
+          currentX += charWidth;
+        });
+      } else if (shape.textShape === "valley") {
+        svg += this.createValleyTextSVG(text, shape, canvasSize, style);
+      } else if (shape.textShape === "bulge") {
+        svg += this.createBulgeTextSVG(text, shape, canvasSize, style);
+      } else if (shape.textShape === "flag" || shape.textShape === "wave") {
+        svg += this.createFlagTextSVG(text, shape, canvasSize, style);
+      } else if (shape.textShape === "distort") {
+        svg += this.createDistortTextSVG(text, shape, canvasSize, style);
+      } else if (shape.textShape === "circle") {
+        svg += this.createCircleTextSVG(text, shape, canvasSize, style);
+      } else if (shape.textShape === "pinch") {
+        svg += this.createPinchTextSVG(text, shape, canvasSize, style);
+      }
+
+      return svg;
+    },
+
+    createValleyTextSVG(text, shape, canvasSize, style) {
+      const chars = text.split("");
+      const len = chars.length;
+      const mid = (len - 1) / 2;
+      const shapeData = this.getTextPathForShape(
+        shape.textShape,
+        shape.shapeIntensity,
+        text
+      );
+      const curveScale = shapeData.curveScale || 50;
+      let svg = "";
+
+      const charWidth = canvasSize * 0.08;
+      const totalWidth = charWidth * len;
+      let currentX = (canvasSize - totalWidth) / 2;
+
+      chars.forEach((char, i) => {
+        const normX = (i - mid) / (mid || 1);
+        const y = -curveScale * (normX * normX) + curveScale * 0.5;
+        const tiltAngle = normX * -40;
+        const posX = currentX + charWidth / 2;
+        const posY = canvasSize / 2 + y;
+        svg += `<text x='${posX}' y='${posY}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${tiltAngle} ${posX} ${posY})'>${this.escapeXml(
+          char
+        )}</text>`;
+        currentX += charWidth;
+      });
+
+      return svg;
+    },
+
+    createBulgeTextSVG(text, shape, canvasSize, style) {
+      const chars = text.split("");
+      const len = chars.length;
+      const mid = (len - 1) / 2;
+      const shapeData = this.getTextPathForShape(
+        shape.textShape,
+        shape.shapeIntensity,
+        text
+      );
+      const bulgeAmount = shapeData.bulgeAmount || 0.8;
+      let svg = "";
+
+      // Calculate scales
+      const scales = chars.map((_, i) => {
+        const dist = Math.abs(i - mid);
+        const maxDist = mid || 1;
+        return 1 + bulgeAmount * (1 - dist / maxDist);
+      });
+
+      const charWidth = canvasSize * 0.08;
+      const totalWidth = scales.reduce(
+        (acc, scale) => acc + charWidth * scale,
+        0
+      );
+      let currentX = (canvasSize - totalWidth) / 2;
+
+      chars.forEach((char, i) => {
+        const scale = scales[i];
+        const scaledWidth = charWidth * scale;
+        const scaledFontSize = shape.fontSize * scale;
+        const scaledStyle = style.replace(
+          `font-size:${shape.fontSize}px`,
+          `font-size:${scaledFontSize}px`
+        );
+        svg += `<text x='${currentX + scaledWidth / 2}' y='${
+          canvasSize / 2
+        }' text-anchor='middle' dominant-baseline='middle' style='${scaledStyle}'>${this.escapeXml(
+          char
+        )}</text>`;
+        currentX += scaledWidth;
+      });
+
+      return svg;
+    },
+
+    createFlagTextSVG(text, shape, canvasSize, style) {
+      const chars = text.split("");
+      const shapeData = this.getTextPathForShape(
+        shape.textShape,
+        shape.shapeIntensity,
+        text
+      );
+      const waveAmount = shapeData.waveAmount || 20;
+      let svg = "";
+
+      const charWidth = canvasSize * 0.08;
+      const totalWidth = charWidth * chars.length;
+      let currentX = (canvasSize - totalWidth) / 2;
+
+      chars.forEach((char, i) => {
+        const y = Math.sin(i * 0.5) * waveAmount;
+        const posX = currentX + charWidth / 2;
+        const posY = canvasSize / 2 + y;
+        svg += `<text x='${posX}' y='${posY}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${this.escapeXml(
+          char
+        )}</text>`;
+        currentX += charWidth;
+      });
+
+      return svg;
+    },
+
+    createDistortTextSVG(text, shape, canvasSize, style) {
+      const chars = text.split("");
+      const len = chars.length;
+      const shapeData = this.getTextPathForShape(
+        shape.textShape,
+        shape.shapeIntensity,
+        text
+      );
+      const distortAmount = shapeData.distortAmount || 0.5;
+      let svg = "";
+
+      const scales = chars.map(
+        (_, i) => 0.5 + distortAmount * (i / (len - 1 || 1))
+      );
+      const charWidth = canvasSize * 0.08;
+      const totalWidth = scales.reduce(
+        (acc, scale) => acc + charWidth * scale,
+        0
+      );
+      let currentX = (canvasSize - totalWidth) / 2;
+
+      chars.forEach((char, i) => {
+        const scale = scales[i];
+        const scaledWidth = charWidth * scale;
+        const scaledFontSize = shape.fontSize * scale;
+        const scaledStyle = style.replace(
+          `font-size:${shape.fontSize}px`,
+          `font-size:${scaledFontSize}px`
+        );
+        svg += `<text x='${currentX + scaledWidth / 2}' y='${
+          canvasSize / 2
+        }' text-anchor='middle' dominant-baseline='middle' style='${scaledStyle}'>${this.escapeXml(
+          char
+        )}</text>`;
+        currentX += scaledWidth;
+      });
+
+      return svg;
+    },
+
+    createCircleTextSVG(text, shape, canvasSize, style) {
+      const chars = text.split("");
+      const len = chars.length;
+      const radius = 110 * (canvasSize / 120);
+      const centerX = canvasSize / 2;
+      const centerY = canvasSize / 2;
+      const angleStep = (2 * Math.PI) / len;
+      let svg = "";
+
+      chars.forEach((char, i) => {
+        const angle = i * angleStep - Math.PI / 2;
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+        const rotation = (angle * 180) / Math.PI + 90;
+        svg += `<text x='${x}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${rotation} ${x} ${y})'>${this.escapeXml(
+          char
+        )}</text>`;
+      });
+
+      return svg;
+    },
+
+    createPinchTextSVG(text, shape, canvasSize, style) {
+      const chars = text.split("");
+      const len = chars.length;
+      const mid = (len - 1) / 2;
+      const shapeData = this.getTextPathForShape(
+        shape.textShape,
+        shape.shapeIntensity,
+        text
+      );
+      const pinchAmount = shapeData.pinchAmount || 0.5;
+      let svg = "";
+
+      const scales = chars.map((_, i) => {
+        const dist = Math.abs(i - mid);
+        const maxDist = mid || 1;
+        return 1 - pinchAmount * (1 - dist / maxDist);
+      });
+
+      const charWidth = canvasSize * 0.08;
+      const totalWidth = scales.reduce(
+        (acc, scale) => acc + charWidth * scale,
+        0
+      );
+      let currentX = (canvasSize - totalWidth) / 2;
+
+      chars.forEach((char, i) => {
+        const scale = scales[i];
+        const scaledWidth = charWidth * scale;
+        const scaledFontSize = shape.fontSize * scale;
+        const scaledStyle = style.replace(
+          `font-size:${shape.fontSize}px`,
+          `font-size:${scaledFontSize}px`
+        );
+        svg += `<text x='${currentX + scaledWidth / 2}' y='${
+          canvasSize / 2
+        }' text-anchor='middle' dominant-baseline='middle' style='${scaledStyle}'>${this.escapeXml(
+          char
+        )}</text>`;
+        currentX += scaledWidth;
+      });
+
+      return svg;
+    },
+
+    buildStyleWithOutline(baseStyle, shape, scale = 1) {
+      let style = baseStyle;
+      if (shape.fontWeight) style += ` font-weight:${shape.fontWeight};`;
+      if (shape.fontStyle) style += ` font-style:${shape.fontStyle};`;
+      if (
+        shape.outlineEnabled &&
+        shape.outlineColor &&
+        shape.outlineThickness > 0
+      ) {
+        style += ` stroke:${shape.outlineColor}; stroke-width:${
+          shape.outlineThickness * scale
+        }px; paint-order: stroke fill;`;
+      }
+      return style;
+    },
+
+    escapeXml(str) {
+      return String(str).replace(/[<>&'"]/g, function (c) {
+        switch (c) {
+          case "<":
+            return "&lt;";
+          case ">":
+            return "&gt;";
+          case "&":
+            return "&amp;";
+          case "'":
+            return "&apos;";
+          case '"':
+            return "&quot;";
+        }
+      });
+    },
+
+    getTextPathForShape(shapeType, intensity, text = "") {
+      const width = 120;
+      const height = 120;
+      const centerY = 60;
+      const intensityFactor = (intensity || 50) / 100; // Convert 0-100 to 0-1
+
+      switch (shapeType) {
+        case "arch": {
+          const radius = intensityFactor;
+          const len = text.length || 1;
+          const angleRange = Math.PI * 0.8;
+          const startAngle = -Math.PI / 2 - angleRange / 2;
+
+          return { type: "arch", radius, len, angleRange, startAngle };
+        }
+        case "valley": {
+          const len = text.length || 1;
+          const mid = (len - 1) / 2;
+          const curveScale = 50 * intensityFactor;
+          return { type: "valley", mid, len, curveScale };
+        }
+        case "bulge": {
+          const len = text.length || 1;
+          const mid = (len - 1) / 2;
+          const bulgeAmount = 0.8 * intensityFactor;
+          return { type: "bulge", mid, len, bulgeAmount };
+        }
+        case "flag":
+        case "wave": {
+          const len = text.length || 1;
+          const waveAmount = 20 * intensityFactor;
+          return { type: "flag", len, waveAmount };
+        }
+        case "distort": {
+          const len = text.length || 1;
+          const distortAmount = 0.5 * intensityFactor;
+          return { type: "distort", len, distortAmount };
+        }
+        case "circle": {
+          const radius = 110 * intensityFactor;
+          const len = text.length || 1;
+          return { type: "circle", radius, len };
+        }
+        case "pinch": {
+          const len = text.length || 1;
+          const mid = (len - 1) / 2;
+          const pinchAmount = 0.5 * intensityFactor;
+          return { type: "pinch", mid, len, pinchAmount };
+        }
+        default:
+          return { type: "none" };
+      }
+    },
+    updateLastTextShape(key, value) {
+      if (!this.svgShapes.length) return;
+      const last = this.svgShapes[this.svgShapes.length - 1];
+      if (last.type === "text") {
+        last[key] = value;
+        this.updateSvgPreview();
+      }
+      this.addSvgLayer();
+    },
+
+    addSvgLayer() {
+      const panel = this.currentPanel();
+      if (!panel) {
+        console.error("Cannot add SVG layer: panel not found");
+        return;
+      }
+
+      if (!panel.texture()) {
+        console.error("Cannot add SVG layer: panel texture not initialized");
+        return;
+      }
+
+      var size = panel.settings.build.parameters.size;
+
+      // Create or update SVG layer
+      if (!this.currentSvgLayer) {
+        this.currentSvgLayer = new WrapviewSvgLayer(WrapviewUtils.guid(), {
+          size: { width: size, height: size },
+          pivot: { x: 0.5, y: 0.5 },
+          position: { x: size / 2, y: size / 2 },
+          angle: 0,
+        });
+      }
+
+      var color = new WrapviewParameter(panel, "textColor");
+      color.set({
+        type: "fixed",
+        value: "#2b2b2b",
+        descriptor: "Black",
+      });
+
+      // Apply the gray tint to all panels
+      const colorTargets = [
+        "COLLAR",
+        "BACK_NECK_TAPE",
+        "LEFT_ARM_SLEEVE",
+        "RIGHT_ARM_SLEEVE",
+        "FRONT_BODY",
+        "BACK_BODY",
+      ];
+
+      // Begin editing the texture before adding layers
+      panel
+        .texture()
+        .beginEditing()
+        .then(() => {
+          // Build SVG data from current state - scale it up to material size
+          const svgData = this.buildSvgDataForMaterial(size);
+
+          // Check if SVG layer already exists
+          const layers = panel.texture().layers();
+          let layerIndex = panel.texture().addLayer(this.currentSvgLayer);
+          for (let i = 0; i < layers.length; i++) {
+            if (layers[i].id === this.currentSvgLayer.id) {
+              layerIndex = i;
+              break;
+            }
+          }
+
+          // Load SVG data into the layer
+          this.currentSvgLayer
+            .load({ svgData: svgData })
+            .then(() => {
+              const mat = this.materials.get("FRONT_BODY");
+              if (mat) {
+                mat.texture().editLayer(layerIndex);
+                mat.texture().render();
+              }
+            })
+            .catch((err) => {
+              console.error("Error loading SVG layer:", err);
+            });
+        })
+        .catch((err) => {
+          console.error("Error in beginEditing():", err);
+        });
+    },
+
+    buildSvgDataForMaterial(size) {
+      // Build SVG with scaled dimensions for the material
+      var svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}'>`;
+
+      for (var i = 0; i < this.svgShapes.length; i++) {
+        var shape = this.svgShapes[i];
+        if (shape.type === "text") {
+          const scale = size / 120; // 120 is preview canvas size
+          const scaledFontSize = shape.fontSize * scale;
+          svg += this.createTextElementSVGMaterial(shape, size, scale);
+        }
+      }
+
+      svg += `</svg>`;
+      return svg;
+    },
+
+    createTextElementSVGMaterial(shape, size, scale) {
+      const scaledFontSize = shape.fontSize * scale;
+      const baseStyle = `font-size:${scaledFontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily};`;
+      const styleWithStroke = this.buildStyleWithOutline(
+        baseStyle,
+        shape,
+        scale
+      );
+
+      if (shape.textShape && shape.textShape !== "none") {
+        return this.createShapedTextSVGMaterial(
+          shape,
+          size,
+          styleWithStroke,
+          scale
+        );
+      } else {
+        const cx = size / 2;
+        const cy = size / 2;
+        return `<text x='${cx}' y='${cy}' text-anchor='middle' dominant-baseline='middle' style='${styleWithStroke}'>${shape.value}</text>`;
+      }
+    },
+
+    createShapedTextSVGMaterial(shape, size, style, scale) {
+      const text = shape.value;
+      const len = text.length;
+      let svg = "";
+
+      if (shape.textShape === "arch") {
+        const shapeData = this.getTextPathForShapeScaled(
+          shape.textShape,
+          shape.shapeIntensity,
+          size,
+          text
+        );
+        const chars = text.split("");
+        chars.forEach((char, i) => {
+          const angle =
+            shapeData.startAngle + (i / (len - 1 || 1)) * shapeData.angleRange;
+          const x = size / 2 + Math.cos(angle) * shapeData.radius;
+          const y = size / 2 + Math.sin(angle) * shapeData.radius;
+          const rotation = (angle * 180) / Math.PI + 90;
+          svg += `<text x='${x}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${rotation} ${x} ${y})'>${this.escapeXml(
+            char
+          )}</text>`;
+        });
+      } else if (shape.textShape === "bridge") {
+        const chars = text.split("");
+        const charWidth = size * 0.08;
+        const totalWidth = charWidth * chars.length;
+        let currentX = (size - totalWidth) / 2;
+        const mid = (chars.length - 1) / 2;
+
+        chars.forEach((char, i) => {
+          const normX = (i - mid) / (mid || 1);
+          const y = 50 * (normX * normX);
+          const posX = currentX + charWidth / 2;
+          const posY = size / 2 + y;
+          svg += `<text x='${posX}' y='${posY}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${this.escapeXml(
+            char
+          )}</text>`;
+          currentX += charWidth;
+        });
+      } else if (shape.textShape === "valley") {
+        svg += this.createValleyTextSVGMaterial(
+          text,
+          shape,
+          size,
+          style,
+          scale
+        );
+      } else if (shape.textShape === "bulge") {
+        svg += this.createBulgeTextSVGMaterial(text, shape, size, style, scale);
+      } else if (shape.textShape === "flag" || shape.textShape === "wave") {
+        svg += this.createFlagTextSVGMaterial(text, shape, size, style, scale);
+      } else if (shape.textShape === "distort") {
+        svg += this.createDistortTextSVGMaterial(
+          text,
+          shape,
+          size,
+          style,
+          scale
+        );
+      } else if (shape.textShape === "circle") {
+        svg += this.createCircleTextSVGMaterial(
+          text,
+          shape,
+          size,
+          style,
+          scale
+        );
+      } else if (shape.textShape === "pinch") {
+        svg += this.createPinchTextSVGMaterial(text, shape, size, style, scale);
+      }
+
+      return svg;
+    },
+
+    createValleyTextSVGMaterial(text, shape, size, style, scale) {
+      const chars = text.split("");
+      const len = chars.length;
+      const mid = (len - 1) / 2;
+      const shapeData = this.getTextPathForShapeScaled(
+        shape.textShape,
+        shape.shapeIntensity,
+        size,
+        text
+      );
+      const curveScale = shapeData.curveScale || 50 * scale;
+      let svg = "";
+
+      // Calculate character spacing based on estimated widths
+      const estimatedCharWidth = size * 0.06;
+      const spacing = size * 0.001;
+      const totalWidth =
+        chars.length * estimatedCharWidth +
+        spacing * Math.max(chars.length - 1, 0);
+      let currentX = (size - totalWidth) / 2;
+
+      chars.forEach((char, i) => {
+        const normX = (i - mid) / (mid || 1);
+        // Valley curve: center is lowest (max Y), edges are highest (min Y)
+        const y = -curveScale * (normX * normX) + curveScale * 0.5;
+        // Tilt characters inward (toward center)
+        const tiltAngle = normX * -40; // Negative tilt on left, positive on right
+        const posX = currentX + estimatedCharWidth / 2;
+        const posY = size / 2 + y;
+        svg += `<text x='${posX}' y='${posY}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${tiltAngle} ${posX} ${posY})'>${this.escapeXml(
+          char
+        )}</text>`;
+        currentX += estimatedCharWidth + spacing;
+      });
+
+      return svg;
+    },
+
+    createBulgeTextSVGMaterial(text, shape, size, style, scale) {
+      const chars = text.split("");
+      const len = chars.length;
+      const mid = (len - 1) / 2;
+      const shapeData = this.getTextPathForShapeScaled(
+        shape.textShape,
+        shape.shapeIntensity,
+        size,
+        text
+      );
+      const bulgeAmount = shapeData.bulgeAmount || 1;
+      let svg = "";
+
+      const scales = chars.map((_, i) => {
+        const dist = Math.abs(i - mid);
+        const maxDist = mid || 1;
+        return 1 + bulgeAmount * (1 - dist / maxDist);
+      });
+
+      const charWidth = size * 0.05;
+      const totalWidth = scales.reduce((acc, s) => acc + charWidth * s, 0);
+      let currentX = (size - totalWidth) / 2;
+
+      chars.forEach((char, i) => {
+        const charScale = scales[i];
+        const scaledWidth = charWidth * charScale;
+        const scaledFontSize = shape.fontSize * scale * charScale;
+        const scaledStyle = style.replace(
+          `font-size:${shape.fontSize * scale}px`,
+          `font-size:${scaledFontSize}px`
+        );
+        svg += `<text x='${currentX + scaledWidth / 2}' y='${
+          size / 2
+        }' text-anchor='middle' dominant-baseline='middle' style='${scaledStyle}'>${this.escapeXml(
+          char
+        )}</text>`;
+        currentX += scaledWidth;
+      });
+
+      return svg;
+    },
+
+    createFlagTextSVGMaterial(text, shape, size, style, scale) {
+      const chars = text.split("");
+      const shapeData = this.getTextPathForShapeScaled(
+        shape.textShape,
+        shape.shapeIntensity,
+        size,
+        text
+      );
+      const waveAmount = shapeData.waveAmount || 20 * scale;
+      let svg = "";
+
+      const charWidth = size * 0.05;
+      const totalWidth = charWidth * chars.length;
+      let currentX = (size - totalWidth) / 2;
+
+      chars.forEach((char, i) => {
+        const y = Math.sin(i * 0.5) * waveAmount;
+        const posX = currentX + charWidth / 2;
+        const posY = size / 2 + y;
+        svg += `<text x='${posX}' y='${posY}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${this.escapeXml(
+          char
+        )}</text>`;
+        currentX += charWidth;
+      });
+
+      return svg;
+    },
+
+    createDistortTextSVGMaterial(text, shape, size, style, scale) {
+      const chars = text.split("");
+      const len = chars.length;
+      const shapeData = this.getTextPathForShapeScaled(
+        shape.textShape,
+        shape.shapeIntensity,
+        size,
+        text
+      );
+      const distortAmount = shapeData.distortAmount || 0.5;
+      let svg = "";
+
+      const scales = chars.map(
+        (_, i) => 0.5 + distortAmount * (i / (len - 1 || 1))
+      );
+      const charWidth = size * 0.05;
+      const totalWidth = scales.reduce((acc, s) => acc + charWidth * s, 0);
+      let currentX = (size - totalWidth) / 2;
+
+      chars.forEach((char, i) => {
+        const charScale = scales[i];
+        const scaledWidth = charWidth * charScale;
+        const scaledFontSize = shape.fontSize * scale * charScale;
+        const scaledStyle = style.replace(
+          `font-size:${shape.fontSize * scale}px`,
+          `font-size:${scaledFontSize}px`
+        );
+        svg += `<text x='${currentX + scaledWidth / 2}' y='${
+          size / 2
+        }' text-anchor='middle' dominant-baseline='middle' style='${scaledStyle}'>${this.escapeXml(
+          char
+        )}</text>`;
+        currentX += scaledWidth;
+      });
+
+      return svg;
+    },
+
+    createCircleTextSVGMaterial(text, shape, size, style, scale) {
+      const chars = text.split("");
+      const len = chars.length;
+      const shapeData = this.getTextPathForShapeScaled(
+        shape.textShape,
+        shape.shapeIntensity,
+        size,
+        text
+      );
+      const radius = shapeData.radius || (size / 120) * 0.5;
+      const centerX = size / 2;
+      const centerY = size / 2;
+      const angleStep = (2 * Math.PI) / len;
+      let svg = "";
+
+      chars.forEach((char, i) => {
+        const angle = i * angleStep - Math.PI / 2;
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+        const rotation = (angle * 180) / Math.PI + 90;
+        svg += `<text x='${x}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${rotation} ${x} ${y})'>${this.escapeXml(
+          char
+        )}</text>`;
+      });
+
+      return svg;
+    },
+
+    createPinchTextSVGMaterial(text, shape, size, style, scale) {
+      const chars = text.split("");
+      const len = chars.length;
+      const mid = (len - 1) / 2;
+      const shapeData = this.getTextPathForShapeScaled(
+        shape.textShape,
+        shape.shapeIntensity,
+        size,
+        text
+      );
+      const pinchAmount = shapeData.pinchAmount || 0.5;
+      let svg = "";
+
+      const scales = chars.map((_, i) => {
+        const dist = Math.abs(i - mid);
+        const maxDist = mid || 1;
+        return 1 - pinchAmount * (1 - dist / maxDist);
+      });
+
+      const charWidth = size * 0.05;
+      const totalWidth = scales.reduce((acc, s) => acc + charWidth * s, 0);
+      let currentX = (size - totalWidth) / 2;
+
+      chars.forEach((char, i) => {
+        const charScale = scales[i];
+        const scaledWidth = charWidth * charScale;
+        const scaledFontSize = shape.fontSize * scale * charScale;
+        const scaledStyle = style.replace(
+          `font-size:${shape.fontSize * scale}px`,
+          `font-size:${scaledFontSize}px`
+        );
+        svg += `<text x='${currentX + scaledWidth / 2}' y='${
+          size / 2
+        }' text-anchor='middle' dominant-baseline='middle' style='${scaledStyle}'>${this.escapeXml(
+          char
+        )}</text>`;
+        currentX += scaledWidth;
+      });
+
+      return svg;
+    },
+
+    getTextPathForShapeScaled(shapeType, intensity, size, text = "") {
+      // Generate character positioning data for material size
+      const centerY = size / 2;
+      const startX = size * 0.167;
+      const endX = size * 0.833;
+      const intensityFactor = (intensity || 50) / 100; // Convert 0-100 to 0-1
+
+      switch (shapeType) {
+        case "arch": {
+          const radius = 13 * (size / 120) * intensityFactor;
+          const len = text.length || 1;
+          const angleRange = Math.PI * 0.8;
+          const startAngle = -Math.PI / 2 - angleRange / 2;
+
+          return { type: "arch", radius, len, angleRange, startAngle };
+        }
+        case "valley": {
+          const len = text.length || 1;
+          const mid = (len - 1) / 2;
+          const curveScale = 5 * (size / 120) * intensityFactor;
+          return { type: "valley", mid, len, curveScale };
+        }
+        case "bulge": {
+          const len = text.length || 1;
+          const mid = (len - 1) / 2;
+          const bulgeAmount = 0.5 * intensityFactor;
+          return { type: "bulge", mid, len, bulgeAmount };
+        }
+        case "flag":
+        case "wave": {
+          const len = text.length || 1;
+          const waveAmount = 20 * (size / 120) * intensityFactor;
+          return { type: "flag", len, waveAmount };
+        }
+        case "distort": {
+          const len = text.length || 1;
+          const distortAmount = 0.5 * intensityFactor;
+          return { type: "distort", len, distortAmount };
+        }
+        case "circle": {
+          const radius = 11 * (size / 120) * intensityFactor;
+          const len = text.length || 1;
+          return { type: "circle", radius, len };
+        }
+        case "pinch": {
+          const len = text.length || 1;
+          const mid = (len - 1) / 2;
+          const pinchAmount = intensityFactor;
+          return { type: "pinch", mid, len, pinchAmount };
+        }
+        default:
+          return { type: "none" };
+      }
+    },
+  },
 };
 </script>
 
 <style lang="css">
 * {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-	font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
 }
 
 .header {
-	position: absolute;
-	z-index: 999;
-	top: 0%;
-	left: 0;
-	width: 100%;
-	height: auto;
-	padding: 23px 10px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	background-color: white;
+  position: absolute;
+  z-index: 999;
+  top: 0%;
+  left: 0;
+  width: 100%;
+  height: auto;
+  padding: 23px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
 }
 
 #orbitControls {
-	position: absolute;
-	z-index: 999;
-	top: 0;
-	left: 0;
-	height: 100vh;
-	width: 100%;
+  position: absolute;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
 }
 
 .bottom-panel {
-	position: absolute;
-	z-index: 999;
-	bottom: 0%;
-	left: 0;
-	padding: 15px;
-	width: 100%;
-	height: 320px;
-	background-color: white;
-	border-top-left-radius: 20px;
-	border-top-right-radius: 20px;
+  position: absolute;
+  z-index: 999;
+  bottom: 0%;
+  left: 0;
+  padding: 15px;
+  width: 100%;
+  height: 320px;
+  background-color: white;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
 }
 
 .thumb-container {
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	margin-bottom: 5px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px;
 }
 
 .thumb {
-	height: 4px;
-	width: 30px;
-	border-radius: 4px;
-	background-color: #cccccc;
+  height: 4px;
+  width: 30px;
+  border-radius: 4px;
+  background-color: #cccccc;
 }
 
 .top-tabs,
 .bottom-tabs {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-end;
-	padding: 10px 0;
-	border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .tab {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
 .tab p {
-	font-size: 10px;
+  font-size: 10px;
 }
 
 .tab.active {
-	color: #0070c8;
+  color: #0070c8;
 }
 
 .tab.active img,
 .tab.active path {
-	color: #0070c8;
+  color: #0070c8;
 }
 
 .image {
-	height: 28px;
-	width: 28px;
-	background-color: black;
-	border-radius: 50%;
+  height: 28px;
+  width: 28px;
+  background-color: black;
+  border-radius: 50%;
 }
 
 .tab.active .image {
-	background-color: #0070c8;
+  background-color: #0070c8;
 }
 
 .content {
-	margin: 10px 0;
-	padding-bottom: 30px;
+  margin: 10px 0;
+  padding-bottom: 60px;
 }
 
 #tab2 {
-	text-align: center;
+  text-align: center;
 }
 
 .color-container {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 15px;
-	align-self: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-self: center;
 }
 
 .color {
-	height: 24px;
-	width: 24px;
-	border-radius: 50%;
-	background-color: aqua;
-	margin-left: 10px;
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  background-color: aqua;
+  margin-left: 10px;
 }
 
 .font-variants {
-	text-align: center;
-	padding: 7px;
-	border-bottom: 1px solid #f0f0f0;
-	cursor: pointer;
-	transition: background-color 0.2s;
+  text-align: center;
+  padding: 7px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .font-variants:hover {
-	background-color: #f0f0f0;
+  background-color: #f0f0f0;
 }
 
 .font-variants.active-font {
-	background-color: #e3f2fd;
-	border-left: 3px solid #0070c8;
+  background-color: #e3f2fd;
+  border-left: 3px solid #0070c8;
 }
 
 .font-variants h4 {
-	font-size: 18px;
+  font-size: 18px;
 }
 
 .font-variants p {
-	font-size: 12px;
+  font-size: 12px;
 }
 
 .outline-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
 }
 
 .outline-header p {
-	font-size: 14px;
+  font-size: 14px;
 }
 
 .outline-header div {
-	display: flex;
-	align-items: center;
-	gap: 7px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
 }
 
 .outline-footer {
-	margin-top: 24px;
+  margin-top: 24px;
 }
 
 .outline-footer p {
-	font-size: 14px;
+  font-size: 14px;
 }
 
 .outline-footer div {
-	width: 100%;
-	display: flex;
-	align-items: center;
-	gap: 7px;
-	margin-top: 8px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 8px;
 }
 
 .outline-footer div input {
-	flex: 1;
+  flex: 1;
 }
 
 .style-content {
-	display: flex;
-	flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .style-content .fontStyle {
-	width: 25%;
-	text-align: center;
-	padding: 5px;
-	margin-bottom: 10px;
-	cursor: pointer;
-	border: 2px solid transparent;
-	border-radius: 4px;
-	transition: all 0.2s;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+  width: 25%;
+  text-align: center;
+  padding: 5px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .style-content .fontStyle:hover {
-	background-color: #f0f0f0;
+  background-color: #f0f0f0;
 }
 
 .style-content .fontStyle.active-shape {
-	background-color: #e3f2fd;
-	border-color: #0070c8;
+  background-color: #e3f2fd;
+  border-color: #0070c8;
 }
 
 .style-footer {
-	margin-top: 10px;
-	text-align: center;
+  margin-top: 10px;
+  text-align: center;
 }
 
 .style-footer p {
-	font-size: 14px;
-	margin-bottom: 4px;
+  font-size: 14px;
+  margin-bottom: 4px;
 }
 
 .style-footer input {
-	width: 100%;
+  width: 100%;
 }
 
 .display-none {
-	display: none;
+  display: none;
 }
 
 .styled-range {
-	-webkit-appearance: none;
-	appearance: none;
-	width: 250px;
-	background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 250px;
+  background: transparent;
 }
 
 /* ===== Chrome / Safari / Edge ===== */
 
 .styled-range::-webkit-slider-runnable-track {
-	height: 2px;
-	background: #000;
-	/* gray track */
+  height: 2px;
+  background: #000;
+  /* gray track */
 }
 
 .styled-range::-webkit-slider-thumb {
-	-webkit-appearance: none;
-	appearance: none;
-	width: 16px;
-	height: 16px;
-	background: #aaa;
-	/* gray thumb */
-	border: 1px solid #000;
-	/* black border */
-	border-radius: 50%;
-	margin-top: -8px;
-	/* centers thumb on 2px track */
-	cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #aaa;
+  /* gray thumb */
+  border: 1px solid #000;
+  /* black border */
+  border-radius: 50%;
+  margin-top: -8px;
+  /* centers thumb on 2px track */
+  cursor: pointer;
 }
 
 /* ===== Firefox ===== */
 
 .styled-range::-moz-range-track {
-	height: 2px;
-	background: #000;
+  height: 2px;
+  background: #000;
 }
 
 .styled-range::-moz-range-thumb {
-	width: 16px;
-	height: 16px;
-	background: #aaa;
-	border: 1px solid #000;
-	border-radius: 50%;
-	cursor: pointer;
+  width: 16px;
+  height: 16px;
+  background: #aaa;
+  border: 1px solid #000;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 /* Remove Firefox inner hit area padding */
 .styled-range::-moz-range-progress {
-	background: #000;
-	height: 2px;
+  background: #000;
+  height: 2px;
 }
 
 /* ===== Old Edge / IE (optional) ===== */
 
 .styled-range::-ms-track {
-	height: 2px;
-	background: transparent;
-	border-color: transparent;
-	color: transparent;
+  height: 2px;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
 }
 
 .styled-range::-ms-fill-lower,
 .styled-range::-ms-fill-upper {
-	background: #000;
+  background: #000;
 }
 
 .styled-range::-ms-thumb {
-	width: 16px;
-	height: 16px;
-	background: #aaa;
-	border: 1px solid #000;
-	border-radius: 50%;
-	cursor: pointer;
+  width: 16px;
+  height: 16px;
+  background: #aaa;
+  border: 1px solid #000;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 .wrapViewContainer {
-	position: relative;
-	z-index: 998;
-
+  position: relative;
+  z-index: 998;
 }
 </style>
