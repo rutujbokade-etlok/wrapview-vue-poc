@@ -171,6 +171,11 @@
 				</div>
 			</div>
 			<div id="tab3" :class="{ 'display-none': activeTab !== 2 }">
+				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Impact' }"
+					@click="svgFontFamily = 'Impact'">
+					<h4 style="font-weight: 600;font-family: 'Impact', sans-serif;">{{ svgTextValue }}</h4>
+					<p>Impact</p>
+				</div>
 				<div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Asap Condensed' }"
 					@click="svgFontFamily = 'Asap Condensed'">
 					<h4 style="font-weight: 600;font-family: 'Asap Condensed', sans-serif;">{{ svgTextValue }}</h4>
@@ -230,7 +235,7 @@
 					<p style="margin: 0;">Outline Thickness (pt)</p>
 					<!-- <input type="number" v-model.number="svgOutlineThickness" min="0" max="10" step="0.01"
 						style="width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" /> -->
-					<input type="range" v-model="svgOutlineThickness" min="0" max="10" class="styled-range w-full" />
+					<input type="range" v-model="svgOutlineThickness" min="0" max="10" step='0.1' class="styled-range w-full" />
 				</div>
 			</div>
 			<div id="tab5" :class="{ 'display-none': activeTab !== 4 }">
