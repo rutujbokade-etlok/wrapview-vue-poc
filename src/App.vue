@@ -669,13 +669,29 @@ export default {
 			let svg = "";
 			const len = chars.length;
 
-			chars.forEach((char, i) => {
-				const angle = shapeData.startAngle + (i / (len - 1 || 1)) * shapeData.angleRange;
-				const x = size / 2 + Math.cos(angle) * shapeData.radius;
-				const y = size / 2 + Math.sin(angle) * shapeData.radius;
-				const rotation = (angle * 180 / Math.PI) + 90;
-				svg += `<text x='${x}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${rotation} ${x} ${y})'>${this.escapeXml(char)}</text>`;
-			});
+			// If intensity is very low (less than 10%), render as straight line
+			if (shapeData.intensityFactor < 0.1) {
+				const charWidth = size * 0.025;
+				const spacing = size * 0.002;
+				const totalWidth = chars.length * charWidth + spacing * Math.max(chars.length - 1, 0);
+				let currentX = (size - totalWidth) / 2;
+
+				chars.forEach((char) => {
+					const posX = currentX + charWidth / 2;
+					const posY = size / 2;
+					svg += `<text x='${posX}' y='${posY}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${this.escapeXml(char)}</text>`;
+					currentX += charWidth + spacing;
+				});
+			} else {
+				// Render as arch with reduced effect at lower intensities
+				chars.forEach((char, i) => {
+					const angle = shapeData.startAngle + (i / (len - 1 || 1)) * shapeData.angleRange;
+					const x = size / 2 + Math.cos(angle) * shapeData.radius;
+					const y = size / 2 + Math.sin(angle) * shapeData.radius;
+					const rotation = (angle * 180 / Math.PI) + 90;
+					svg += `<text x='${x}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${rotation} ${x} ${y})'>${this.escapeXml(char)}</text>`;
+				});
+			}
 
 			return svg;
 		},
@@ -748,16 +764,19 @@ export default {
 		renderFlagShape(chars, mid, shapeData, size, style, shape, scale) {
 			let svg = "";
 			const waveAmount = shapeData.waveAmount || (20 * scale);
-			const charWidth = size * 0.05;
-			const totalWidth = charWidth * chars.length;
+			const charWidth = size * 0.025;
+			const spacing = size * 0.002;
+			const totalWidth = chars.length * charWidth + spacing * Math.max(chars.length - 1, 0);
 			let currentX = (size - totalWidth) / 2;
 
 			chars.forEach((char, i) => {
-				const y = Math.sin(i * 0.5) * waveAmount;
+				// Create a smoother, less intense wave using a lower frequency and amplitude
+				const frequency = 0.25; // Reduced from 0.5 for smoother wave
+				const y = Math.sin(i * frequency) * (waveAmount * 0.6); // Reduced amplitude to 60%
 				const posX = currentX + charWidth / 2;
 				const posY = size / 2 + y;
 				svg += `<text x='${posX}' y='${posY}' text-anchor='middle' dominant-baseline='middle' style='${style}'>${this.escapeXml(char)}</text>`;
-				currentX += charWidth;
+				currentX += charWidth + spacing;
 			});
 
 			return svg;
@@ -893,10 +912,16 @@ export default {
 
 			switch (shapeType) {
 				case "arch": {
-					const radius = size === 120 ? intensityFactor : 13 * sizeRatio * intensityFactor;
+					// Calculate radius based on intensity with gradual progression
+					// Smaller base radius for more subtle effect at lower intensities
+					// At 50%+ intensity, it should form a proper half-circle arch
+					const baseRadius = size === 120 ? 30 : 30 * sizeRatio;
+					// Use quadratic scaling for smoother transition (intensityFactor^1.5)
+					const scaledIntensity = Math.pow(intensityFactor, 1.2);
+					const radius = baseRadius * Math.max(0.15, scaledIntensity);
 					const angleRange = Math.PI * 0.8;
 					const startAngle = -Math.PI / 2 - angleRange / 2;
-					return { type: "arch", radius, len, angleRange, startAngle };
+					return { type: "arch", radius, len, angleRange, startAngle, intensityFactor };
 				}
 				case "valley": {
 					const mid = (len - 1) / 2;
