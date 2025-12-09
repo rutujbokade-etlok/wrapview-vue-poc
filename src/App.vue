@@ -197,6 +197,10 @@
           <p>Shape Intensity: {{ svgShapeIntensity }}%</p>
           <input type="range" v-model="svgShapeIntensity" min="0" max="100" class="styled-range" />
         </div>
+				<div class="style-footer">
+					<p>Character Spacing: {{ svgLetterSpacing }}%</p>
+					<input type="range" v-model="svgLetterSpacing" min="0" max="100" class="styled-range" />
+				</div>
       </div>
     </div>
   </section>
@@ -243,6 +247,7 @@ export default {
 			svgTextValue: "WARRIORS",
 			svgTextShape: "none",
 			svgShapeIntensity: 50,
+			svgLetterSpacing: 0,
 			svgOutlineColor: "#000000",
 			svgOutlineThickness: 1,
 			svgOutlineEnabled: false,
@@ -262,6 +267,7 @@ export default {
 		svgTextValue(val) { this.syncShape("svgTextValue", val); },
 		svgTextShape(val) { this.syncShape("svgTextShape", val); },
 		svgShapeIntensity(val) { this.syncShape("svgShapeIntensity", val); },
+		svgLetterSpacing(val) { this.syncShape("svgLetterSpacing", val); },
 		svgOutlineColor(val) { this.syncShape("svgOutlineColor", val); },
 		svgOutlineThickness(val) { this.syncShape("svgOutlineThickness", val); },
 		svgOutlineEnabled(val) { this.syncShape("svgOutlineEnabled", val); },
@@ -304,6 +310,7 @@ export default {
 				svgTextValue: "value",
 				svgTextShape: "textShape",
 				svgShapeIntensity: "shapeIntensity",
+				svgLetterSpacing: "letterSpacing",
 				svgOutlineColor: "outlineColor",
 				svgOutlineThickness: "outlineThickness",
 				svgOutlineEnabled: "outlineEnabled",
@@ -332,11 +339,23 @@ export default {
 				fontStyle: this.parseFontStyle(),
 				textShape: this.svgTextShape,
 				shapeIntensity: this.svgShapeIntensity,
+				letterSpacing: this.svgLetterSpacing,
 				outlineColor: this.svgOutlineColor,
 				outlineThickness: this.svgOutlineThickness,
 				outlineEnabled: this.svgOutlineEnabled,
 			};
 			return { ...defaults, ...overrides };
+		},
+
+		getSpacingMultiplier(shape) {
+			const raw = Number(shape?.letterSpacing ?? 0);
+			return 1 + Math.max(0, raw) / 100;
+		},
+
+		getLetterSpacingPx(shape, scale = 1) {
+			const raw = Number(shape?.letterSpacing ?? 0);
+			const baseSize = Number(shape?.fontSize ?? 0) * scale;
+			return (Math.max(0, raw) / 100) * baseSize * 0.4;
 		},
 
 		// ============================================
@@ -619,7 +638,8 @@ export default {
 			svg += this.createOutlineGroup(shape.value, shape, canvasSize, 1);
 
 			// Render text on top with anti-aliasing
-			const baseStyle = `font-size:${shape.fontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily}; font-weight:${shape.fontWeight || 'normal'}; font-style:${shape.fontStyle || 'normal'}; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:geometricPrecision; filter:url(#previewFilter);`;
+			const letterSpacingPx = this.getLetterSpacingPx(shape);
+			const baseStyle = `font-size:${shape.fontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily}; font-weight:${shape.fontWeight || 'normal'}; font-style:${shape.fontStyle || 'normal'}; letter-spacing:${letterSpacingPx}px; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:geometricPrecision; filter:url(#previewFilter);`;
 
 			if (shape.textShape && shape.textShape !== "none") {
 				svg += this.renderShapeText(shape.value, shape, canvasSize, baseStyle, shape.textShape);
@@ -668,11 +688,12 @@ export default {
 		renderArchShape(chars, mid, shapeData, size, style, shape, scale) {
 			let svg = "";
 			const len = chars.length;
+			const spacingFactor = this.getSpacingMultiplier(shape);
 
 			// If intensity is very low (less than 10%), render as straight line
 			if (shapeData.intensityFactor < 0.1) {
-				const charWidth = size * 0.025;
-				const spacing = size * 0.002;
+				const charWidth = size * 0.025 * spacingFactor;
+				const spacing = size * 0.002 * spacingFactor;
 				const totalWidth = chars.length * charWidth + spacing * Math.max(chars.length - 1, 0);
 				let currentX = (size - totalWidth) / 2;
 
@@ -684,8 +705,12 @@ export default {
 				});
 			} else {
 				// Render as arch with reduced effect at lower intensities
+				const baseRange = shapeData.angleRange;
+				const angleRange = baseRange * spacingFactor;
+				const startAngle = shapeData.startAngle - (angleRange - baseRange) / 2;
+
 				chars.forEach((char, i) => {
-					const angle = shapeData.startAngle + (i / (len - 1 || 1)) * shapeData.angleRange;
+					const angle = startAngle + (i / (len - 1 || 1)) * angleRange;
 					const x = size / 2 + Math.cos(angle) * shapeData.radius;
 					const y = size / 2 + Math.sin(angle) * shapeData.radius;
 					const rotation = (angle * 180 / Math.PI) + 90;
@@ -698,7 +723,8 @@ export default {
 
 		renderBridgeShape(chars, mid, shapeData, size, style, shape, scale) {
 			let svg = "";
-			const charWidth = size * 0.08;
+			const spacingFactor = this.getSpacingMultiplier(shape);
+			const charWidth = size * 0.08 * spacingFactor;
 			const totalWidth = charWidth * chars.length;
 			let currentX = (size - totalWidth) / 2;
 
@@ -714,9 +740,10 @@ export default {
 
 		renderValleyShape(chars, mid, shapeData, size, style, shape, scale) {
 			let svg = "";
+			const spacingFactor = this.getSpacingMultiplier(shape);
 			const curveScale = shapeData.curveScale || (50 * scale);
-			const charWidth = size * 0.06;
-			const spacing = size * 0.001;
+			const charWidth = size * 0.06 * spacingFactor;
+			const spacing = size * 0.001 * spacingFactor;
 			const totalWidth = chars.length * charWidth + spacing * Math.max(chars.length - 1, 0);
 			let currentX = (size - totalWidth) / 2;
 
@@ -736,13 +763,14 @@ export default {
 		renderBulgeShape(chars, mid, shapeData, size, style, shape, scale) {
 			let svg = "";
 			const bulgeAmount = shapeData.bulgeAmount || 1;
+			const spacingFactor = this.getSpacingMultiplier(shape);
 			const scales = chars.map((_, i) => {
 				const dist = Math.abs(i - mid);
 				const maxDist = mid || 1;
 				return 1 + bulgeAmount * (1 - dist / maxDist);
 			});
 
-			const charWidth = size * 0.05;
+			const charWidth = size * 0.05 * spacingFactor;
 			const totalWidth = scales.reduce((acc, s) => acc + charWidth * s, 0);
 			let currentX = (size - totalWidth) / 2;
 
@@ -763,9 +791,10 @@ export default {
 
 		renderFlagShape(chars, mid, shapeData, size, style, shape, scale) {
 			let svg = "";
+			const spacingFactor = this.getSpacingMultiplier(shape);
 			const waveAmount = shapeData.waveAmount || (20 * scale);
-			const charWidth = size * 0.025;
-			const spacing = size * 0.002;
+			const charWidth = size * 0.025 * spacingFactor;
+			const spacing = size * 0.002 * spacingFactor;
 			const totalWidth = chars.length * charWidth + spacing * Math.max(chars.length - 1, 0);
 			let currentX = (size - totalWidth) / 2;
 
@@ -787,7 +816,7 @@ export default {
 			const distortAmount = shapeData.distortAmount || 0.5;
 			const len = chars.length;
 			const scales = chars.map((_, i) => 0.5 + distortAmount * (i / (len - 1 || 1)));
-			const charWidth = size * 0.05;
+			const charWidth = size * 0.05 * this.getSpacingMultiplier(shape);
 			const totalWidth = scales.reduce((acc, s) => acc + charWidth * s, 0);
 			let currentX = (size - totalWidth) / 2;
 
@@ -808,7 +837,8 @@ export default {
 
 		renderCircleShape(chars, mid, shapeData, size, style, shape, scale) {
 			let svg = "";
-			const radius = shapeData.radius || ((size / 120) * 0.5);
+			const spacingFactor = this.getSpacingMultiplier(shape);
+			const radius = (shapeData.radius || ((size / 120) * 0.5)) * spacingFactor;
 			const centerX = size / 2;
 			const centerY = size / 2;
 			const len = chars.length;
@@ -828,13 +858,14 @@ export default {
 		renderPinchShape(chars, mid, shapeData, size, style, shape, scale) {
 			let svg = "";
 			const pinchAmount = shapeData.pinchAmount || 0.5;
+			const spacingFactor = this.getSpacingMultiplier(shape);
 			const scales = chars.map((_, i) => {
 				const dist = Math.abs(i - mid);
 				const maxDist = mid || 1;
 				return 1 - pinchAmount * (1 - dist / maxDist);
 			});
 
-			const charWidth = size * 0.05;
+			const charWidth = size * 0.05 * spacingFactor;
 			const totalWidth = scales.reduce((acc, s) => acc + charWidth * s, 0);
 			let currentX = (size - totalWidth) / 2;
 
@@ -877,7 +908,8 @@ export default {
 
 			const scaledFontSize = shape.fontSize * scale;
 			// Use proper stroke settings for clear outline without blur
-			const outlineStyle = `font-size:${scaledFontSize}px; fill:none; stroke:${shape.outlineColor}; stroke-width:${shape.outlineThickness * scale}px; font-family:${shape.fontFamily}; font-weight:${shape.fontWeight || 'normal'}; font-style:${shape.fontStyle || 'normal'}; stroke-linejoin:round; stroke-linecap:round; paint-order:stroke fill; text-rendering:geometricPrecision;`;
+			const outlineLetterSpacing = this.getLetterSpacingPx(shape, scale);
+			const outlineStyle = `font-size:${scaledFontSize}px; fill:none; stroke:${shape.outlineColor}; stroke-width:${shape.outlineThickness * scale}px; font-family:${shape.fontFamily}; font-weight:${shape.fontWeight || 'normal'}; font-style:${shape.fontStyle || 'normal'}; letter-spacing:${outlineLetterSpacing}px; stroke-linejoin:round; stroke-linecap:round; paint-order:stroke fill; text-rendering:geometricPrecision;`;
 
 			let svg = `<g id='outline-group'>`;
 
@@ -1023,7 +1055,8 @@ export default {
 
 					// Render text on top with anti-aliasing settings
 					const scaledFontSize = shape.fontSize * scale;
-					const baseStyle = `font-size:${scaledFontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily}; font-weight:${shape.fontWeight || 'normal'}; font-style:${shape.fontStyle || 'normal'}; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:geometricPrecision; filter:url(#textFilter);`;
+					const letterSpacingPx = this.getLetterSpacingPx(shape, scale);
+					const baseStyle = `font-size:${scaledFontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily}; font-weight:${shape.fontWeight || 'normal'}; font-style:${shape.fontStyle || 'normal'}; letter-spacing:${letterSpacingPx}px; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:geometricPrecision; filter:url(#textFilter);`;
 
 					if (shape.textShape && shape.textShape !== "none") {
 						svg += this.renderShapeText(shape.value, shape, size, baseStyle, shape.textShape, scale);
