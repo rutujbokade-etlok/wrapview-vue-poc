@@ -177,9 +177,6 @@
           <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'arch' }" @click="svgTextShape = 'arch'">
             <img src="/icons/arch.png" />
           </div>
-          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'valley' }" @click="svgTextShape = 'valley'">
-            <img src="/icons/wave.png" />
-          </div>
           <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'bulge' }" @click="svgTextShape = 'bulge'">
             <img src="/icons/buldge.png" />
           </div>
