@@ -230,7 +230,7 @@
 					<p style="margin: 0;">Outline Thickness (pt)</p>
 					<!-- <input type="number" v-model.number="svgOutlineThickness" min="0" max="10" step="0.01"
 						style="width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" /> -->
-					<input type="range" v-model="svgOutlineThickness" min="0" max="10" class="styled-range flex-1" />
+					<input type="range" v-model="svgOutlineThickness" min="0" max="10" class="styled-range w-full" />
 				</div>
 			</div>
 			<div id="tab5" :class="{ 'display-none': activeTab !== 4 }">
@@ -480,7 +480,7 @@ export default {
 				var rectAreaLight1 = new WrapviewLight({
 					type: "rectarea",
 					color: 0xffffff,
-					intensity: 5,
+					intensity: 3,
 					position: { x: 4, y: 25, z: 9 },
 					width: 30,
 					height: 30
@@ -489,7 +489,7 @@ export default {
 				var rectAreaLight2 = new WrapviewLight({
 					type: "rectarea",
 					color: 0xffffff,
-					intensity: 5,
+					intensity: 3,
 					position: { x: 4, y: 12, z: -8 },
 					width: 30,
 					height: 30
@@ -498,7 +498,7 @@ export default {
 				var rectAreaLight3 = new WrapviewLight({
 					type: "rectarea",
 					color: 0xffffff,
-					intensity: 7,
+					intensity: 4,
 					position: { x: 0, y: 55, z: 0 },
 					width: 30,
 					height: 30
