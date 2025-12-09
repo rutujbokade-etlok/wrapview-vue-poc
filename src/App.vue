@@ -416,8 +416,8 @@ export default {
 					this.$refs["wrapView"].instance().camera(),
 					document.getElementById("orbitControls")
 				);
-				orbitController.enabled = false;
-				orbitController.enableZoom = true;
+				orbitController.enabled = true;
+				orbitController.enableZoom = false;
 				orbitController.enableDamping = false;
 				orbitController.minDistance = 1;
 				orbitController.maxDistance = 2;

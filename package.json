@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@etlok-systems/wrapview": "1.0.1-beta.28",
+    "@etlok-systems/wrapview": "1.0.1-beta.33",
     "@etlok-systems/wrapview-vue": "^1.0.0-beta.8",
     "lodash": "^4.17.21",
     "vue": "^3.3.4"
