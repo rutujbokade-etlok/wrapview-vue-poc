@@ -1246,6 +1246,8 @@ export default {
 			if (shape.textShape === "arch") {
 				const shapeData = this.getTextPathForShapeScaled(shape.textShape, shape.shapeIntensity, size, text);
 				const chars = text.split('');
+				const spacing = size * 0.015; // Character spacing factor
+				
 				chars.forEach((char, i) => {
 					const angle = shapeData.startAngle + (i / (len - 1 || 1)) * shapeData.angleRange;
 					const x = size / 2 + Math.cos(angle) * shapeData.radius;
@@ -1458,9 +1460,9 @@ export default {
 
 			switch (shapeType) {
 				case "arch": {
-					const radius = 13 * (size / 120) * intensityFactor;
+					const radius = 25 * (size / 120) * intensityFactor; // Increased radius for less curvature
 					const len = text.length || 1;
-					const angleRange = Math.PI * 0.8;
+					const angleRange = Math.PI * 0.5 * intensityFactor; // Reduced angle range for less curvature
 					const startAngle = -Math.PI / 2 - angleRange / 2;
 
 					return { type: "arch", radius, len, angleRange, startAngle };
