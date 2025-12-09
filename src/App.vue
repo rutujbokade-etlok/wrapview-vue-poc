@@ -620,7 +620,7 @@ export default {
 		},
 
 		buildSvgData(size = 120) {
-			var svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}'>`;
+			var svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}' shape-rendering='geometricPrecision' text-rendering='geometricPrecision'>`;
 			for (var shape of this.svgShapes) {
 				if (shape.type === "text") {
 					svg += this.createTextElementSVG(shape, size);
@@ -631,15 +631,13 @@ export default {
 		},
 
 		createTextElementSVG(shape, canvasSize) {
-			let svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${canvasSize}' height='${canvasSize}'>`;
-			svg += `<defs><filter id='previewFilter' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='0' /></filter></defs>`;
-			
+			let svg = `<g class='text-shape'>`;
 			// Render outline first (underneath)
 			svg += this.createOutlineGroup(shape.value, shape, canvasSize, 1);
 
-			// Render text on top with anti-aliasing
+			// Render text on top with anti-aliasing (no blur filter to keep crisp edges)
 			const letterSpacingPx = this.getLetterSpacingPx(shape);
-			const baseStyle = `font-size:${shape.fontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily}; font-weight:${shape.fontWeight || 'normal'}; font-style:${shape.fontStyle || 'normal'}; letter-spacing:${letterSpacingPx}px; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:geometricPrecision; filter:url(#previewFilter);`;
+			const baseStyle = `font-size:${shape.fontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily}; font-weight:${shape.fontWeight || 'normal'}; font-style:${shape.fontStyle || 'normal'}; letter-spacing:${letterSpacingPx}px; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:geometricPrecision;`;
 
 			if (shape.textShape && shape.textShape !== "none") {
 				svg += this.renderShapeText(shape.value, shape, canvasSize, baseStyle, shape.textShape);
@@ -649,7 +647,7 @@ export default {
 				svg += `<text x='${cx}' y='${cy}' text-anchor='middle' dominant-baseline='middle' style='${baseStyle}'>${this.escapeXml(shape.value)}</text>`;
 			}
 
-			svg += `</svg>`;
+			svg += `</g>`;
 			return svg;
 		},
 
@@ -1044,9 +1042,7 @@ export default {
 		 */
 		buildSvgDataForMaterial(size) {
 			const scale = size / 120;
-			// Add SVG filter for sharp text rendering without blur
-			var svg = `<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='${size}' height='${size}'>`;
-			svg += `<defs><filter id='textFilter' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='0' /></filter></defs>`;
+			var svg = `<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='${size}' height='${size}' shape-rendering='geometricPrecision' text-rendering='geometricPrecision'>`;
 
 			for (var shape of this.svgShapes) {
 				if (shape.type === "text") {
@@ -1056,7 +1052,7 @@ export default {
 					// Render text on top with anti-aliasing settings
 					const scaledFontSize = shape.fontSize * scale;
 					const letterSpacingPx = this.getLetterSpacingPx(shape, scale);
-					const baseStyle = `font-size:${scaledFontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily}; font-weight:${shape.fontWeight || 'normal'}; font-style:${shape.fontStyle || 'normal'}; letter-spacing:${letterSpacingPx}px; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:geometricPrecision; filter:url(#textFilter);`;
+					const baseStyle = `font-size:${scaledFontSize}px; fill:${shape.fill}; font-family:${shape.fontFamily}; font-weight:${shape.fontWeight || 'normal'}; font-style:${shape.fontStyle || 'normal'}; letter-spacing:${letterSpacingPx}px; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:geometricPrecision;`;
 
 					if (shape.textShape && shape.textShape !== "none") {
 						svg += this.renderShapeText(shape.value, shape, size, baseStyle, shape.textShape, scale);
