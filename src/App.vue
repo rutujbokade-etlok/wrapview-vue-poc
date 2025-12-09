@@ -850,13 +850,36 @@ export default {
 
 			if (shape.textShape === "arch") {
 				const shapeData = this.getTextPathForShape(shape.textShape, shape.shapeIntensity, text);
-				const chars = text.split('');
+				const chars = text.split(' ');
+				const mid = (chars.length - 1) / 2;
+				const intensityFactor = (shape.shapeIntensity || 50) / 100;
+				
+				// Calculate scale for each character (end chars larger, middle chars smaller)
+				const scales = chars.map((_, i) => {
+					const dist = Math.abs(i - mid);
+					const maxDist = mid || 1;
+					return 0.7 + (0.5 * (dist / maxDist) * intensityFactor);
+				});
+				
+				// Calculate cumulative scale positions for proportional spacing
+				const totalScale = scales.reduce((sum, s) => sum + s, 0);
+				let cumulativeScale = 0;
+				
 				chars.forEach((char, i) => {
-					const angle = shapeData.startAngle + (i / (len - 1 || 1)) * shapeData.angleRange;
+					// Position based on cumulative scale (proportional spacing)
+					const progress = (cumulativeScale + scales[i] / 2) / totalScale;
+					const angle = shapeData.startAngle + progress * shapeData.angleRange;
 					const x = canvasSize / 2 + Math.cos(angle) * shapeData.radius;
 					const y = canvasSize / 2 + Math.sin(angle) * shapeData.radius;
 					const rotation = (angle * 180 / Math.PI) + 90;
-					svg += `<text x='${x}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${rotation} ${x} ${y})'>${this.escapeXml(char)}</text>`;
+					const scale = scales[i];
+					const scaledFontSize = shape.fontSize * scale;
+					const scaledStyle = style.replace(
+						`font-size:${shape.fontSize}px`,
+						`font-size:${scaledFontSize}px`
+					);
+					svg += `<text x='${x}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${scaledStyle}' transform='rotate(${rotation} ${x} ${y})'>${this.escapeXml(char)}</text>`;
+					cumulativeScale += scales[i];
 				});
 			} else if (shape.textShape === "bridge") {
 				const chars = text.split('');
@@ -1251,14 +1274,35 @@ export default {
 			if (shape.textShape === "arch") {
 				const shapeData = this.getTextPathForShapeScaled(shape.textShape, shape.shapeIntensity, size, text);
 				const chars = text.split('');
-				const spacing = size * 0.015; // Character spacing factor
+				const mid = (chars.length - 1) / 2;
+				const intensityFactor = (shape.shapeIntensity || 50) / 100;
+				
+				// Calculate scale for each character (end chars larger, middle chars smaller)
+				const scales = chars.map((_, i) => {
+					const dist = Math.abs(i - mid);
+					const maxDist = mid || 1;
+					return 0.7 + (0.5 * (dist / maxDist) * intensityFactor);
+				});
+				
+				// Calculate cumulative scale positions for proportional spacing
+				const totalScale = scales.reduce((sum, s) => sum + s, 0);
+				let cumulativeScale = 0;
 				
 				chars.forEach((char, i) => {
-					const angle = shapeData.startAngle + (i / (len - 1 || 1)) * shapeData.angleRange;
+					// Position based on cumulative scale (proportional spacing)
+					const progress = (cumulativeScale + scales[i] / 2) / totalScale;
+					const angle = shapeData.startAngle + progress * shapeData.angleRange;
 					const x = size / 2 + Math.cos(angle) * shapeData.radius;
 					const y = size / 2 + Math.sin(angle) * shapeData.radius;
 					const rotation = (angle * 180 / Math.PI) + 90;
-					svg += `<text x='${x}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${style}' transform='rotate(${rotation} ${x} ${y})'>${this.escapeXml(char)}</text>`;
+					const charScale = scales[i];
+					const scaledFontSize = shape.fontSize * scale * charScale;
+					const scaledStyle = style.replace(
+						`font-size:${shape.fontSize * scale}px`,
+						`font-size:${scaledFontSize}px`
+					);
+					svg += `<text x='${x}' y='${y}' text-anchor='middle' dominant-baseline='middle' style='${scaledStyle}' transform='rotate(${rotation} ${x} ${y})'>${this.escapeXml(char)}</text>`;
+					cumulativeScale += scales[i];
 				});
 			} else if (shape.textShape === "bridge") {
 				const chars = text.split('');
