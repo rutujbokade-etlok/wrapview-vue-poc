@@ -606,20 +606,22 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.initializeSvgText();
+    //   this.initializeSvgText();
     });
   },
   watch: {
     svgTextColor(val) {
-      this.updateLastTextShape("fill", val);
       if (this.svgEditor && this.svgEditor.setFillColor) {
         this.svgEditor.setFillColor(val);
+        this.updateTextureOnly();
       }
     },
     svgFontSize(val) {
-      this.updateLastTextShape("fontSize", val);
       if (this.svgEditor && this.svgEditor.setFontSize) {
-        this.svgEditor.setFontSize(val);
+        this.svgEditor.setFontSize(parseInt(val));
+        this.updateTextureOnly();
+      } else {
+        console.warn("⚠️ SVG Editor or setFontSize method not available");
       }
     },
     svgTextDecoration(val) {
@@ -631,49 +633,49 @@ export default {
         fontWeight = "bold";
         fontStyle = "italic";
       }
-      this.updateLastTextShape("fontWeight", fontWeight);
-      this.updateLastTextShape("fontStyle", fontStyle);
+      // Update only texture, not model
+      this.updateTextureOnly();
     },
     svgFontFamily(val) {
-      this.updateLastTextShape("fontFamily", val);
       if (this.svgEditor && this.svgEditor.setFontFamily) {
         this.svgEditor.setFontFamily(val);
+        this.updateTextureOnly();
       }
     },
     svgTextValue(val) {
-      this.updateLastTextShape("value", val);
       if (this.svgEditor && this.svgEditor.setText) {
         this.svgEditor.setText(val);
+        this.updateTextureOnly();
       }
     },
     svgTextShape(val) {
-      this.updateLastTextShape("textShape", val);
       if (this.svgEditor && this.svgEditor.setEffect) {
         this.svgEditor.setEffect(val || "none");
+        this.updateTextureOnly();
       }
     },
     svgShapeIntensity(val) {
-      this.updateLastTextShape("shapeIntensity", val);
       if (this.svgEditor && this.svgEditor.setShapeIntensity) {
         this.svgEditor.setShapeIntensity(val);
+        this.updateTextureOnly();
       }
     },
     svgOutlineColor(val) {
-      this.updateLastTextShape("outlineColor", val);
       this.updateSvgEditorOutline();
+      this.updateTextureOnly();
     },
     svgOutlineThickness(val) {
-      this.updateLastTextShape("outlineThickness", val);
       this.updateSvgEditorOutline();
+      this.updateTextureOnly();
     },
     svgOutlineEnabled(val) {
-      this.updateLastTextShape("outlineEnabled", val);
       this.updateSvgEditorOutline();
+      this.updateTextureOnly();
     },
     svgCharSpacing(val) {
-      this.updateLastTextShape("charSpacing", val);
       if (this.svgEditor && this.svgEditor.setCharSpacing) {
         this.svgEditor.setCharSpacing(val);
+        this.updateTextureOnly();
       }
     },
   },
@@ -1076,7 +1078,7 @@ export default {
     },
     initializeSvgEditor() {
       if (!this.wrapViewInstance) {
-        console.error("wrapViewInstance not initialized");
+        console.error("❌ wrapViewInstance not initialized");
         return;
       }
 
@@ -1086,11 +1088,11 @@ export default {
       if (svgContainer && this.svgEditor) {
         this.svgEditor.attachTo(svgContainer);
       } else {
-        console.warn("SVG editor or container not available.");
+        console.warn("⚠️ SVG editor or container not available.");
       }
 
       if (!this.svgEditor) {
-        console.error("Failed to create SVG editor");
+        console.error("❌ Failed to create SVG editor");
         return;
       }
 
@@ -1105,26 +1107,33 @@ export default {
       // Setup editor change listener for real-time texture updates
       this.svgEditor.setOnChange((dataUrl) => {
         if (dataUrl) {
+          console.log("📝 SVG Editor onChange triggered");
           this.applyTextTextureToCube(dataUrl);
         }
       });
 
       // Initialize editor with current state
+      console.log("📋 Initializing SVG Editor with values:", {
+        text: this.svgTextValue,
+        fontSize: this.svgFontSize,
+        fontFamily: this.svgFontFamily,
+        fillColor: this.svgTextColor,
+        effect: this.svgTextShape,
+      });
+
       this.svgEditor.setText(this.svgTextValue);
       this.svgEditor.setFillColor(this.svgTextColor);
       this.svgEditor.setFontFamily(this.svgFontFamily);
-      this.svgEditor.setFontSize(this.svgFontSize);
+      this.svgEditor.setFontSize(parseInt(this.svgFontSize));
       this.svgEditor.setEffect(this.svgTextShape || "none");
       this.svgEditor.setCharSpacing(this.svgCharSpacing);
       this.svgEditor.setShapeIntensity(this.svgShapeIntensity);
       this.updateSvgEditorOutline();
 
-      // Load initial texture after a short delay
       setTimeout(() => {
         const initialDataUrl = this.svgEditor.getDataURL();
         if (initialDataUrl) {
           this.applyTextTextureToCube(initialDataUrl);
-          console.log("Initial text texture loaded");
         }
       }, 500);
 
@@ -1195,11 +1204,9 @@ export default {
                 panel
               )
               .then(() => {
-                console.log("textLayer.load() resolved");
                 panel.texture().editLayer(layerIndex);
-                panel.texture().render();
-                console.log("Text layer added successfully");
-                panel.texture().endEditing();
+                // panel.texture().render();
+                // panel.texture().endEditing();
               })
               .catch((err) => {
                 console.error("Error loading text layer:", err);
@@ -1211,10 +1218,18 @@ export default {
         console.error("Error applying text texture:", error);
       }
     },
+    updateTextureOnly() {
+      if (this.svgEditor) {
+        const dataUrl = this.svgEditor.getDataURL();
+        if (dataUrl) {
+          this.applyTextTextureToCube(dataUrl);
+        }
+      } else {
+        console.warn("⚠️ SVG Editor not initialized for texture update");
+      }
+    },
     updateLastTextShape(property, value) {
-      // This method is called by watchers to track property changes
-      // You can use this to maintain a history or state of text shapes if needed
-      console.log(`Updating text shape property: ${property} = ${value}`);
+      console.log(`Text shape property changed: ${property} = ${value}`);
     },
     updateSvgEditorOutline() {
       if (!this.svgEditor || !this.svgEditor.setOutline) {
@@ -1226,11 +1241,6 @@ export default {
         color: this.svgOutlineColor,
         width: this.svgOutlineThickness,
       });
-    },
-    initializeSvgText() {
-      // This method is called on component mount
-      // SVG editor will be initialized after environment is loaded
-      console.log("SVG text initialization queued");
     },
   },
 };
