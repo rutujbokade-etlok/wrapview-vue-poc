@@ -572,8 +572,35 @@ import {
   WrapviewLight,
   WrapviewParameter,
   WrapviewSVGLayer,
+  WrapviewVectorSvgTextLayer,
   WrapviewInstance,
+  WrapviewUtils,
 } from "@etlok-systems/wrapview";
+
+// Constants
+const TEXTURE_SIZE = 2048;
+const LAYER_SIZE = { width: 480, height: 480 };
+const MODEL_PATH = "/3001C_SMALL/3001C_SMALL_LOD0.glb";
+const TEXTURE_BASE_PATH = "/3001C_SMALL/textures";
+
+// Material configurations for textured panels
+const TEXTURED_MATERIALS_CONFIG = {
+  COLLAR: { suffix: 1005, base: "F_3001C_SMALL_diffuse_1005.png" },
+  BACK_NECK_TAPE: { suffix: 1006, base: "F_3001C_SMALL_diffuse_1006.png" },
+  LEFT_ARM_SLEEVE: { suffix: 1003, base: "F_3001C_SMALL_diffuse_1003.png" },
+  RIGHT_ARM_SLEEVE: { suffix: 1004, base: "F_3001C_SMALL_diffuse_1004.png" },
+  FRONT_BODY: { suffix: 1001, base: "F_3001C_SMALL_common.png" },
+  BACK_BODY: { suffix: 1002, base: "F_3001C_SMALL_common.png" },
+};
+
+// Effect button configurations
+const EFFECT_BUTTONS_CONFIG = [
+  { id: "apply-none-effect-btn", effect: "none" },
+  { id: "apply-arch-effect-btn", effect: "arch" },
+  { id: "apply-flag-effect-btn", effect: "flag" },
+  { id: "apply-bulge-effect-btn", effect: "bulge" },
+  { id: "apply-pinch-effect-btn", effect: "pinch" },
+];
 
 export default {
   components: { Wrapview },
@@ -582,7 +609,11 @@ export default {
     return {
       materials: null,
       wrapViewInstance: null,
+      vectorTextLayer: null,
       svgEditor: null,
+      debounceTimer: null,
+      debouncedApplyTexture: null,
+      currentEffect: "none",
       size: {
         height: 0,
         width: 0,
@@ -592,7 +623,7 @@ export default {
       svgTextColor: "#FFAB29",
       svgFontSize: 100,
       svgTextDecoration: "",
-      svgFontFamily: "Impact",
+      svgFontFamily: "Big Shoulders Stencil",
       svgTextValue: "WARRIORS",
       svgTextShape: "arch",
       svgShapeIntensity: 50,
@@ -606,76 +637,70 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-    //   this.initializeSvgText();
+      // Initialize debounced texture application
+      this.debouncedApplyTexture = this.debounce(
+        this.applyTextTextureToPanels,
+        300
+      );
     });
   },
   watch: {
     svgTextColor(val) {
-      if (this.svgEditor && this.svgEditor.setFillColor) {
-        this.svgEditor.setFillColor(val);
-        this.updateTextureOnly();
+      if (this.vectorTextLayer && this.vectorTextLayer.setFontColor) {
+        this.vectorTextLayer.setFontColor(val);
+        this.renderEffectAndApplyTexture();
       }
     },
     svgFontSize(val) {
-      if (this.svgEditor && this.svgEditor.setFontSize) {
-        this.svgEditor.setFontSize(parseInt(val));
-        this.updateTextureOnly();
+      if (this.vectorTextLayer && this.vectorTextLayer.setFontSize) {
+        this.vectorTextLayer.setFontSize(parseInt(val));
+        this.renderEffectAndApplyTexture();
       } else {
-        console.warn("⚠️ SVG Editor or setFontSize method not available");
+        console.warn("⚠️ Vector text layer or setFontSize method not available");
       }
     },
     svgTextDecoration(val) {
-      let fontWeight = "";
-      let fontStyle = "";
-      if (val === "bold") fontWeight = "bold";
-      if (val === "italic") fontStyle = "italic";
-      if (val === "bold italic") {
-        fontWeight = "bold";
-        fontStyle = "italic";
-      }
-      // Update only texture, not model
-      this.updateTextureOnly();
+      this.renderEffectAndApplyTexture();
     },
     svgFontFamily(val) {
-      if (this.svgEditor && this.svgEditor.setFontFamily) {
-        this.svgEditor.setFontFamily(val);
-        this.updateTextureOnly();
+      if (this.vectorTextLayer && this.vectorTextLayer.setFontFamily) {
+        this.vectorTextLayer.setFontFamily(val);
+        this.renderEffectAndApplyTexture();
       }
     },
     svgTextValue(val) {
-      if (this.svgEditor && this.svgEditor.setText) {
-        this.svgEditor.setText(val);
-        this.updateTextureOnly();
+      if (this.vectorTextLayer && this.vectorTextLayer.setText) {
+        this.vectorTextLayer.setText(val);
+        this.renderEffectAndApplyTexture();
       }
     },
     svgTextShape(val) {
-      if (this.svgEditor && this.svgEditor.setEffect) {
-        this.svgEditor.setEffect(val || "none");
-        this.updateTextureOnly();
-      }
+      this.currentEffect = val;
+      this.renderEffectAndApplyTexture();
     },
     svgShapeIntensity(val) {
-      if (this.svgEditor && this.svgEditor.setShapeIntensity) {
-        this.svgEditor.setShapeIntensity(val);
-        this.updateTextureOnly();
+      if (this.vectorTextLayer && this.vectorTextLayer.setShapeIntensity) {
+        this.vectorTextLayer.setShapeIntensity(val);
+        this.renderEffectAndApplyTexture();
       }
     },
     svgOutlineColor(val) {
-      this.updateSvgEditorOutline();
-      this.updateTextureOnly();
+      this.renderEffectAndApplyTexture();
     },
     svgOutlineThickness(val) {
-      this.updateSvgEditorOutline();
-      this.updateTextureOnly();
+      if (this.vectorTextLayer && this.vectorTextLayer.setOutlineThickness) {
+        this.vectorTextLayer.setOutlineThickness(val);
+        this.renderEffectAndApplyTexture();
+      }
     },
     svgOutlineEnabled(val) {
       this.updateSvgEditorOutline();
-      this.updateTextureOnly();
+      this.renderEffectAndApplyTexture();
     },
     svgCharSpacing(val) {
-      if (this.svgEditor && this.svgEditor.setCharSpacing) {
-        this.svgEditor.setCharSpacing(val);
-        this.updateTextureOnly();
+      if (this.vectorTextLayer && this.vectorTextLayer.setCharSpacing) {
+        this.vectorTextLayer.setCharSpacing(val);
+        this.renderEffectAndApplyTexture();
       }
     },
   },
@@ -835,19 +860,8 @@ export default {
     loadMaterials() {
       return new Promise((resolve, reject) => {
         this.$refs["wrapView"].instance().updateOffsets();
-        const promises = [];
 
-        var materials = new WrapviewMaterialSet();
-        const shadow = new WrapviewShadowMaterial(
-          this.$refs["wrapView"].instance(),
-          {
-            resources: {
-              alpha:
-                "https://combibmark.s3.amazonaws.com/models/shadow_ultra_light_inverted.png",
-            },
-          }
-        );
-
+        // Initialize text color parameter
         var color = new WrapviewParameter(null, "textColor");
         color.set({
           type: "fixed",
@@ -855,146 +869,43 @@ export default {
           descriptor: "Black",
         });
 
-        const collar = new WrapviewTexturedMaterial(
-          this.$refs["wrapView"].instance(),
-          {
-            resources: {
-              base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1005.png",
-              diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1005.png",
-              normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1005.png",
-              alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1005.png",
-              // roughness:
-              // 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1005.png",
-              metalness:
-                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1005.png",
-            },
-            build: {
-              parameters: {
-                base: true,
-                size: 2048,
-                layers: [],
-                color: color,
+        // Factory function to create textured materials
+        const createTexturedMaterial = (config) => {
+          const { suffix, base } = config;
+          return new WrapviewTexturedMaterial(
+            this.$refs["wrapView"].instance(),
+            {
+              resources: {
+                base: `${TEXTURE_BASE_PATH}/${base}`,
+                diffuse: `${TEXTURE_BASE_PATH}/${base}`,
+                normal: `${TEXTURE_BASE_PATH}/F_3001C_SMALL_normal_${suffix}.png`,
+                alpha: `${TEXTURE_BASE_PATH}/F_3001C_SMALL_opacity_${suffix}.png`,
+                metalness: `${TEXTURE_BASE_PATH}/F_3001C_SMALL_metalness_${suffix}.png`,
               },
-            },
-          }
-        );
+              build: {
+                parameters: {
+                  base: true,
+                  size: TEXTURE_SIZE,
+                  layers: [],
+                  color: color,
+                },
+              },
+            }
+          );
+        };
 
-        const backNeckTape = new WrapviewTexturedMaterial(
-          this.$refs["wrapView"].instance(),
-          {
-            resources: {
-              base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1006.png",
-              diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1006.png",
-              normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1006.png",
-              alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1006.png",
-              // roughness:
-              // 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1006.png",
-              metalness:
-                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1006.png",
-            },
-            build: {
-              parameters: {
-                base: true,
-                size: 2048,
-                layers: [],
-                color: color,
-              },
-            },
-          }
-        );
+        // Create all textured materials
+        const texturedMaterials = {};
+        Object.entries(TEXTURED_MATERIALS_CONFIG).forEach(([name, config]) => {
+          texturedMaterials[name] = createTexturedMaterial(config);
+        });
 
-        const leftArmSleeve = new WrapviewTexturedMaterial(
+        // Create special materials
+        const shadow = new WrapviewShadowMaterial(
           this.$refs["wrapView"].instance(),
           {
             resources: {
-              base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1003.png",
-              diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1003.png",
-              normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1003.png",
-              alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1003.png",
-              // roughness:
-              // 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1003.png",
-              metalness:
-                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1003.png",
-            },
-            build: {
-              parameters: {
-                base: true,
-                size: 2048,
-                layers: [],
-                color: color,
-              },
-            },
-          }
-        );
-
-        const rightArmSleeve = new WrapviewTexturedMaterial(
-          this.$refs["wrapView"].instance(),
-          {
-            resources: {
-              base: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1004.png",
-              diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1004.png",
-              normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1004.png",
-              alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1004.png",
-              // roughness:
-              // 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1004.png",
-              metalness:
-                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1004.png",
-            },
-            build: {
-              parameters: {
-                base: true, // Enable base layer building for text editing
-                size: 2048,
-                layers: [],
-                color: color,
-              },
-            },
-          }
-        );
-
-        const frontBody = new WrapviewTexturedMaterial(
-          this.$refs["wrapView"].instance(),
-          {
-            resources: {
-              base: "/3001C_SMALL/textures/F_3001C_SMALL_common.png", // Base layer for text editing
-              diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
-              normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1001.png",
-              alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1001.png",
-              // roughness:
-              // 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1001.png",
-              metalness:
-                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1001.png",
-            },
-            build: {
-              parameters: {
-                base: true, // Enable base layer building for text editing
-                size: 2048,
-                layers: [],
-                color: color,
-              },
-            },
-          }
-        );
-
-        const backBody = new WrapviewTexturedMaterial(
-          this.$refs["wrapView"].instance(),
-          {
-            resources: {
-              base: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
-              diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
-              normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1002.png",
-              alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1002.png",
-              // roughness:
-              // 	"/3001C_SMALL/textures/F_3001C_SMALL_roughness_1002.png",
-              metalness:
-                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1002.png",
-            },
-            build: {
-              parameters: {
-                base: true,
-                size: 2048,
-                layers: [],
-                color: color,
-              },
+              alpha: "https://combibmark.s3.amazonaws.com/models/shadow_ultra_light_inverted.png",
             },
           }
         );
@@ -1003,33 +914,27 @@ export default {
           this.$refs["wrapView"].instance(),
           {
             resources: {
-              diffuse: "/3001C_SMALL/textures/Basic_Offset_2193.png",
+              diffuse: `${TEXTURE_BASE_PATH}/Basic_Offset_2193.png`,
             },
           }
         );
 
-        promises.push(
-          collar.init(),
-          backNeckTape.init(),
-          leftArmSleeve.init(),
-          rightArmSleeve.init(),
-          frontBody.init(),
-          backBody.init(),
+        // Initialize all materials in parallel
+        const promises = [
+          ...Object.values(texturedMaterials).map((m) => m.init()),
           shadow.init(),
-          stitches.init()
-        );
+          stitches.init(),
+        ];
 
-        materials.add("COLLAR", collar);
-        materials.add("BACK_NECK_TAPE", backNeckTape);
-        materials.add("LEFT_ARM_SLEEVE", leftArmSleeve);
-        materials.add("RIGHT_ARM_SLEEVE", rightArmSleeve);
-        materials.add("FRONT_BODY", frontBody);
-        materials.add("BACK_BODY", backBody);
+        // Add all materials to the set
+        const materials = new WrapviewMaterialSet();
+        Object.entries(texturedMaterials).forEach(([name, material]) => {
+          materials.add(name, material);
+        });
         materials.add("EXT_Stitches", stitches);
         materials.add("99_ShadowPanel", shadow);
 
-        const allPromises = Promise.all(promises);
-        allPromises.then(
+        Promise.all(promises).then(
           () => {
             resolve({
               materials: materials,
@@ -1037,6 +942,7 @@ export default {
           },
           (e) => {
             console.log("Error!", e);
+            reject(e);
           }
         );
       });
@@ -1076,70 +982,13 @@ export default {
       }
       return panel;
     },
-    initializeSvgEditor() {
-      if (!this.wrapViewInstance) {
-        console.error("❌ wrapViewInstance not initialized");
-        return;
-      }
-
-      // Create SVG editor instance directly
-      const svgContainer = document.getElementById("editor-panel");
-      this.svgEditor = new WrapviewInstance(this.wrapViewInstance).svgEditor();
-      if (svgContainer && this.svgEditor) {
-        this.svgEditor.attachTo(svgContainer);
-      } else {
-        console.warn("⚠️ SVG editor or container not available.");
-      }
-
-      if (!this.svgEditor) {
-        console.error("❌ Failed to create SVG editor");
-        return;
-      }
-
-      // Initialize SVG layer
-      this.currentSvgLayer = new WrapviewSVGLayer("svgTextLayer", {
-        size: { width: 2048, height: 2048 },
-        pivot: { x: 0.5, y: 0.5 },
-        position: { x: 1024, y: 1024 },
-        angle: 0,
-      });
-
-      // Setup editor change listener for real-time texture updates
-      this.svgEditor.setOnChange((dataUrl) => {
-        if (dataUrl) {
-          console.log("📝 SVG Editor onChange triggered");
-          this.applyTextTextureToCube(dataUrl);
-        }
-      });
-
-      // Initialize editor with current state
-      console.log("📋 Initializing SVG Editor with values:", {
-        text: this.svgTextValue,
-        fontSize: this.svgFontSize,
-        fontFamily: this.svgFontFamily,
-        fillColor: this.svgTextColor,
-        effect: this.svgTextShape,
-      });
-
-      this.svgEditor.setText(this.svgTextValue);
-      this.svgEditor.setFillColor(this.svgTextColor);
-      this.svgEditor.setFontFamily(this.svgFontFamily);
-      this.svgEditor.setFontSize(parseInt(this.svgFontSize));
-      this.svgEditor.setEffect(this.svgTextShape || "none");
-      this.svgEditor.setCharSpacing(this.svgCharSpacing);
-      this.svgEditor.setShapeIntensity(this.svgShapeIntensity);
-      this.updateSvgEditorOutline();
-
-      setTimeout(() => {
-        const initialDataUrl = this.svgEditor.getDataURL();
-        if (initialDataUrl) {
-          this.applyTextTextureToCube(initialDataUrl);
-        }
-      }, 500);
-
-      this.svgInitialized = true;
+    debounce(func, delay) {
+      return (...args) => {
+        clearTimeout(this.debounceTimer);
+        this.debounceTimer = setTimeout(() => func(...args), delay);
+      };
     },
-    async applyTextTextureToCube(dataUrl) {
+    async applyTextTextureToPanels(dataUrl) {
       if (!dataUrl) {
         console.warn("No data URL provided for texture");
         return;
@@ -1153,94 +1002,144 @@ export default {
         }
 
         if (!panel.texture()) {
-          console.error("Cannot add SVG layer: panel texture not initialized");
+          console.error("Cannot add SVG layer: texture not initialized");
           return;
         }
 
-        var size = panel.settings.build.parameters.size;
+        const size = panel.settings.build?.parameters?.size || TEXTURE_SIZE;
 
         if (!this.currentSvgLayer) {
           this.currentSvgLayer = new WrapviewSVGLayer(WrapviewUtils.guid(), {
-            size: { width: size, height: size },
+            size: LAYER_SIZE,
             pivot: { x: 0.5, y: 0.5 },
             position: { x: size / 2, y: size / 2 },
             angle: 0,
           });
         }
 
-        var color = new WrapviewParameter(panel, "textColor");
-        color.set({
-          type: "fixed",
-          value: "#2b2b2b",
-          descriptor: "Black",
-        });
+        const layer = this.currentSvgLayer;
+        const texture = panel.texture();
 
-        const colorTargets = [
-          "COLLAR",
-          "BACK_NECK_TAPE",
-          "LEFT_ARM_SLEEVE",
-          "RIGHT_ARM_SLEEVE",
-          "FRONT_BODY",
-          "BACK_BODY",
-        ];
+        await texture.beginEditing();
+        try {
+          const layers = texture.layers();
+          let layerIndex = layers.findIndex((l) => l.id === layer.id);
+          if (layerIndex === -1) {
+            layerIndex = texture.addLayer(layer);
+          }
 
-        panel
-          .texture()
-          .beginEditing()
-          .then(() => {
-            const layers = panel.texture().layers();
-            let layerIndex = panel.texture().addLayer(this.currentSvgLayer);
-            for (let i = 0; i < layers.length; i++) {
-              if (layers[i].id === this.currentSvgLayer.id) {
-                layerIndex = i;
-                break;
-              }
-            }
-            this.currentSvgLayer
-              .load(
-                {
-                  svgData: this.svgEditor.getDataURL(),
-                },
-                panel
-              )
-              .then(() => {
-                panel.texture().editLayer(layerIndex);
-                // panel.texture().render();
-                // panel.texture().endEditing();
-              })
-              .catch((err) => {
-                console.error("Error loading text layer:", err);
-              });
-          });
+          await layer.load(
+            {
+              svgData: dataUrl,
+            },
+            panel
+          );
 
-        console.log("Text texture applied to front body panel");
+          texture.editLayer(layerIndex);
+          texture.render();
+        } catch (error) {
+          console.error("Error loading text layer:", error);
+        } finally {
+          await texture.endEditing();
+        }
+
+        console.log("Text texture applied to garment panel");
       } catch (error) {
         console.error("Error applying text texture:", error);
       }
     },
-    updateTextureOnly() {
-      if (this.svgEditor) {
-        const dataUrl = this.svgEditor.getDataURL();
-        if (dataUrl) {
-          this.applyTextTextureToCube(dataUrl);
+    initializeSvgEditor() {
+      if (!this.wrapViewInstance) {
+        console.error("❌ wrapViewInstance not initialized");
+        return;
+      }
+
+      const panel = this.currentPanel();
+      if (!panel) {
+        console.error("Front body panel not found");
+        return;
+      }
+
+      const size = panel.settings.build?.parameters?.size || TEXTURE_SIZE;
+
+      // Initialize vector text layer instead of SVG editor
+      this.vectorTextLayer = new WrapviewVectorSvgTextLayer(
+        WrapviewUtils.guid(),
+        {
+          text: this.svgTextValue,
+          fontFamily: this.svgFontFamily,
+          fontVariant: "regular",
+          fontSize: this.svgFontSize,
+          fontColor: this.svgTextColor,
+          size: LAYER_SIZE,
+          pivot: { x: 0.5, y: 0.5 },
+          position: { x: size / 2, y: size / 2 },
+          angle: 0,
+          effect: this.svgTextShape,
+          outline: {
+            include: this.svgOutlineEnabled,
+            color: this.svgOutlineColor,
+            thickness: this.svgOutlineThickness,
+          },
         }
-      } else {
-        console.warn("⚠️ SVG Editor not initialized for texture update");
+      );
+
+      this.vectorTextLayer.setApiKey("AIzaSyDwE8sM8Ts9SE1ZFkBqEtHNX_3MIwnKNTw");
+
+      this.vectorTextLayer
+        .load(null, panel)
+        .then(() => {
+          this.currentEffect = this.svgTextShape;
+          this.svgInitialized = true;
+          console.log("✅ Vector text layer initialized successfully");
+          setTimeout(() => {
+            this.updateGarmentTexture();
+          }, 500);
+        })
+        .catch((error) => {
+          console.error("Failed to initialize vector text layer:", error);
+        });
+    },
+    updateTextureOnly() {
+      this.updateGarmentTexture();
+    },
+    async updateGarmentTexture() {
+      try {
+        if (!this.vectorTextLayer || !this.vectorTextLayer._canvas) {
+          console.warn("Vector text layer or canvas not ready");
+          return;
+        }
+
+        const dataUrl = this.vectorTextLayer._canvas.toDataURL("image/png");
+        this.debouncedApplyTexture(dataUrl);
+      } catch (error) {
+        console.error("Error applying SVG viewport texture:", error);
+      }
+    },
+    async renderEffectAndApplyTexture() {
+      if (!this.vectorTextLayer) return;
+
+      try {
+        this.vectorTextLayer.setEffect(this.currentEffect);
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        this.updateGarmentTexture();
+      } catch (error) {
+        console.error("Error rendering effect:", error);
       }
     },
     updateLastTextShape(property, value) {
       console.log(`Text shape property changed: ${property} = ${value}`);
     },
     updateSvgEditorOutline() {
-      if (!this.svgEditor || !this.svgEditor.setOutline) {
+      if (!this.vectorTextLayer) {
         return;
       }
 
-      this.svgEditor.setOutline({
-        enabled: this.svgOutlineEnabled,
-        color: this.svgOutlineColor,
-        width: this.svgOutlineThickness,
-      });
+      if (this.svgOutlineEnabled) {
+        this.vectorTextLayer.addOutline();
+      } else {
+        this.vectorTextLayer.removeOutline();
+      }
     },
   },
 };
