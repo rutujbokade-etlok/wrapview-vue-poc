@@ -1084,7 +1084,7 @@ export default {
         }
       );
 
-      this.vectorTextLayer.setApiKey("AIzaSyDwE8sM8Ts9SE1ZFkBqEtHNX_3MIwnKNTw");
+      this.vectorTextLayer.setApiKey("");
 
       this.vectorTextLayer
         .load(null, panel)
