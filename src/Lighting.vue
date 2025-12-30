@@ -89,12 +89,12 @@ export default {
         loadLights() {
             return new Promise((resolve, reject) => {
                 const envPaths = [
-                    "/environment/px.png",
-                    "/environment/nx.png",
-                    "/environment/py.png",
-                    "/environment/ny.png",
-                    "/environment/pz.png",
-                    "/environment/nz.png",
+                    "/environment/vivid/px.png",
+                    "/environment/vivid/nx.png",
+                    "/environment/vivid/py.png",
+                    "/environment/vivid/ny.png",
+                    "/environment/vivid/pz.png",
+                    "/environment/vivid/nz.png",
                 ];
 
                 const envLight = new WrapviewLight({ type: "ambient", intensity: 1 });
@@ -110,38 +110,38 @@ export default {
                     );
 
                 var rectAreaLight1 = new WrapviewLight({
-                    type: "rectarea",
+                    type: "directional",
                     color: 0xffffff,
-                    intensity: 3,
-                    position: { x: 4, y: 25, z: 9 },
+                    intensity: 1.5,
+                    position: { x: 6, y: 4, z: 10 },
                     width: 30,
                     height: 30,
                 });
 
                 var rectAreaLight2 = new WrapviewLight({
-                    type: "rectarea",
+                    type: "directional",
                     color: 0xffffff,
-                    intensity: 3,
-                    position: { x: 4, y: 12, z: -8 },
+                    intensity: 1.5,
+                    position: { x: 6, y: 3, z: -10 },
                     width: 30,
                     height: 30,
                 });
 
                 var rectAreaLight3 = new WrapviewLight({
-                    type: "rectarea",
+                    type: "directional",
                     color: 0xffffff,
-                    intensity: 4,
-                    position: { x: 0, y: 55, z: 0 },
+                    intensity: 1.5,
+                    position: { x: 0, y: 12, z: 0 },
                     width: 30,
                     height: 30,
                 });
 
                 rectAreaLight1 = rectAreaLight1.createLight();
-                rectAreaLight1.lookAt(0, 0, 0);
+                rectAreaLight1.lookAt(0, 0, -1.5);
                 rectAreaLight2 = rectAreaLight2.createLight();
-                rectAreaLight2.lookAt(0, 0, 0);
+                rectAreaLight2.lookAt(0, 0, -1.5);
                 rectAreaLight3 = rectAreaLight3.createLight();
-                rectAreaLight3.lookAt(0, 0, 0);
+                rectAreaLight3.lookAt(0, 0, -1.5);
 
                 this.$refs["wrapView"]
                     .instance()
@@ -306,6 +306,50 @@ export default {
                     }
                 );
 
+                const rightCuff = new WrapviewTexturedMaterial(
+                    this.$refs["wrapView"].instance(),
+                    {
+                        resources: {
+                            base: "/3501_SMALL/textures/F_BC3501_MENS_SOLID_diffuse_1005.png",
+                            diffuse: "/3501_SMALL/textures/F_BC3501_MENS_SOLID_diffuse_1005.png",
+                            normal: "/3501_SMALL/textures/F_BC3501_MENS_SOLID_normal_1002.png",
+                            alpha: "/3501_SMALL/textures/F_BC3501_MENS_SOLID_opacity_1005.png",
+                            metalness:
+                                "/3501_SMALL/textures/F_BC3501_MENS_SOLID_metalness_1002.png",
+                        },
+                        build: {
+                            parameters: {
+                                base: true,
+                                size: 2048,
+                                layers: [],
+                                color: color,
+                            },
+                        },
+                    }
+                );
+
+                const leftCuff = new WrapviewTexturedMaterial(
+                    this.$refs["wrapView"].instance(),
+                    {
+                        resources: {
+                            base: "/3501_SMALL/textures/F_BC3501_MENS_SOLID_diffuse_1005.png",
+                            diffuse: "/3501_SMALL/textures/F_BC3501_MENS_SOLID_diffuse_1005.png",
+                            normal: "/3501_SMALL/textures/F_BC3501_MENS_SOLID_normal_1002.png",
+                            alpha: "/3501_SMALL/textures/F_BC3501_MENS_SOLID_opacity_1005.png",
+                            metalness:
+                                "/3501_SMALL/textures/F_BC3501_MENS_SOLID_metalness_1002.png",
+                        },
+                        build: {
+                            parameters: {
+                                base: true,
+                                size: 2048,
+                                layers: [],
+                                color: color,
+                            },
+                        },
+                    }
+                );
+
                 const stitches = new WrapviewStitchMaterial(
                     this.$refs["wrapView"].instance(),
                     {
@@ -323,7 +367,9 @@ export default {
                     frontBody.init(),
                     backBody.init(),
                     shadow.init(),
-                    stitches.init()
+                    stitches.init(),
+                    leftCuff.init(),
+                    rightCuff.init()
                 );
 
                 materials.add("COLLAR", collar);
@@ -334,6 +380,8 @@ export default {
                 materials.add("BACK_BODY", backBody);
                 materials.add("EXT_Stitches", stitches);
                 materials.add("99_ShadowPanel", shadow);
+                materials.add("LEFT_CUFF", leftCuff);
+                materials.add("RIGHT_CUFF", rightCuff);
 
                 const allPromises = Promise.all(promises);
                 allPromises.then(
@@ -349,6 +397,7 @@ export default {
             });
         },
         loadObjects(materials) {
+            console.log(materials)
             return new Promise((resolve, reject) => {
                 const item = new WrapviewObject({
                     transform: {
