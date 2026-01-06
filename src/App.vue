@@ -6,11 +6,7 @@
     </div>
     <div></div>
   </div>
-  <Wrapview
-    class="wrapViewContainer"
-    ref="wrapView"
-    @onInitalized="environmentMounted"
-  ></Wrapview>
+  <Wrapview class="wrapViewContainer" ref="wrapView" @onInitalized="environmentMounted"></Wrapview>
   <div id="orbitControls"></div>
   <section class="bottom-panel">
     <div class="svg-preview-panel" style="display: none">
@@ -40,107 +36,59 @@
       </div>
     </div>
     <div class="bottom-tabs">
-      <div
-        class="tab"
-        :class="{ active: activeTab === 0 }"
-        v-on:click="changeTab(0)"
-      >
+      <div class="tab" :class="{ active: activeTab === 0 }" v-on:click="changeTab(0)">
         <img src="/icons/Edit.svg" />
         <p>Edit Text</p>
       </div>
-      <div
-        class="tab"
-        :class="{ active: activeTab === 1 }"
-        v-on:click="changeTab(1)"
-      >
+      <div class="tab" :class="{ active: activeTab === 1 }" v-on:click="changeTab(1)">
         <img src="/icons/EditColor.svg" style="height: 24px; width: 24px" />
         <p>Edit Color</p>
       </div>
-      <div
-        class="tab"
-        :class="{ active: activeTab === 2 }"
-        v-on:click="changeTab(2)"
-      >
+      <div class="tab" :class="{ active: activeTab === 2 }" v-on:click="changeTab(2)">
         <img src="/icons/Aa.svg" />
         <p>Font</p>
       </div>
-      <div
-        class="tab"
-        :class="{ active: activeTab === 3 }"
-        v-on:click="changeTab(3)"
-      >
+      <div class="tab" :class="{ active: activeTab === 3 }" v-on:click="changeTab(3)">
         <img src="/icons/AOutline.svg" />
         <p>Outline</p>
       </div>
-      <div
-        class="tab"
-        :class="{ active: activeTab === 4 }"
-        v-on:click="changeTab(4)"
-      >
+      <div class="tab" :class="{ active: activeTab === 4 }" v-on:click="changeTab(4)">
         <img src="/icons/Arch.svg" />
         <p>Shape</p>
       </div>
     </div>
     <div class="content">
       <div id="tab1" :class="{ 'display-none': activeTab !== 0 }">
-        <div
-          style="
+        <div style="
             padding: 10px;
             display: flex;
             flex-direction: column;
             flex-wrap: wrap;
             gap: 15px;
-          "
-        >
+          ">
           <label style="flex: 1">
-            <span style="display: block; margin-bottom: 5px; font-weight: bold"
-              >Edit Text</span
-            >
-            <input
-              type="text"
-              v-model="svgTextValue"
-              placeholder="Enter text"
-              style="
+            <span style="display: block; margin-bottom: 5px; font-weight: bold">Edit Text</span>
+            <input type="text" v-model="svgTextValue" placeholder="Enter text" style="
                 width: 100%;
                 padding: 8px;
                 border: 1px solid #ccc;
                 border-radius: 4px;
-              "
-            />
+              " />
           </label>
           <label style="flex: 1; width: 100%">
-            <span style="display: block; margin-bottom: 5px; font-weight: bold"
-              >Text Size (px)</span
-            >
+            <span style="display: block; margin-bottom: 5px; font-weight: bold">Text Size (px)</span>
             <!-- <input type="number" v-model.number="svgFontSize" min="8" max="72" step="1"
 							style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" /> -->
-            <input
-              type="range"
-              v-model="svgFontSize"
-              min="50"
-              max="250"
-              class="styled-range w-full"
-            />
+            <input type="range" v-model="svgFontSize" min="50" max="250" class="styled-range w-full" />
           </label>
         </div>
       </div>
       <div id="tab2" :class="{ 'display-none': activeTab !== 1 }">
         <div class="color-container">
-          <div
-            class="color"
-            style="background-color: #ffffff; border: 1px solid #dddddd"
-            @click="svgTextColor = '#FFFFFF'"
-            title="White"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #000000"
-            @click="svgTextColor = '#000000'"
-            title="Black"
-          ></div>
-          <div
-            class="color"
-            style="
+          <div class="color" style="background-color: #ffffff; border: 1px solid #dddddd"
+            @click="svgTextColor = '#FFFFFF'" title="White"></div>
+          <div class="color" style="background-color: #000000" @click="svgTextColor = '#000000'" title="Black"></div>
+          <div class="color" style="
               background: linear-gradient(
                   45deg,
                   #ccc 25%,
@@ -160,224 +108,77 @@
               background-size: 8px 8px;
               background-position: 0 0, 4px 4px;
               border: 1px solid #dddddd;
-            "
-            @click="svgTextColor = 'transparent'"
-            title="Transparent"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #595f5e"
-            @click="svgTextColor = '#595F5E'"
-            title="Dark Gray"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ff0086"
-            @click="svgTextColor = '#FF0086'"
-            title="Hot Pink"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ffa5b6"
-            @click="svgTextColor = '#FFA5B6'"
-            title="Light Pink"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ff80b6"
-            @click="svgTextColor = '#FF80B6'"
-            title="Medium Pink"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ad3d80"
-            @click="svgTextColor = '#AD3D80'"
-            title="Purple Pink"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #732735"
-            @click="svgTextColor = '#732735'"
-            title="Maroon"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #c30c27"
-            @click="svgTextColor = '#C30C27'"
-            title="Red"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ef2b3b"
-            @click="svgTextColor = '#EF2B3B'"
-            title="Bright Red"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ff761c"
-            @click="svgTextColor = '#FF761C'"
-            title="Orange"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ffab29"
-            @click="svgTextColor = '#FFAB29'"
-            title="Light Orange"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ffc032"
-            @click="svgTextColor = '#FFC032'"
-            title="Gold Orange"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ffd725"
-            @click="svgTextColor = '#FFD725'"
-            title="Yellow"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #f9e85c"
-            @click="svgTextColor = '#F9E85C'"
-            title="Light Yellow"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #815e24"
-            @click="svgTextColor = '#815E24'"
-            title="Brown"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #60c8a9"
-            @click="svgTextColor = '#60C8A9'"
-            title="Mint"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #98dd22"
-            @click="svgTextColor = '#98DD22'"
-            title="Lime Green"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #289b24"
-            @click="svgTextColor = '#289B24'"
-            title="Green"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #005e31"
-            @click="svgTextColor = '#005E31'"
-            title="Dark Green"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #27472d"
-            @click="svgTextColor = '#27472D'"
-            title="Forest Green"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #00686c"
-            @click="svgTextColor = '#00686C'"
-            title="Teal"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #0091aa"
-            @click="svgTextColor = '#0091AA'"
-            title="Cyan"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #1da6eb"
-            @click="svgTextColor = '#1DA6EB'"
-            title="Sky Blue"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #86b6e6"
-            @click="svgTextColor = '#86B6E6'"
-            title="Light Blue"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #045594"
-            @click="svgTextColor = '#045594'"
-            title="Blue"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #0e3eb0"
-            @click="svgTextColor = '#0E3EB0'"
-            title="Royal Blue"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #073575"
-            @click="svgTextColor = '#073575'"
-            title="Dark Blue"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #032c4f"
-            @click="svgTextColor = '#032C4F'"
-            title="Navy"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #a271bf"
-            @click="svgTextColor = '#A271BF'"
-            title="Light Purple"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #b523b1"
-            @click="svgTextColor = '#B523B1'"
-            title="Purple"
-          ></div>
+            " @click="svgTextColor = 'transparent'" title="Transparent"></div>
+          <div class="color" style="background-color: #595f5e" @click="svgTextColor = '#595F5E'" title="Dark Gray">
+          </div>
+          <div class="color" style="background-color: #ff0086" @click="svgTextColor = '#FF0086'" title="Hot Pink"></div>
+          <div class="color" style="background-color: #ffa5b6" @click="svgTextColor = '#FFA5B6'" title="Light Pink">
+          </div>
+          <div class="color" style="background-color: #ff80b6" @click="svgTextColor = '#FF80B6'" title="Medium Pink">
+          </div>
+          <div class="color" style="background-color: #ad3d80" @click="svgTextColor = '#AD3D80'" title="Purple Pink">
+          </div>
+          <div class="color" style="background-color: #732735" @click="svgTextColor = '#732735'" title="Maroon"></div>
+          <div class="color" style="background-color: #c30c27" @click="svgTextColor = '#C30C27'" title="Red"></div>
+          <div class="color" style="background-color: #ef2b3b" @click="svgTextColor = '#EF2B3B'" title="Bright Red">
+          </div>
+          <div class="color" style="background-color: #ff761c" @click="svgTextColor = '#FF761C'" title="Orange"></div>
+          <div class="color" style="background-color: #ffab29" @click="svgTextColor = '#FFAB29'" title="Light Orange">
+          </div>
+          <div class="color" style="background-color: #ffc032" @click="svgTextColor = '#FFC032'" title="Gold Orange">
+          </div>
+          <div class="color" style="background-color: #ffd725" @click="svgTextColor = '#FFD725'" title="Yellow"></div>
+          <div class="color" style="background-color: #f9e85c" @click="svgTextColor = '#F9E85C'" title="Light Yellow">
+          </div>
+          <div class="color" style="background-color: #815e24" @click="svgTextColor = '#815E24'" title="Brown"></div>
+          <div class="color" style="background-color: #60c8a9" @click="svgTextColor = '#60C8A9'" title="Mint"></div>
+          <div class="color" style="background-color: #98dd22" @click="svgTextColor = '#98DD22'" title="Lime Green">
+          </div>
+          <div class="color" style="background-color: #289b24" @click="svgTextColor = '#289B24'" title="Green"></div>
+          <div class="color" style="background-color: #005e31" @click="svgTextColor = '#005E31'" title="Dark Green">
+          </div>
+          <div class="color" style="background-color: #27472d" @click="svgTextColor = '#27472D'" title="Forest Green">
+          </div>
+          <div class="color" style="background-color: #00686c" @click="svgTextColor = '#00686C'" title="Teal"></div>
+          <div class="color" style="background-color: #0091aa" @click="svgTextColor = '#0091AA'" title="Cyan"></div>
+          <div class="color" style="background-color: #1da6eb" @click="svgTextColor = '#1DA6EB'" title="Sky Blue"></div>
+          <div class="color" style="background-color: #86b6e6" @click="svgTextColor = '#86B6E6'" title="Light Blue">
+          </div>
+          <div class="color" style="background-color: #045594" @click="svgTextColor = '#045594'" title="Blue"></div>
+          <div class="color" style="background-color: #0e3eb0" @click="svgTextColor = '#0E3EB0'" title="Royal Blue">
+          </div>
+          <div class="color" style="background-color: #073575" @click="svgTextColor = '#073575'" title="Dark Blue">
+          </div>
+          <div class="color" style="background-color: #032c4f" @click="svgTextColor = '#032C4F'" title="Navy"></div>
+          <div class="color" style="background-color: #a271bf" @click="svgTextColor = '#A271BF'" title="Light Purple">
+          </div>
+          <div class="color" style="background-color: #b523b1" @click="svgTextColor = '#B523B1'" title="Purple"></div>
         </div>
       </div>
       <div id="tab3" :class="{ 'display-none': activeTab !== 2 }">
-        <div
-          class="font-variants"
-          :class="{ 'active-font': svgFontFamily === 'Impact' }"
-          @click="svgFontFamily = 'Impact'"
-        >
-          <h4
-            style="font-weight: 600; font-family: 'Impact', sans-serif"
-          >
+        <div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Impact' }"
+          @click="svgFontFamily = 'Impact'">
+          <h4 style="font-weight: 600; font-family: 'Impact', sans-serif">
             {{ svgTextValue }}
           </h4>
           <p>Impact</p>
         </div>
-        <div
-          class="font-variants"
-          :class="{ 'active-font': svgFontFamily === 'Baloo 2' }"
-          @click="svgFontFamily = 'Baloo 2'"
-        >
+        <div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Baloo 2' }"
+          @click="svgFontFamily = 'Baloo 2'">
           <h4 style="font-weight: 600; font-family: 'Baloo 2', sans-serif">
             {{ svgTextValue }}
           </h4>
           <p>Baloo</p>
         </div>
-        <div
-          class="font-variants"
-          :class="{ 'active-font': svgFontFamily === 'Caprasimo' }"
-          @click="svgFontFamily = 'Caprasimo'"
-        >
+        <div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Caprasimo' }"
+          @click="svgFontFamily = 'Caprasimo'">
           <h4 style="font-weight: 600; font-family: 'Caprasimo', serif">
             {{ svgTextValue }}
           </h4>
           <p>Caprasimo</p>
         </div>
-        <div
-          class="font-variants"
-          :class="{ 'active-font': svgFontFamily === 'Caramel' }"
-          @click="svgFontFamily = 'Caramel'"
-        >
+        <div class="font-variants" :class="{ 'active-font': svgFontFamily === 'Caramel' }"
+          @click="svgFontFamily = 'Caramel'">
           <h4 style="font-weight: 600; font-family: 'Caramel', cursive">
             {{ svgTextValue }}
           </h4>
@@ -388,172 +189,75 @@
         <div class="outline-header">
           <div>
             <p>Enable Outline</p>
-            <input
-              type="checkbox"
-              v-model="svgOutlineEnabled"
-              style="width: 20px; height: 20px; cursor: pointer"
-            />
+            <input type="checkbox" v-model="svgOutlineEnabled" style="width: 20px; height: 20px; cursor: pointer" />
           </div>
           <p>{{ svgOutlineThickness }}pt</p>
         </div>
         <div class="color-container">
-          <div
-            class="color"
-            style="background-color: #ffffff; border: 1px solid #dddddd"
-            @click="svgOutlineColor = '#FFFFFF'"
-            title="White"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #000000"
-            @click="svgOutlineColor = '#000000'"
-            title="Black"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #595f5e"
-            @click="svgOutlineColor = '#595F5E'"
-            title="Dark Gray"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #c30c27"
-            @click="svgOutlineColor = '#C30C27'"
-            title="Red"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ff761c"
-            @click="svgOutlineColor = '#FF761C'"
-            title="Orange"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ffd725"
-            @click="svgOutlineColor = '#FFD725'"
-            title="Yellow"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #289b24"
-            @click="svgOutlineColor = '#289B24'"
-            title="Green"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #0091aa"
-            @click="svgOutlineColor = '#0091AA'"
-            title="Cyan"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #045594"
-            @click="svgOutlineColor = '#045594'"
-            title="Blue"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #b523b1"
-            @click="svgOutlineColor = '#B523B1'"
-            title="Purple"
-          ></div>
-          <div
-            class="color"
-            style="background-color: #ad3d80"
-            @click="svgOutlineColor = '#AD3D80'"
-            title="Purple Pink"
-          ></div>
+          <div class="color" style="background-color: #ffffff; border: 1px solid #dddddd"
+            @click="svgOutlineColor = '#FFFFFF'" title="White"></div>
+          <div class="color" style="background-color: #000000" @click="svgOutlineColor = '#000000'" title="Black"></div>
+          <div class="color" style="background-color: #595f5e" @click="svgOutlineColor = '#595F5E'" title="Dark Gray">
+          </div>
+          <div class="color" style="background-color: #c30c27" @click="svgOutlineColor = '#C30C27'" title="Red"></div>
+          <div class="color" style="background-color: #ff761c" @click="svgOutlineColor = '#FF761C'" title="Orange">
+          </div>
+          <div class="color" style="background-color: #ffd725" @click="svgOutlineColor = '#FFD725'" title="Yellow">
+          </div>
+          <div class="color" style="background-color: #289b24" @click="svgOutlineColor = '#289B24'" title="Green"></div>
+          <div class="color" style="background-color: #0091aa" @click="svgOutlineColor = '#0091AA'" title="Cyan"></div>
+          <div class="color" style="background-color: #045594" @click="svgOutlineColor = '#045594'" title="Blue"></div>
+          <div class="color" style="background-color: #b523b1" @click="svgOutlineColor = '#B523B1'" title="Purple">
+          </div>
+          <div class="color" style="background-color: #ad3d80" @click="svgOutlineColor = '#AD3D80'" title="Purple Pink">
+          </div>
         </div>
-        <div
-          class="outline-footer"
-          style="
+        <div class="outline-footer" style="
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 10px;
-          "
-        >
+          ">
           <p style="margin: 0">Outline Thickness (pt)</p>
           <!-- <input type="number" v-model.number="svgOutlineThickness" min="0" max="10" step="0.01"
 						style="width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" /> -->
-          <input
-            type="range"
-            v-model="svgOutlineThickness"
-            min="0"
-            max="10"
-			step="0.1"
-            class="styled-range w-full"
-          />
+          <input type="range" v-model="svgOutlineThickness" min="0" max="10" step="0.1" class="styled-range w-full" />
         </div>
       </div>
       <div id="tab5" :class="{ 'display-none': activeTab !== 4 }">
         <div class="style-content">
-          <div
-            class="fontStyle"
-            :class="{ 'active-shape': svgTextShape === 'none' }"
-            @click="svgTextShape = 'none'"
-          >
+          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'none' }" @click="svgTextShape = 'none'">
             <h2>None</h2>
           </div>
-          <div
-            class="fontStyle"
-            :class="{ 'active-shape': svgTextShape === 'arch' }"
-            @click="svgTextShape = 'arch'"
-          >
+          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'arch' }" @click="svgTextShape = 'arch'">
             <img src="/icons/arch.png" />
           </div>
-          <div
-            class="fontStyle"
-            :class="{ 'active-shape': svgTextShape === 'Adistort' }"
-            @click="svgTextShape = 'Adistort'"
-          >
-            <img src="/icons/wave.png" />
-          </div>
-          <div
-            class="fontStyle"
-            :class="{ 'active-shape': svgTextShape === 'bulge' }"
-            @click="svgTextShape = 'bulge'"
-          >
-            <img src="/icons/buldge.png" />
-          </div>
-          <div
-            class="fontStyle"
-            :class="{ 'active-shape': svgTextShape === 'flag' }"
-            @click="svgTextShape = 'flag'"
-          >
+          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'flag' }" @click="svgTextShape = 'flag'">
             <img src="/icons/flag.png" />
           </div>
-          <div
-            class="fontStyle"
-            :class="{ 'active-shape': svgTextShape === 'distort' }"
-            @click="svgTextShape = 'distort'"
-          >
-            <img src="/icons/angle.png" />
+          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'buldge' }"
+            @click="svgTextShape = 'buldge'">
+            <img src="/icons/buldge.png" />
           </div>
-          <div
-            class="fontStyle"
-            :class="{ 'active-shape': svgTextShape === 'circle' }"
-            @click="svgTextShape = 'circle'"
-          >
-            <img src="/icons/circle.png" />
-          </div>
-          <div
-            class="fontStyle"
-            :class="{ 'active-shape': svgTextShape === 'pinch' }"
-            @click="svgTextShape = 'pinch'"
-          >
+          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'pinch' }" @click="svgTextShape = 'pinch'">
             <img src="/icons/pinch.png" />
+          </div>
+          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'valley' }"
+            @click="svgTextShape = 'valley'">
+            <img src="/icons/valley.png" />
+          </div>
+          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'bridge' }"
+            @click="svgTextShape = 'bridge'">
+            <img src="/icons/bridge.png" />
+          </div>
+          <div class="fontStyle" :class="{ 'active-shape': svgTextShape === 'circle' }"
+            @click="svgTextShape = 'circle'">
+            <img src="/icons/circle.png" />
           </div>
         </div>
         <div class="style-footer">
           <p>Shape Intensity: {{ svgShapeIntensity }}%</p>
-          <input
-            type="range"
-            v-model="svgShapeIntensity"
-            min="0"
-            max="100"
-            class="styled-range"
-          />
+          <input type="range" v-model="svgShapeIntensity" min="0" max="100" class="styled-range" />
         </div>
       </div>
     </div>
@@ -579,7 +283,7 @@ import {
 
 // Constants
 const TEXTURE_SIZE = 2048;
-const LAYER_SIZE = { width: 480, height: 480 };
+const LAYER_SIZE = { width: 600, height: 600 };
 const MODEL_PATH = "/3001C_SMALL/3001C_SMALL_LOD0.glb";
 const TEXTURE_BASE_PATH = "/3001C_SMALL/textures";
 
@@ -592,15 +296,6 @@ const TEXTURED_MATERIALS_CONFIG = {
   FRONT_BODY: { suffix: 1001, base: "F_3001C_SMALL_common.png" },
   BACK_BODY: { suffix: 1002, base: "F_3001C_SMALL_common.png" },
 };
-
-// Effect button configurations
-const EFFECT_BUTTONS_CONFIG = [
-  { id: "apply-none-effect-btn", effect: "none" },
-  { id: "apply-arch-effect-btn", effect: "arch" },
-  { id: "apply-flag-effect-btn", effect: "flag" },
-  { id: "apply-bulge-effect-btn", effect: "bulge" },
-  { id: "apply-pinch-effect-btn", effect: "pinch" },
-];
 
 export default {
   components: { Wrapview },
@@ -646,8 +341,8 @@ export default {
   },
   watch: {
     svgTextColor(val) {
-      if (this.vectorTextLayer && this.vectorTextLayer.setFontColor) {
-        this.vectorTextLayer.setFontColor(val);
+      if (this.vectorTextLayer && this.vectorTextLayer.setColor) {
+        this.vectorTextLayer.setColor(val);
         this.renderEffectAndApplyTexture();
       }
     },
@@ -685,7 +380,10 @@ export default {
       }
     },
     svgOutlineColor(val) {
-      this.renderEffectAndApplyTexture();
+      if (this.vectorTextLayer && this.vectorTextLayer.setOutlineColor) {
+        this.vectorTextLayer.setOutlineColor(val);
+        this.renderEffectAndApplyTexture();
+      }
     },
     svgOutlineThickness(val) {
       if (this.vectorTextLayer && this.vectorTextLayer.setOutlineThickness) {
@@ -695,7 +393,6 @@ export default {
     },
     svgOutlineEnabled(val) {
       this.updateSvgEditorOutline();
-      this.renderEffectAndApplyTexture();
     },
     svgCharSpacing(val) {
       if (this.vectorTextLayer && this.vectorTextLayer.setCharSpacing) {
@@ -1010,7 +707,7 @@ export default {
 
         if (!this.currentSvgLayer) {
           this.currentSvgLayer = new WrapviewSVGLayer(WrapviewUtils.guid(), {
-            size: LAYER_SIZE,
+            size: { width: 480, height: 480 },
             pivot: { x: 0.5, y: 0.5 },
             position: { x: size / 2, y: size / 2 },
             angle: 0,
@@ -1062,32 +759,47 @@ export default {
 
       const size = panel.settings.build?.parameters?.size || TEXTURE_SIZE;
 
-      // Initialize vector text layer instead of SVG editor
       this.vectorTextLayer = new WrapviewVectorSvgTextLayer(
         WrapviewUtils.guid(),
         {
-          text: this.svgTextValue,
-          fontFamily: this.svgFontFamily,
-          fontVariant: "regular",
-          fontSize: this.svgFontSize,
-          fontColor: this.svgTextColor,
-          size: LAYER_SIZE,
+          size: { width: 480, height: 480 },
           pivot: { x: 0.5, y: 0.5 },
           position: { x: size / 2, y: size / 2 },
           angle: 0,
-          effect: this.svgTextShape,
-          outline: {
-            include: this.svgOutlineEnabled,
-            color: this.svgOutlineColor,
-            thickness: this.svgOutlineThickness,
-          },
         }
       );
 
-      this.vectorTextLayer.setApiKey("");
+      this.vectorTextLayer.setApiKey("AIzaSyDwE8sM8Ts9SE1ZFkBqEtHNX_3MIwnKNTw");
+
+      const initialSettings = {
+        text: this.svgTextValue,
+        font: {
+          family: this.svgFontFamily,
+          variant: "regular",
+          source: "google",
+        },
+        fontSize: this.svgFontSize,
+        color: this.svgTextColor,
+        size: LAYER_SIZE,
+        pivot: { x: 0.5, y: 0.5 },
+        position: { x: size / 2, y: size / 2 },
+        angle: 0,
+        effect: {
+          effectName: this.svgTextShape,
+          effectProperties: {
+            intensity: this.svgShapeIntensity,
+            characterSpacing: this.svgCharSpacing,
+          },
+        },
+        outline: {
+          includes: this.svgOutlineEnabled,
+          color: this.svgOutlineColor,
+          thickness: this.svgOutlineThickness,
+        },
+      };
 
       this.vectorTextLayer
-        .load(null, panel)
+        .applySettings(initialSettings, panel)
         .then(() => {
           this.currentEffect = this.svgTextShape;
           this.svgInitialized = true;
@@ -1120,7 +832,7 @@ export default {
       if (!this.vectorTextLayer) return;
 
       try {
-        this.vectorTextLayer.setEffect(this.currentEffect);
+        await this.vectorTextLayer.setEffect(this.currentEffect);
         await new Promise((resolve) => setTimeout(resolve, 100));
         this.updateGarmentTexture();
       } catch (error) {
@@ -1140,6 +852,8 @@ export default {
       } else {
         this.vectorTextLayer.removeOutline();
       }
+
+      this.renderEffectAndApplyTexture();
     },
   },
 };
