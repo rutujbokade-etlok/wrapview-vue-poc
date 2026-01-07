@@ -17,11 +17,17 @@ import {
     WrapviewSVGLayer,
     WrapviewInstance,
 } from "@etlok-systems/wrapview";
+import * as THREE from 'three';
 
 export default {
     components: { Wrapview },
     data() {
-        return {}
+        return {
+            size: {
+                width: window.innerWidth,
+                height: window.innerHeight,
+            },
+        }
     },
     methods: {
         environmentMounted() {
@@ -36,6 +42,7 @@ export default {
                             const wrapViewInstance = this.$refs["wrapView"].instance();
                             wrapViewInstance.animate();
                             this.wrapViewInstance = wrapViewInstance;
+                            document.getElementsByTagName("canvas")[0].style.height = "100vh";
                         })
                     )
                 )
@@ -89,19 +96,19 @@ export default {
         loadLights() {
             return new Promise((resolve, reject) => {
                 const envPaths = [
-                    "/environment/vivid/px.png",
-                    "/environment/vivid/nx.png",
-                    "/environment/vivid/py.png",
-                    "/environment/vivid/ny.png",
-                    "/environment/vivid/pz.png",
-                    "/environment/vivid/nz.png",
+                    "/environment/light5/px.hdr",
+                    "/environment/light5/nx.hdr",
+                    "/environment/light5/py.hdr",
+                    "/environment/light5/ny.hdr",
+                    "/environment/light5/pz.hdr",
+                    "/environment/light5/nz.hdr",
                 ];
 
-                const envLight = new WrapviewLight({ type: "ambient", intensity: 1 });
+                const envLight = new WrapviewLight({ type: "ambient", intensity:1 });
                 this.$refs["wrapView"].instance().scene().add(envLight.createLight());
 
                 envLight
-                    .loadEnvironmentMap(envPaths)
+                    .loadHDREnvironmentMap(envPaths)
                     .then((texture) => {
                         this.$refs["wrapView"].instance().scene().environment = texture;
                     })
@@ -109,11 +116,13 @@ export default {
                         console.error("Failed to load environment map:", err)
                     );
 
+                const distance = 150, angle = Math.PI / 4
+
                 var rectAreaLight1 = new WrapviewLight({
                     type: "directional",
                     color: 0xffffff,
-                    intensity: 1.5,
-                    position: { x: 6, y: 4, z: 10 },
+                    intensity: 2,
+                    position: { x: -Math.cos(Math.PI/4) * distance, y: 1, z: Math.sin(Math.PI/4) * distance },
                     width: 30,
                     height: 30,
                 });
@@ -121,8 +130,8 @@ export default {
                 var rectAreaLight2 = new WrapviewLight({
                     type: "directional",
                     color: 0xffffff,
-                    intensity: 1.5,
-                    position: { x: 6, y: 3, z: -10 },
+                    intensity: 2,
+                    position: { x: -distance * Math.cos(angle) * Math.cos(angle), y: distance * Math.sin(angle)*0.3, z: -distance * Math.cos(angle) * Math.sin(angle) },
                     width: 30,
                     height: 30,
                 });
@@ -130,8 +139,8 @@ export default {
                 var rectAreaLight3 = new WrapviewLight({
                     type: "directional",
                     color: 0xffffff,
-                    intensity: 1.5,
-                    position: { x: 0, y: 12, z: 0 },
+                    intensity: 1,
+                    position: { x: 0, y: distance, z: -10 },
                     width: 30,
                     height: 30,
                 });
@@ -143,10 +152,16 @@ export default {
                 rectAreaLight3 = rectAreaLight3.createLight();
                 rectAreaLight3.lookAt(0, 0, -1.5);
 
+                const helper1 = new THREE.DirectionalLightHelper(rectAreaLight1, 1, "red");
+                const helper2 = new THREE.DirectionalLightHelper(rectAreaLight2, 1, "green");
+                const helper3 = new THREE.DirectionalLightHelper(rectAreaLight3, 1, "red");
+
                 this.$refs["wrapView"]
                     .instance()
                     .scene()
-                    .add(rectAreaLight1, rectAreaLight2, rectAreaLight3);
+                    .add(rectAreaLight1, rectAreaLight2, rectAreaLight3, 
+                    helper1, helper2, helper3
+                );
 
                 resolve();
             });
@@ -170,7 +185,7 @@ export default {
                 var color = new WrapviewParameter(null, "textColor");
                 color.set({
                     type: "fixed",
-                    value: "#2b2b2b",
+                    value: "#ffffff",
                     descriptor: "Black",
                 });
 
@@ -182,17 +197,19 @@ export default {
                             diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1005.png",
                             normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1005.png",
                             alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1005.png",
-                            metalness:
-                                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1005.png",
+                            // metalness:
+                            //     "/3001C_SMALL/textures/F_3001C_SMALL_roughness_1005.png",
+                            // roughness:
+                            //     "/3001C_SMALL/textures/F_3001C_SMALL_roughness_1005.png",
                         },
-                        build: {
-                            parameters: {
-                                base: true,
-                                size: 2048,
-                                layers: [],
-                                color: color,
-                            },
-                        },
+                        // build: {
+                        //     parameters: {
+                        //         base: true,
+                        //         size: 2048,
+                        //         layers: [],
+                        //         color: color,
+                        //     },
+                        // },
                     }
                 );
 
@@ -204,17 +221,19 @@ export default {
                             diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1006.png",
                             normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1006.png",
                             alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1006.png",
-                            metalness:
-                                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1006.png",
+                            // metalness:
+                            //     "/3001C_SMALL/textures/F_3001C_SMALL_roughness_1006.png",
+                            // roughness:
+                            //     "/3001C_SMALL/textures/F_3001C_SMALL_roughness_1006.png",
                         },
-                        build: {
-                            parameters: {
-                                base: true,
-                                size: 2048,
-                                layers: [],
-                                color: color,
-                            },
-                        },
+                        // build: {
+                        //     parameters: {
+                        //         base: true,
+                        //         size: 2048,
+                        //         layers: [],
+                        //         color: color,
+                        //     },
+                        // },
                     }
                 );
 
@@ -226,17 +245,19 @@ export default {
                             diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1003.png",
                             normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1003.png",
                             alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1003.png",
-                            metalness:
-                                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1003.png",
+                            // metalness:
+                            //     "/3001C_SMALL/textures/F_3001C_SMALL_roughness_1003.png",
+                            // roughness:
+                            //     "/3001C_SMALL/textures/F_3001C_SMALL_roughness_1003.png",
                         },
-                        build: {
-                            parameters: {
-                                base: true,
-                                size: 2048,
-                                layers: [],
-                                color: color,
-                            },
-                        },
+                        // build: {
+                        //     parameters: {
+                        //         base: true,
+                        //         size: 2048,
+                        //         layers: [],
+                        //         color: color,
+                        //     },
+                        // },
                     }
                 );
 
@@ -248,17 +269,19 @@ export default {
                             diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_diffuse_1004.png",
                             normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1004.png",
                             alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1004.png",
-                            metalness:
-                                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1004.png",
+                            // metalness:
+                            //     "/3001C_SMALL/textures/F_3001C_SMALL_roughness_1004.png",
+                            // roughness:
+                            //     "/3001C_SMALL/textures/F_3001C_SMALL_roughness_1004.png",
                         },
-                        build: {
-                            parameters: {
-                                base: true, // Enable base layer building for text editing
-                                size: 2048,
-                                layers: [],
-                                color: color,
-                            },
-                        },
+                        // build: {
+                        //     parameters: {
+                        //         base: true,
+                        //         size: 2048,
+                        //         layers: [],
+                        //         color: color,
+                        //     },
+                        // },
                     }
                 );
 
@@ -270,17 +293,19 @@ export default {
                             diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
                             normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1001.png",
                             alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1001.png",
-                            metalness:
-                                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1001.png",
+                            // metalness:
+                            //     "/3001C_SMALL/textures/F_3001C_SMALL_roughness_1001.png",
+                            // roughness:
+                            //     "/3001C_SMALL/textures/F_3001C_SMALL_roughness_1001.png",
                         },
-                        build: {
-                            parameters: {
-                                base: true, // Enable base layer building for text editing
-                                size: 2048,
-                                layers: [],
-                                color: color,
-                            },
-                        },
+                        // build: {
+                        //     parameters: {
+                        //         base: true,
+                        //         size: 2048,
+                        //         layers: [],
+                        //         color: color,
+                        //     },
+                        // },
                     }
                 );
 
@@ -292,61 +317,19 @@ export default {
                             diffuse: "/3001C_SMALL/textures/F_3001C_SMALL_common.png",
                             normal: "/3001C_SMALL/textures/F_3001C_SMALL_normal_1002.png",
                             alpha: "/3001C_SMALL/textures/F_3001C_SMALL_opacity_1002.png",
-                            metalness:
-                                "/3001C_SMALL/textures/F_3001C_SMALL_metalness_1002.png",
+                            // metalness:
+                            //     "/3001C_SMALL/textures/F_3001C_SMALL_roughness_1002.png",
+                            // roughness:
+                            //     "/3001C_SMALL/textures/F_3001C_SMALL_roughness_1002.png",
                         },
-                        build: {
-                            parameters: {
-                                base: true,
-                                size: 2048,
-                                layers: [],
-                                color: color,
-                            },
-                        },
-                    }
-                );
-
-                const rightCuff = new WrapviewTexturedMaterial(
-                    this.$refs["wrapView"].instance(),
-                    {
-                        resources: {
-                            base: "/3501_SMALL/textures/F_BC3501_MENS_SOLID_diffuse_1005.png",
-                            diffuse: "/3501_SMALL/textures/F_BC3501_MENS_SOLID_diffuse_1005.png",
-                            normal: "/3501_SMALL/textures/F_BC3501_MENS_SOLID_normal_1002.png",
-                            alpha: "/3501_SMALL/textures/F_BC3501_MENS_SOLID_opacity_1005.png",
-                            metalness:
-                                "/3501_SMALL/textures/F_BC3501_MENS_SOLID_metalness_1002.png",
-                        },
-                        build: {
-                            parameters: {
-                                base: true,
-                                size: 2048,
-                                layers: [],
-                                color: color,
-                            },
-                        },
-                    }
-                );
-
-                const leftCuff = new WrapviewTexturedMaterial(
-                    this.$refs["wrapView"].instance(),
-                    {
-                        resources: {
-                            base: "/3501_SMALL/textures/F_BC3501_MENS_SOLID_diffuse_1005.png",
-                            diffuse: "/3501_SMALL/textures/F_BC3501_MENS_SOLID_diffuse_1005.png",
-                            normal: "/3501_SMALL/textures/F_BC3501_MENS_SOLID_normal_1002.png",
-                            alpha: "/3501_SMALL/textures/F_BC3501_MENS_SOLID_opacity_1005.png",
-                            metalness:
-                                "/3501_SMALL/textures/F_BC3501_MENS_SOLID_metalness_1002.png",
-                        },
-                        build: {
-                            parameters: {
-                                base: true,
-                                size: 2048,
-                                layers: [],
-                                color: color,
-                            },
-                        },
+                        // build: {
+                        //     parameters: {
+                        //         base: true,
+                        //         size: 2048,
+                        //         layers: [],
+                        //         color: color,
+                        //     },
+                        // },
                     }
                 );
 
@@ -368,8 +351,6 @@ export default {
                     backBody.init(),
                     shadow.init(),
                     stitches.init(),
-                    leftCuff.init(),
-                    rightCuff.init()
                 );
 
                 materials.add("COLLAR", collar);
@@ -380,8 +361,6 @@ export default {
                 materials.add("BACK_BODY", backBody);
                 materials.add("EXT_Stitches", stitches);
                 materials.add("99_ShadowPanel", shadow);
-                materials.add("LEFT_CUFF", leftCuff);
-                materials.add("RIGHT_CUFF", rightCuff);
 
                 const allPromises = Promise.all(promises);
                 allPromises.then(
@@ -397,7 +376,6 @@ export default {
             });
         },
         loadObjects(materials) {
-            console.log(materials)
             return new Promise((resolve, reject) => {
                 const item = new WrapviewObject({
                     transform: {
@@ -415,7 +393,7 @@ export default {
                     },
                 });
                 item.setMaterials(materials);
-                item.load("/3001C_SMALL/3001C_SMALL_LOD0.glb").then(() => {
+                item.load("/F_BC3001_MENS_SOLID/model.glb").then(() => {
                     this.$refs["wrapView"].instance().addObject(item);
                 });
 
