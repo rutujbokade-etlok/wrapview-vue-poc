@@ -21,7 +21,7 @@ import {
     ObjectController
 } from "@etlok-systems/wrapview";
 import * as THREE from 'three';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+import { HDRLoader } from 'three/examples/jsm/Addons.js';
 
 export default {
     components: { Wrapview },
@@ -44,8 +44,9 @@ export default {
                         this.loadObjects(materials).then(() => {
                             this.$refs["wrapView"].show();
                             // this.materials = materials;
-                            this.$refs['wrapView'].instance().renderer().toneMapping = THREE.ACESFilmicToneMapping;
-                            this.$refs['wrapView'].instance().renderer().toneMappingExposure = 0.768;
+                            this.$refs['wrapView'].instance().renderer().toneMapping = THREE.NeutralToneMapping;
+                            this.$refs['wrapView'].instance().renderer().toneMappingExposure = 2.2;
+                            this.$refs['wrapView'].instance().renderer().outputColorSpace = THREE.SRGBColorSpace;
 
                             const wrapViewInstance = this.$refs["wrapView"].instance();
                             wrapViewInstance.animate();
@@ -65,7 +66,7 @@ export default {
         loadEnvironment() {
             return new Promise((resolve, reject) => {
                 WrapviewSettings.init();
-                var bgColor = 0xd4d4d4;
+                var bgColor = 0xfefefe;
 
                 this.$refs["wrapView"].viewer().init({
                     renderer: {
@@ -78,15 +79,15 @@ export default {
                     agent: this.size,
                 });
 
-                this.orbitController = new ObjectController(
-                    // this.$refs["wrapView"].instance().camera(),
+                this.orbitController = new OrbitControls(
+                    this.$refs["wrapView"].instance().camera(),
                     document.getElementById("orbitControls"),
-                    {
-                        allow: {
-                            x: false,
-                            y: true
-                        },
-                    }
+                    // {
+                    //     allow: {
+                    //         x: false,
+                    //         y: true
+                    //     },
+                    // }
                 );
                 this.orbitController.enabled = true;
                 // orbitController.enableZoom = true;
@@ -99,6 +100,26 @@ export default {
 
                 this.$refs['wrapView'].instance().camera().lookAt(0, 0, 0);
                 this.$refs["wrapView"].instance().setController(this.orbitController);
+
+                let physicalShader = THREE.ShaderLib.physical.fragmentShader;
+
+                physicalShader = physicalShader.replace(
+                    '\tvec3 outgoingLight = totalDiffuse + totalSpecular + totalEmissiveRadiance;',
+                    '\tvec3 outgoingLight = totalDiffuse + totalSpecular + totalEmissiveRadiance;\n' +
+                    '\t#ifdef USE_LIGHTMAP\n\n' +
+                    '\t\tfloat lightfactor = 0.015;\n' +
+                    '\t\tfloat darkfactor = 0.025;\n' +
+                    '\t\tif (diffuseColor.r < 0.5) outgoingLight.r += lightMapIrradiance.r * darkfactor;\n' +
+                    '\t\telse outgoingLight.r += (1.0 - lightMapIrradiance.r) * lightfactor;\n' +
+                    '\t\tif (diffuseColor.g < 0.5) outgoingLight.g += lightMapIrradiance.g * darkfactor;\n' +
+                    '\t\telse outgoingLight.g += (1.0 - lightMapIrradiance.g) * lightfactor;\n' +
+                    '\t\tif (diffuseColor.b < 0.5) outgoingLight.b += lightMapIrradiance.b * darkfactor;\n' +
+                    '\t\telse outgoingLight.b += (1.0 - lightMapIrradiance.b) * lightfactor;\n\n' +
+                    '\t#endif\n'
+                );
+
+                THREE.ShaderLib.physical.fragmentShader = physicalShader;
+
                 resolve();
             });
         },
@@ -110,73 +131,40 @@ export default {
         },
         loadLights() {
             return new Promise((resolve, reject) => {
-                const distance = 150, angle = Math.PI / 4
 
-                var rectAreaLight1 = new WrapviewLight({
-                    type: "directional",
-                    color: 0xffffff,
-                    intensity: 1,
-                    position: { x: -Math.cos(Math.PI / 4) * distance, y: 1, z: Math.sin(Math.PI / 4) * distance },
-                    width: 30,
-                    height: 30,
-                });
+                function createDirLight(position, intensity, rotation = null) {
+                    const dirLight = new THREE.DirectionalLight(new THREE.Color(1, 1, 1), intensity);
+                    dirLight.castShadow = false;
+                    dirLight.shadow.mapSize = new THREE.Vector2(512, 512);
+                    dirLight.shadow.bias = -0.0001;
+                    dirLight.shadow.camera.near = 0.03;
+                    dirLight.shadow.camera.far = 100;
+                    dirLight.shadow.camera.top = 1;
+                    dirLight.shadow.camera.bottom = -1;
+                    dirLight.shadow.camera.left = -1;
+                    dirLight.shadow.camera.right = 1;
+                    dirLight.position.copy(position);
+                    if (rotation) dirLight.rotation.copy(rotation);
+                    else dirLight.lookAt(new THREE.Vector3(0, 0, 0));
+                    return dirLight;
+                }
+                const lightFactor = 0.1;
 
-                var rectAreaLight2 = new WrapviewLight({
-                    type: "directional",
-                    color: 0xffffff,
-                    intensity: 1,
-                    position: { x: -distance * Math.cos(angle) * Math.cos(angle), y: distance * Math.sin(angle) * 0.3, z: -distance * Math.cos(angle) * Math.sin(angle) },
-                    width: 30,
-                    height: 30,
-                });
+                const rectLight_01 = createDirLight(new THREE.Vector3(-1.0, 0.5, -2.0), 5. * lightFactor);
+                const rectLight_02 = createDirLight(new THREE.Vector3(1.25, 1.25, 2.0), 5. * lightFactor);
+                const rectLight_03 = createDirLight(new THREE.Vector3(0, 1.25, 0), 7. * lightFactor, new THREE.Euler(-Math.PI / 2.0, 0, 0));
 
-                var rectAreaLight3 = new WrapviewLight({
-                    type: "directional",
-                    color: 0xffffff,
-                    intensity: 1.5,
-                    position: { x: 0, y: distance / 2, z: -24 },
-                    width: 30,
-                    height: 30,
-                });
+                this.$refs["wrapView"].instance().scene().add(rectLight_01, rectLight_02, rectLight_03);
 
-                rectAreaLight1 = rectAreaLight1.createLight();
-                rectAreaLight1.lookAt(0, 0, -1.5);
-                rectAreaLight2 = rectAreaLight2.createLight();
-                rectAreaLight2.lookAt(0, 0, -1.5);
-                rectAreaLight3 = rectAreaLight3.createLight();
-                rectAreaLight3.lookAt(0, 0, -1.5);
-
-                const helper1 = new THREE.DirectionalLightHelper(rectAreaLight1, 1, "red");
-                const helper2 = new THREE.DirectionalLightHelper(rectAreaLight2, 1, "green");
-                const helper3 = new THREE.DirectionalLightHelper(rectAreaLight3, 1, "red");
-
-                this.$refs["wrapView"]
-                    .instance()
-                    .scene()
-                    .add(
-                        rectAreaLight1,
-                        rectAreaLight2,
-                        rectAreaLight3,
-                        // helper1,
-                        // helper2,
-                        // helper3
-                    );
-
-                const pmremGenerator = new THREE.PMREMGenerator(this.$refs["wrapView"].instance().renderer());
-                new RGBELoader().load('/hdr/Light_5.hdr', (hdrTexture) => {
-                    const envMap = pmremGenerator.fromEquirectangular(hdrTexture).texture;
-                    envMap.mapping = THREE.EquirectangularReflectionMapping;
-
-                    this.$refs["wrapView"].instance().scene().environment = envMap;
-                    this.$refs["wrapView"].instance().scene().environmentIntensity = 0.2;
-                    // this.$refs["wrapView"].instance().scene().background = envMap; // optional
-
-                    hdrTexture.dispose();
-                    pmremGenerator.dispose();
-                });
+                const hdrLoader = new HDRLoader();
+                hdrLoader.load("/hdr/Light_5.hdr", (t) => {
+                    t.mapping = THREE.EquirectangularReflectionMapping;
+                    this.$refs["wrapView"].instance().scene().environment = t;
+                    this.$refs["wrapView"].instance().scene().environmentIntensity = 0.15;
+                    this.$refs["wrapView"].instance().scene().environmentRotation = -0.174533;
+                }, undefined, (e) => console.log(e));
                 resolve()
             })
-
         },
         loadMaterials() {
             return new Promise((resolve, reject) => {
@@ -194,24 +182,40 @@ export default {
                     }
                 );
 
+                const colors = [
+                    { name: "Black", value: "#303030" },
+                    { name: "Asphalt", value: "#4d4d4d" },
+                    { name: "White", value: "#f2f2f2" },
+                    { name: "Athletic Heather", value: "#a7a8af" },
+                    { name: "Navy", value: "#1f2f3f" },
+                    { name: "True Royal", value: "#004487" },
+                    { name: "Maroon", value: "#522235" },
+                    { name: "Red", value: "#940a20" },
+                    { name: "Kelly", value: "#00654a" },
+                    { name: "Pink", value: "#e3a1bb" },
+                    { name: "Team Purple", value: "#361e4d" },
+                    { name: "Gold", value: "#ed8d1c" },
+                    { name: "Forest", value: "#244537" },
+                ]
+
+                const index = 2
+
                 var color = new WrapviewParameter(null, "textColor");
                 color.set({
                     type: "fixed",
-                    value: "#0160a1",
-                    descriptor: "Black",
+                    value: "#f7c7d2" || colors[index].value,
+                    descriptor: colors[index].name,
                 });
 
                 const collar = new WrapviewTexturedMaterial(
                     this.$refs["wrapView"].instance(),
                     {
                         resources: {
-                            base: `/${this.name}/textures/T_${this.name}_COLLAR.png`,
-                            diffuse: `/${this.name}/textures/T_${this.name}_COLLAR.png`,
+                            base: `/${this.name}/textures/T_${this.name}_FRONT_BODY.png`,
+                            diffuse: `/${this.name}/textures/T_${this.name}_FRONT_BODY.png`,
                             normal: `/${this.name}/textures/N_${this.name}_COLLAR.png`,
                             alpha: `/${this.name}/textures/A_${this.name}_COLLAR.png`,
-                            // metalness:
-                            //     `/${this.name}/textures/M_${this.name}_COLLAR.png`,
-                            // roughness: `/${this.name}/textures/R_${this.name}_COLLAR.png`
+                            lightMap: `/${this.name}/textures/L_${this.name}_COLLAR.png`,
                         },
                         build: {
                             parameters: {
@@ -228,13 +232,11 @@ export default {
                     this.$refs["wrapView"].instance(),
                     {
                         resources: {
-                            base: `/${this.name}/textures/T_${this.name}_BACK_NECK_TAPE.png`,
-                            diffuse: `/${this.name}/textures/T_${this.name}_BACK_NECK_TAPE.png`,
+                            base: `/${this.name}/textures/T_${this.name}_FRONT_BODY.png`,
+                            diffuse: `/${this.name}/textures/T_${this.name}_FRONT_BODY.png`,
                             normal: `/${this.name}/textures/N_${this.name}_BACK_NECK_TAPE.png`,
                             alpha: `/${this.name}/textures/A_${this.name}_BACK_NECK_TAPE.png`,
-                            // metalness:
-                            //     `/${this.name}/textures/M_${this.name}_BACK_NECK_TAPE.png`,
-                            // roughness: `/${this.name}/textures/R_${this.name}_BACK_NECK_TAPE.png`
+                            lightMap: `/${this.name}/textures/L_${this.name}_BACK_NECK_TAPE.png`,
                         },
                         build: {
                             parameters: {
@@ -251,13 +253,11 @@ export default {
                     this.$refs["wrapView"].instance(),
                     {
                         resources: {
-                            base: `/${this.name}/textures/T_${this.name}_LEFT_ARM_SLEEVE.png`,
-                            diffuse: `/${this.name}/textures/T_${this.name}_LEFT_ARM_SLEEVE.png`,
+                            base: `/${this.name}/textures/T_${this.name}_FRONT_BODY.png`,
+                            diffuse: `/${this.name}/textures/T_${this.name}_FRONT_BODY.png`,
                             normal: `/${this.name}/textures/N_${this.name}_LEFT_ARM_SLEEVE.png`,
                             alpha: `/${this.name}/textures/A_${this.name}_LEFT_ARM_SLEEVE.png`,
-                            // metalness:
-                            //     `/${this.name}/textures/M_${this.name}_LEFT_ARM_SLEEVE.png`,
-                            // roughness: `/${this.name}/textures/R_${this.name}_LEFT_ARM_SLEEVE.png`
+                            lightMap: `/${this.name}/textures/L_${this.name}_LEFT_ARM_SLEEVE.png`,
                         },
                         build: {
                             parameters: {
@@ -274,13 +274,11 @@ export default {
                     this.$refs["wrapView"].instance(),
                     {
                         resources: {
-                            base: `/${this.name}/textures/T_${this.name}_RIGHT_ARM_SLEEVE.png`,
-                            diffuse: `/${this.name}/textures/T_${this.name}_RIGHT_ARM_SLEEVE.png`,
+                            base: `/${this.name}/textures/T_${this.name}_FRONT_BODY.png`,
+                            diffuse: `/${this.name}/textures/T_${this.name}_FRONT_BODY.png`,
                             normal: `/${this.name}/textures/N_${this.name}_RIGHT_ARM_SLEEVE.png`,
                             alpha: `/${this.name}/textures/A_${this.name}_RIGHT_ARM_SLEEVE.png`,
-                            // metalness:
-                            //     `/${this.name}/textures/M_${this.name}_RIGHT_ARM_SLEEVE.png`,
-                            // roughness: `/${this.name}/textures/R_${this.name}_RIGHT_ARM_SLEEVE.png`
+                            lightMap: `/${this.name}/textures/L_${this.name}_RIGHT_ARM_SLEEVE.png`,
                         },
                         build: {
                             parameters: {
@@ -301,9 +299,7 @@ export default {
                             diffuse: `/${this.name}/textures/T_${this.name}_FRONT_BODY.png`,
                             normal: `/${this.name}/textures/N_${this.name}_FRONT_BODY.png`,
                             alpha: `/${this.name}/textures/A_${this.name}_FRONT_BODY.png`,
-                            // metalness:
-                            //     `/${this.name}/textures/M_${this.name}_FRONT_BODY.png`,
-                            // roughness: `/${this.name}/textures/R_${this.name}_FRONT_BODY.png`
+                            lightMap: `/${this.name}/textures/L_${this.name}_FRONT_BODY.png`,
                         },
                         build: {
                             parameters: {
@@ -320,13 +316,11 @@ export default {
                     this.$refs["wrapView"].instance(),
                     {
                         resources: {
-                            base: `/${this.name}/textures/T_${this.name}_BACK_BODY.png`,
-                            diffuse: `/${this.name}/textures/T_${this.name}_BACK_BODY.png`,
+                            base: `/${this.name}/textures/T_${this.name}_FRONT_BODY.png`,
+                            diffuse: `/${this.name}/textures/T_${this.name}_FRONT_BODY.png`,
                             normal: `/${this.name}/textures/N_${this.name}_BACK_BODY.png`,
                             alpha: `/${this.name}/textures/A_${this.name}_BACK_BODY.png`,
-                            // metalness:
-                            //     `/${this.name}/textures/M_${this.name}_BACK_BODY.png`,
-                            // roughness: `/${this.name}/textures/R_${this.name}_BACK_BODY.png`
+                            lightMap: `/${this.name}/textures/L_${this.name}_BACK_BODY.png`,
                         },
                         build: {
                             parameters: {
@@ -391,17 +385,18 @@ export default {
                         position: {
                             y: 0,
                         },
-                        scale: {
-                            x: 0.8,
-                            y: 0.8,
-                            z: 0.8,
-                        },
+                        // scale: {
+                        //     x: 0.8,
+                        //     y: 0.8,
+                        //     z: 0.8,
+                        // },
                     },
                 });
                 item.setMaterials(materials);
+                console.log(materials)
                 item.load(`/${this.name}/${this.name}_LOD0.glb`).then(() => {
                     this.$refs["wrapView"].instance().addObject(item);
-                    this.orbitController.addObject(item)
+                    // this.orbitController.addObject(item)
                 });
 
                 resolve();
