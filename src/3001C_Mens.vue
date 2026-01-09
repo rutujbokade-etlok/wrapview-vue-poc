@@ -183,27 +183,27 @@ export default {
                 );
 
                 const colors = [
-                    { name: "Black", value: "#303030" },
-                    { name: "Asphalt", value: "#4d4d4d" },
-                    { name: "White", value: "#f2f2f2" },
-                    { name: "Athletic Heather", value: "#a7a8af" },
-                    { name: "Navy", value: "#1f2f3f" },
-                    { name: "True Royal", value: "#004487" },
-                    { name: "Maroon", value: "#522235" },
-                    { name: "Red", value: "#940a20" },
-                    { name: "Kelly", value: "#00654a" },
-                    { name: "Pink", value: "#e3a1bb" },
-                    { name: "Team Purple", value: "#361e4d" },
-                    { name: "Gold", value: "#ed8d1c" },
-                    { name: "Forest", value: "#244537" },
+                    { name: "Black", value: "#000" },
+                    { name: "Asphalt", value: "#3e3e3e" },
+                    { name: "White", value: "#fff" },
+                    { name: "Athletic Heather", value: "#a7a8ac" },
+                    { name: "Navy", value: "#1d253b" },
+                    { name: "True Royal", value: "#415d99" },
+                    { name: "Maroon", value: "#5d283e" },
+                    { name: "Red", value: "#b30a2c" },
+                    { name: "Kelly", value: "#006f4a" },
+                    { name: "Pink", value: "#f7c7d2" },
+                    { name: "Team Purple", value: "#29193e" },
+                    { name: "Gold", value: "#ff981f" },
+                    { name: "Forest", value: "#244137" },
                 ]
 
-                const index = 2
+                const index = 12
 
                 var color = new WrapviewParameter(null, "textColor");
                 color.set({
                     type: "fixed",
-                    value: "#f7c7d2" || colors[index].value,
+                    value: colors[index].value,
                     descriptor: colors[index].name,
                 });
 
@@ -393,7 +393,6 @@ export default {
                     },
                 });
                 item.setMaterials(materials);
-                console.log(materials)
                 item.load(`/${this.name}/${this.name}_LOD0.glb`).then(() => {
                     this.$refs["wrapView"].instance().addObject(item);
                     // this.orbitController.addObject(item)
